@@ -1,0 +1,22 @@
+﻿<Application x:Class="Zhai.PictureView.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:Converters="clr-namespace:Zhai.PictureView.Converters"
+             StartupUri="MainWindow.xaml">
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/Zhai.PictureView;component/Themes/IconPack.xaml"/>
+                <ResourceDictionary Source="pack://application:,,,/Zhai.PictureView;component/Themes/Styles.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+
+            <Converters:BoolToInverseBoolConverter x:Key="BoolToInverseBoolConverter"/>
+            <Converters:NullableToBoolConverter x:Key="NullableToBoolConverter"/>
+            <Converters:NullableToVisibilityConverter x:Key="NullableToVisibilityConverter"/>
+            <Converters:NullableToInverseVisibilityConverter x:Key="NullableToInverseVisibilityConverter"/>
+            <Converters:ByteFormatter x:Key="ByteFormatter"/>
+            <Converters:ThumbBoxVisibilityConverter x:Key="ThumbBoxVisibilityConverter"/>
+            <Converters:ScaleTipsConverter x:Key="ScaleTipsConverter"/>
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>

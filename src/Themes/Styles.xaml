@@ -1,0 +1,447 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:sys="clr-namespace:System;assembly=mscorlib"
+                    xmlns:local="clr-namespace:Zhai.PictureView"
+                    xmlns:PresentationOptions="http://schemas.microsoft.com/winfx/2006/xaml/presentation/options">
+
+    <SolidColorBrush x:Key="PictureView.IconButton.HighlightBrush" Color="#eaac22"/>
+    <SolidColorBrush x:Key="PictureView.IconButton.PressedBackground" Color="#BF363636"/>
+    <SolidColorBrush x:Key="PictureView.IconButton.EnabledForeground" Color="#b6bcd1"/>
+
+    <Style x:Key="PictureView.IconButton.Path" TargetType="Path">
+        <Setter Property="Width" Value="16"/>
+        <Setter Property="Height" Value="16"/>
+        <Setter Property="VerticalAlignment" Value="Center"/>
+        <Setter Property="HorizontalAlignment" Value="Center"/>
+        <Setter Property="Stretch" Value="Uniform"/>
+        <Setter Property="Fill" Value="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Button}, AncestorLevel=1}, Path=Foreground}"/>
+    </Style>
+
+    <Style x:Key="PictureView.IconButton" TargetType="Button">
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="Foreground" Value="#FFF5F5F5"/>
+        <Setter Property="BorderBrush" Value="Transparent"/>
+        <Setter Property="Width" Value="30"/>
+        <Setter Property="Height" Value="30"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="Margin" Value="3"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <ControlTemplate.Resources>
+                        <Style TargetType="Path" BasedOn="{StaticResource PictureView.IconButton.Path}"/>
+                    </ControlTemplate.Resources>
+                    <Grid>
+                        <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" Padding="{TemplateBinding Padding}" BorderThickness="{TemplateBinding BorderThickness}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Foreground" Value="{StaticResource PictureView.IconButton.EnabledForeground}"/>
+                        </Trigger>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Foreground" Value="{StaticResource PictureView.IconButton.HighlightBrush}"/>
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter Property="Background" Value="{StaticResource PictureView.IconButton.PressedBackground}"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="PictureView.IconButton2" TargetType="Button" BasedOn="{StaticResource PictureView.IconButton}">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <ControlTemplate.Resources>
+                        <Style TargetType="Path" BasedOn="{StaticResource PictureView.IconButton.Path}">
+                            <Setter Property="Width" Value="12"/>
+                            <Setter Property="Height" Value="12"/>
+                        </Style>
+                    </ControlTemplate.Resources>
+                    <Grid>
+                        <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" Padding="{TemplateBinding Padding}" BorderThickness="{TemplateBinding BorderThickness}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Foreground" Value="{StaticResource PictureView.IconButton.EnabledForeground}"/>
+                        </Trigger>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Foreground" Value="{StaticResource PictureView.IconButton.HighlightBrush}"/>
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter Property="Background" Value="{StaticResource PictureView.IconButton.PressedBackground}"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="PictureView.IconButton3" TargetType="Button" BasedOn="{StaticResource PictureView.IconButton}">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <ControlTemplate.Resources>
+                        <Style TargetType="Path" BasedOn="{StaticResource PictureView.IconButton.Path}">
+                            <Setter Property="Width" Value="12"/>
+                            <Setter Property="Height" Value="12"/>
+                        </Style>
+                    </ControlTemplate.Resources>
+                    <Grid>
+                        <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" Padding="{TemplateBinding Padding}" BorderThickness="{TemplateBinding BorderThickness}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Foreground" Value="{StaticResource PictureView.IconButton.EnabledForeground}"/>
+                        </Trigger>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Background" Value="Red"/>
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter Property="Background" Value="{StaticResource PictureView.IconButton.PressedBackground}"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="PictureView.IconButton4" TargetType="Button" BasedOn="{StaticResource PictureView.IconButton}">
+        <Setter Property="Width" Value="54"/>
+        <Setter Property="Height" Value="54"/>
+        <Setter Property="RenderTransformOrigin" Value="0.5,0.5"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <ControlTemplate.Resources>
+                        <Style TargetType="Path" BasedOn="{StaticResource PictureView.IconButton.Path}">
+                            <Setter Property="Width" Value="42"/>
+                            <Setter Property="Height" Value="42"/>
+                        </Style>
+                    </ControlTemplate.Resources>
+                    <Grid>
+                        <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" Padding="{TemplateBinding Padding}" BorderThickness="{TemplateBinding BorderThickness}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Foreground" Value="{StaticResource PictureView.IconButton.HighlightBrush}"/>
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter Property="RenderTransform">
+                                <Setter.Value>
+                                    <ScaleTransform ScaleX="0.9" ScaleY="0.9"/>
+                                </Setter.Value>
+                            </Setter>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="CaptionButtonStyleKey" TargetType="{x:Type Button}">
+        <Setter Property="OverridesDefaultStyle" Value="True" />
+        <Setter Property="IsTabStop" Value="False"/>
+        <Setter Property="HorizontalContentAlignment" Value="Center" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="Width" Value="30" />
+        <Setter Property="Height" Value="30" />
+        <Setter Property="SnapsToDevicePixels" Value="True" />
+        <Setter Property="UseLayoutRounding" Value="True" />
+        <Setter Property="WindowChrome.IsHitTestVisibleInChrome" Value="True" />
+        <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+    </Style>
+
+    <Style x:Key="GrayCaptionButtonStyleKey" TargetType="{x:Type Button}" BasedOn="{StaticResource CaptionButtonStyleKey}">
+        <Setter Property="Background" Value="DarkGray" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Button}">
+                    <Grid>
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="CommonStates">
+                                <VisualState x:Name="Normal">
+                                    <Storyboard>
+                                        <DoubleAnimation Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="border"
+                                                         To="0.0" Duration="0:0:0.150">
+                                            <DoubleAnimation.EasingFunction>
+                                                <CubicEase EasingMode="EaseIn"/>
+                                            </DoubleAnimation.EasingFunction>
+                                        </DoubleAnimation>
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="MouseOver">
+                                    <Storyboard>
+                                        <DoubleAnimation Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="border"
+                                                         To="0.6" Duration="0:0:0.150">
+                                            <DoubleAnimation.EasingFunction>
+                                                <ExponentialEase EasingMode="EaseOut"/>
+                                            </DoubleAnimation.EasingFunction>
+                                        </DoubleAnimation>
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="Pressed">
+                                    <Storyboard>
+                                        <DoubleAnimation Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="border"
+                                                         To="1" Duration="0:0:0.150">
+                                            <DoubleAnimation.EasingFunction>
+                                                <ExponentialEase EasingMode="EaseOut"/>
+                                            </DoubleAnimation.EasingFunction>
+                                        </DoubleAnimation>
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="Disabled">
+                                    <Storyboard>
+                                        <DoubleAnimation Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="border"
+                                                         To="0.0" Duration="0:0:0.150">
+                                            <DoubleAnimation.EasingFunction>
+                                                <CubicEase EasingMode="EaseIn"/>
+                                            </DoubleAnimation.EasingFunction>
+                                        </DoubleAnimation>
+                                        <DoubleAnimation Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="contentPresenter"
+                                                         To="0.3" Duration="0:0:0.150">
+                                            <DoubleAnimation.EasingFunction>
+                                                <ExponentialEase EasingMode="EaseOut"/>
+                                            </DoubleAnimation.EasingFunction>
+                                        </DoubleAnimation>
+                                    </Storyboard>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+
+                        <Border x:Name="border" Background="{TemplateBinding Background}" />
+                        <ContentPresenter x:Name="contentPresenter" Focusable="False"
+                                          HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                          VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="RedCaptionButtonStyleKey" TargetType="{x:Type Button}" BasedOn="{StaticResource CaptionButtonStyleKey}">
+        <Setter Property="Background" Value="Red" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Button}">
+                    <Grid>
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="CommonStates">
+                                <VisualState x:Name="Normal">
+                                    <Storyboard>
+                                        <DoubleAnimation Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="border"
+                                                         To="0.0" Duration="0:0:0.150">
+                                            <DoubleAnimation.EasingFunction>
+                                                <CubicEase EasingMode="EaseIn"/>
+                                            </DoubleAnimation.EasingFunction>
+                                        </DoubleAnimation>
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="MouseOver">
+                                    <Storyboard>
+                                        <DoubleAnimation Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="border"
+                                                         To="1" Duration="0:0:0.150">
+                                            <DoubleAnimation.EasingFunction>
+                                                <CubicEase EasingMode="EaseOut"/>
+                                            </DoubleAnimation.EasingFunction>
+                                        </DoubleAnimation>
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="Pressed">
+                                    <Storyboard>
+                                        <DoubleAnimation Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="border"
+                                                         To="0.6" Duration="0:0:0.150">
+                                            <DoubleAnimation.EasingFunction>
+                                                <ExponentialEase EasingMode="EaseOut"/>
+                                            </DoubleAnimation.EasingFunction>
+                                        </DoubleAnimation>
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="Disabled">
+                                    <Storyboard>
+                                        <DoubleAnimation Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="border"
+                                                         To="0.0" Duration="0:0:0.150">
+                                            <DoubleAnimation.EasingFunction>
+                                                <CubicEase EasingMode="EaseIn"/>
+                                            </DoubleAnimation.EasingFunction>
+                                        </DoubleAnimation>
+                                        <DoubleAnimation Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="contentPresenter"
+                                                         To="0.3" Duration="0:0:0.150">
+                                            <DoubleAnimation.EasingFunction>
+                                                <ExponentialEase EasingMode="EaseOut"/>
+                                            </DoubleAnimation.EasingFunction>
+                                        </DoubleAnimation>
+                                    </Storyboard>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+
+                        <Border x:Name="border" Background="{TemplateBinding Background}" />
+                        <ContentPresenter x:Name="contentPresenter" Focusable="False"
+                                          HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                          VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <SolidColorBrush x:Key="PictureWindowBackground" Color="#70000000" PresentationOptions:Freeze="True"/>
+    <ControlTemplate x:Key="PictureWindowTemplete" TargetType="{x:Type Window}">
+        <Border x:Name="Layout" BorderBrush="Transparent" BorderThickness="12">
+            <Border.Effect>
+                <DropShadowEffect BlurRadius="15" Color="#000000" Direction="90" ShadowDepth="1"/>
+            </Border.Effect>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="2"/>
+                    <RowDefinition/>
+                    <RowDefinition Height="2"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="2"/>
+                    <ColumnDefinition/>
+                    <ColumnDefinition Width="2"/>
+                </Grid.ColumnDefinitions>
+                <Grid Grid.Row="1" Grid.Column="1" Background="{StaticResource PictureWindowBackground}" >
+                    <ContentPresenter ClipToBounds="True" />
+                    <DockPanel x:Name="TitleBar" VerticalAlignment="Top" Height="36" Panel.ZIndex="1" Background="Transparent">
+                        <StackPanel DockPanel.Dock="Left" Orientation="Horizontal">
+                            <Image x:Name="appIcon"
+                                       Stretch="UniformToFill"
+                                       Margin="12,0,0,0"
+                                       Width="16" Height="16"
+                                       HorizontalAlignment="Left"
+                                       VerticalAlignment="Center"
+                                       Source="/favicon.ico"/>
+                            <TextBlock x:Name="captionText"
+                                   Margin="4,0,0,0"
+                                   Text="{Binding Title, RelativeSource={RelativeSource AncestorType=Window}}"
+                                   VerticalAlignment="Center"
+                                   TextWrapping="NoWrap" TextTrimming="CharacterEllipsis"/>
+                        </StackPanel>
+                        <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
+                            <Button  x:Name="SettingsButton" Style="{StaticResource PictureView.IconButton2}" ToolTip="设置">
+                                <Path Data="{StaticResource Icon.Settings}"/>
+                            </Button>
+                            <Button x:Name="PinButton" Style="{StaticResource PictureView.IconButton2}" ToolTip="置顶">
+                                <Path x:Name="PinButtonIcon" Data="{StaticResource Icon.Pin}" RenderTransformOrigin="0.5,0.5"/>
+                            </Button>
+                            <Button x:Name="MinimizeButton" Style="{StaticResource PictureView.IconButton2}" ToolTip="最小化">
+                                <Path Data="{StaticResource Icon.MinusScreen}"/>
+                            </Button>
+                            <Button x:Name="MaximizeButton" Style="{StaticResource PictureView.IconButton2}" ToolTip="全屏">
+                                <Path Data="{StaticResource Icon.FullScreen}"/>
+                            </Button>
+                            <Button x:Name="RestoreButton" Style="{StaticResource PictureView.IconButton2}" Visibility="Collapsed"  ToolTip="退出全屏">
+                                <Path Data="{StaticResource Icon.RestoreScreen}"/>
+                            </Button>
+                            <Button x:Name="CloseButton" Style="{StaticResource PictureView.IconButton3}" ToolTip="关闭">
+                                <Path Data="{StaticResource Icon.Close}"/>
+                            </Button>
+                        </StackPanel>
+                        <Border>
+                            <ContentControl Content="{Binding (local:PictureWindow.TitleBar), RelativeSource={RelativeSource AncestorType=Window}}"/>
+                        </Border>
+                    </DockPanel>
+                </Grid>
+                <Rectangle Name="ResizeTopLeft" Fill="Transparent" Grid.Row="0" Grid.Column="0" Cursor="SizeNWSE" IsHitTestVisible="False"/>
+                <Rectangle Name="ResizeTop" Fill="Transparent" Grid.Row="0" Grid.Column="1" Cursor="SizeNS" IsHitTestVisible="False"/>
+                <Rectangle Name="ResizeTopRight" Fill="Transparent" Grid.Row="0" Grid.Column="2" Cursor="SizeNESW" IsHitTestVisible="False"/>
+                <Rectangle Name="ResizeLeft" Fill="Transparent" Grid.Row="1" Grid.Column="0" Cursor="SizeWE" IsHitTestVisible="False"/>
+                <Rectangle Name="ResizeRight" Fill="Transparent" Grid.Row="1" Grid.Column="2" Cursor="SizeWE"/>
+                <Rectangle Name="ResizeBottomLeft" Fill="Transparent" Grid.Row="2" Grid.Column="0" Cursor="SizeNESW" IsHitTestVisible="False"/>
+                <Rectangle Name="ResizeBottom" Fill="Transparent" Grid.Row="2" Grid.Column="1" Cursor="SizeNS"/>
+                <Rectangle Name="ResizeBottomRight" Fill="Transparent" Grid.Row="2" Grid.Column="2" Cursor="SizeNWSE"/>
+            </Grid>
+        </Border>
+
+        <ControlTemplate.Triggers>
+            <Trigger Property="WindowState" Value="Maximized">
+                <Setter TargetName="MaximizeButton" Property="Visibility" Value="Collapsed" />
+                <Setter TargetName="RestoreButton" Property="Visibility" Value="Visible" />
+                <Setter TargetName="Layout" Property="BorderThickness" Value="4"/>
+            </Trigger>
+            <Trigger Property="Topmost" Value="True">
+                <Setter TargetName="PinButtonIcon" Property="RenderTransform">
+                    <Setter.Value>
+                        <RotateTransform Angle="45"/>
+                    </Setter.Value>
+                </Setter>
+                <Setter TargetName="PinButtonIcon" Property="Fill" Value="{StaticResource PictureView.IconButton.HighlightBrush}"/>
+            </Trigger>
+        </ControlTemplate.Triggers>
+    </ControlTemplate>
+    <Style x:Key="PictureWindow" TargetType="{x:Type Window}">
+        <Setter Property="AllowsTransparency" Value="True"/>
+        <Setter Property="WindowStyle" Value="None"/>
+        <Setter Property="Foreground" Value="#FFF"/>
+        <Setter Property="Template" Value="{StaticResource PictureWindowTemplete}"/>
+    </Style>
+
+    <Style x:Key="ScrollBar.RepeatButton" TargetType="{x:Type RepeatButton}">
+        <Setter Property="SnapsToDevicePixels" Value="true"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type RepeatButton}">
+                    <Rectangle Fill="#00000000"/>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+    <Style x:Key="ScrollBar.VerticalThumb" TargetType="{x:Type Thumb}">
+        <Setter Property="SnapsToDevicePixels" Value="true"/>
+        <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Thumb}">
+                    <Rectangle Fill="#4DF1F1F1" Width="3" Margin="2 0 1 0" HorizontalAlignment="Right" RadiusX="2" RadiusY="2"/>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+    <Style x:Key="ScrollBar.VerticalStyle" TargetType="{x:Type ScrollBar}">
+        <Setter Property="SnapsToDevicePixels" Value="true"/>
+        <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+        <Setter Property="ContextMenu" Value="{x:Null}"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type ScrollBar}">
+                    <Grid SnapsToDevicePixels="true" Width="6">
+                        <Track x:Name="PART_Track" IsDirectionReversed="true" IsEnabled="{TemplateBinding IsMouseOver}" Grid.Row="1">
+                            <Track.Resources>
+                                <!-- Set the Thumb's minimum height to 50.The Thumb's minimum height is half the value of VerticalScrollBarButtonHeightKey. -->
+                                <sys:Double x:Key="{x:Static SystemParameters.VerticalScrollBarButtonHeightKey}">
+                                    100
+                                </sys:Double>
+                            </Track.Resources>
+                            <Track.DecreaseRepeatButton>
+                                <RepeatButton Command="{x:Static ScrollBar.PageUpCommand}" Style="{StaticResource ScrollBar.RepeatButton}"/>
+                            </Track.DecreaseRepeatButton>
+                            <Track.IncreaseRepeatButton>
+                                <RepeatButton Command="{x:Static ScrollBar.PageDownCommand}" Style="{StaticResource ScrollBar.RepeatButton}"/>
+                            </Track.IncreaseRepeatButton>
+                            <Track.Thumb>
+                                <Thumb Style="{StaticResource ScrollBar.VerticalThumb}" BorderBrush="{TemplateBinding BorderBrush}"/>
+                            </Track.Thumb>
+                        </Track>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+    <Style TargetType="{x:Type ScrollBar}" BasedOn="{StaticResource ScrollBar.VerticalStyle}">
+        <Setter Property="Margin" Value="-6 0"/>
+    </Style>
+
+</ResourceDictionary>
