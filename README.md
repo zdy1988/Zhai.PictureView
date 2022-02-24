@@ -2,7 +2,7 @@
 
 I need a beautiful and practical picture browser, so I wrote it...
 
-![Snapshot](/Snapshot.png)
+![Snapshot](/Snapshot.jpg)
 
 # Thanks
 
