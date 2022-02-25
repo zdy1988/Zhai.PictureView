@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Zhai.PictureView
 {
-    internal class PictureViewModel : INotifyPropertyChanged
+    internal class PictureViewModel : BaseViewModel
     {
         private Folder folder;
         public Folder Folder
@@ -92,17 +92,7 @@ namespace Zhai.PictureView
 
 
         public event EventHandler<Picture> CurrentPictureChanged;
-        public event EventHandler<Double> ScaleChanged;
 
-        public event PropertyChangedEventHandler PropertyChanged;
-        public void OnPropertyChanged(string propertyName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        protected bool SetProperty<T>(ref T storage, T value, bool isCheckEquals = true, [CallerMemberName] string propertyName = null)
-        {
-            if (isCheckEquals)
-                if (object.Equals(storage, value)) { return false; }
-            storage = value;
-            OnPropertyChanged(propertyName);
-            return true;
-        }
+        public event EventHandler<Double> ScaleChanged;
     }
 }

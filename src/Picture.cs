@@ -6,13 +6,14 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
 
 namespace Zhai.PictureView
 {
-    internal class Picture:IDisposable
+    internal class Picture : BaseViewModel, IDisposable
     {
         public string Name { get; }
 
@@ -20,114 +21,155 @@ namespace Zhai.PictureView
 
         public String PicturePath { get; }
 
-        public double PixelWidth { get; set; }
+        private double pixelWidth;
+        public double PixelWidth
+        {
+            get => pixelWidth;
+            set => SetProperty(ref pixelWidth, value);
+        }
 
-        public double PixelHeight { get; set; }
+        private double pixelHeight;
+        public double PixelHeight
+        {
+            get => pixelHeight;
+            set => SetProperty(ref pixelHeight, value);
+        }
 
-        public BitmapSource Thumb { get; private set; }
+        private BitmapSource thumbSource;
+        public BitmapSource ThumbSource
+        {
+            get => thumbSource;
+            set => SetProperty(ref thumbSource, value);
+        }
 
-        public Bitmap Bitmap { get; private set; }
+        private PictureState thumbState = PictureState.Failed;
+        public PictureState ThumbState
+        {
+            get => thumbState;
+            set => SetProperty(ref thumbState, value);
+        }
+
+        private BitmapSource pictureSource;
+        public BitmapSource PictureSource
+        {
+            get => pictureSource;
+            set => SetProperty(ref pictureSource, value);
+        }
+
+        private PictureState pictureState = PictureState.Failed;
+        public PictureState PictureState
+        {
+            get => pictureState;
+            set => SetProperty(ref pictureState, value);
+        }
 
         public Dictionary<string, string> Exif { get; private set; }
 
-        public Boolean IsAnimation
+        public bool IsAnimation
         {
             get
             {
-                if (Bitmap == null) return false;
+                if (PictureSource == null) return false;
 
-                try
-                {
-                    return Bitmap.RawFormat.ToString().ToUpper().Equals("GIF");
-                }
-                catch
-                {
-                    return false;
-                }
+                return Path.GetExtension(PicturePath).ToUpperInvariant() == ".GIF";
             }
         }
-
 
         public Picture(string filename)
         {
-            FileInfo fi = new FileInfo(filename);
+            var file = new FileInfo(filename);
 
-            Name = fi.Name;
+            Name = file.Name;
 
-            Size = fi.Length;
+            Size = file.Length;
 
             PicturePath = filename;
 
-            Thumb = ImageDecoder.GetThumb(filename);
-        }
-
-        public BitmapSource Draw()
-        {
-            if (Bitmap == null)
-            {
-                Bitmap = ImageDecoder.GetBitmap(PicturePath, out Dictionary<string, string> exif);
-
-                Exif = exif;
-            }
-
-            var source = ImageDecoder.GetBitmapSource(Bitmap);
-
-            PixelWidth = source.PixelWidth;
-
-            PixelHeight = source.PixelHeight;
-
-            return source;
+            DrawThumb();
         }
 
 
-        #region Animation
 
-        public delegate void FrameUpdatedEventHandler();
-
-        public event EventHandler<BitmapSource> PictureAnimating;
-
-        public bool isAnimated = false;
-
-        public void StartAnimate()
+        public void DrawThumb()
         {
-            isAnimated = true;
+            if (ThumbState != PictureState.Failed) 
+                return;
 
-            if (ImageAnimator.CanAnimate(Bitmap))
+            ThumbState = PictureState.Loading;
+
+            ThumbSource = PictureStateResources.ImageLoading;
+
+            if (!string.IsNullOrWhiteSpace(PicturePath))
             {
-                ImageAnimator.Animate(Bitmap, OnFrameChanged);
+                ThreadPool.QueueUserWorkItem(async _ =>
+                {
+                    await Task.Delay(2000);
+
+                    try
+                    {
+                        ThumbSource = ImageDecoder.GetThumb(PicturePath);
+
+                        ThumbState = PictureState.Loaded;
+                    }
+                    catch
+                    {
+                        ThumbSource = PictureStateResources.ImageFailed;
+
+                        ThumbState = PictureState.Failed;
+                    }
+                });
             }
         }
 
-        public void StopAnimate()
-        {
-            isAnimated = false;
-
-            ImageAnimator.StopAnimate(Bitmap, OnFrameChanged);
-        }
-
-        public void OnFrameChanged(object sender, EventArgs e)
+        public async Task<BitmapSource> DrawAsync()
         {
             try
             {
-                ImageAnimator.UpdateFrames(Bitmap);
+                PictureState = PictureState.Loading;
 
-                PictureAnimating?.Invoke(this, ImageDecoder.GetBitmapSource(Bitmap));
+                if (PictureSource == null || PictureState == PictureState.Failed)
+                {
+                    await Task.Run(async () =>
+                    {
+                        var imageSource = await ImageDecoder.GetBitmapSource(PicturePath);
+
+                        App.Current.Dispatcher.Invoke(() => PictureSource = imageSource);
+                    });
+                }
+
+                PictureState = PictureState.Loaded;
             }
-            catch { }
+            catch
+            {
+                PictureSource = PictureStateResources.ImageFailed;
+
+                PictureState = PictureState.Failed;
+            }
+
+            PixelWidth = PictureSource.PixelWidth;
+
+            PixelHeight = PictureSource.PixelHeight;
+
+            return PictureSource;
         }
 
-        #endregion
+        public Stream ToStream()
+        {
+            if (PictureSource == null) return null;
+
+            var ms = new MemoryStream();
+
+            BitmapEncoder encoder = new BmpBitmapEncoder();
+            encoder.Frames.Add(BitmapFrame.Create(PictureSource));
+            encoder.Save(ms);
+
+            return ms;
+        }
 
         public void Dispose()
         {
-            if (isAnimated)
-            {
-                StopAnimate();
-            }
-
-            Thumb = null;
-            Bitmap?.Dispose();
-            Bitmap = null;
+            ThumbSource = null;
+            PictureSource = null;
 
             GC.Collect();
             GC.WaitForPendingFinalizers();

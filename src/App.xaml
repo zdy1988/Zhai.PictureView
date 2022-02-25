@@ -15,6 +15,7 @@
             <Converters:NullableToVisibilityConverter x:Key="NullableToVisibilityConverter"/>
             <Converters:NullableToInverseVisibilityConverter x:Key="NullableToInverseVisibilityConverter"/>
             <Converters:ByteFormatter x:Key="ByteFormatter"/>
+            <Converters:LoadingVisibilityConverter x:Key="LoadingVisibilityConverter"/>
             <Converters:ThumbBoxVisibilityConverter x:Key="ThumbBoxVisibilityConverter"/>
             <Converters:ScaleTipsConverter x:Key="ScaleTipsConverter"/>
         </ResourceDictionary>

@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Zhai.PictureView"
+        xmlns:Controls="clr-namespace:Zhai.PictureView.Controls"
         Title=" ZHAI PictureView" Style="{StaticResource PictureWindow}"
         WindowStartupLocation ="CenterScreen"
         Height="720" Width="960"
@@ -81,6 +82,10 @@
                          Background="Transparent" BorderThickness="0"
                          VirtualizingPanel.ScrollUnit="Pixel"
                          VirtualizingPanel.VirtualizationMode="Recycling"
+                         VirtualizingPanel.IsVirtualizing="True"
+                         VirtualizingPanel.IsContainerVirtualizable="True"
+                         VirtualizingPanel.CacheLengthUnit="Page"
+                         ScrollViewer.CanContentScroll="True"
                          ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                          SelectedItem="{Binding CurrentPicture}"
                          SelectedIndex="{Binding CurrentPictureIndex}">
@@ -91,7 +96,7 @@
                     </ListBox.ItemsPanel>
                     <ListBox.ItemTemplate>
                         <DataTemplate>
-                            <Image Stretch="Uniform" Source="{Binding Thumb}" ToolTip="{Binding Name}"/>
+                            <Image Stretch="UniformToFill" Source="{Binding ThumbSource}" ToolTip="{Binding Name}"/>
                         </DataTemplate>
                     </ListBox.ItemTemplate>
                     <ListBox.ItemContainerStyle>
@@ -215,6 +220,13 @@
                         <Path Data="{StaticResource Icon.ChevronRight}"/>
                     </Button>
                 </Grid>
+            </Border>
+            <!--Loading-->
+            <Border x:Name="Loading" 
+                    Visibility="{Binding CurrentPicture, Converter={StaticResource NullableToVisibilityConverter}}"
+                    Panel.ZIndex="100" IsHitTestVisible="False"
+                    VerticalAlignment="Center" HorizontalAlignment="Center">
+                <Controls:Loading Visibility="{Binding CurrentPicture.PictureState, Converter={StaticResource LoadingVisibilityConverter}}" />
             </Border>
         </Grid>
         <Grid Grid.ColumnSpan="2" Grid.Row="2">

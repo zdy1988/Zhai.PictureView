@@ -1,4 +1,7 @@
 ﻿using ImageMagick;
+using Pfim;
+using SkiaSharp;
+using SkiaSharp.Views.WPF;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -10,11 +13,12 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Interop;
+using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
 namespace Zhai.PictureView
 {
-    internal static class ImageDecoder
+    internal static partial class ImageDecoder
     {
         [DllImport("gdi32.dll", CharSet = CharSet.Auto, SetLastError = true)]
         internal static extern bool DeleteObject(IntPtr hObject);
@@ -103,30 +107,100 @@ namespace Zhai.PictureView
             }
         }
 
-        internal static Bitmap GetBitmap(string filename, out Dictionary<string, string> exif)
+        internal static async Task<BitmapSource> GetBitmapSource(string filename)
         {
-            exif = null;
-
             try
             {
-                using var magickImage = new MagickImage();
-                magickImage.Read(filename);
-                magickImage.Quality = 100;
+                FileStream filestream;
 
-                exif = GetExif(magickImage);
+                switch (Path.GetExtension(filename).ToUpperInvariant())
+                {
+                    case ".JPG":
+                    case ".JPEG":
+                    case ".JPE":
+                    case ".PNG":
+                    case ".BMP":
+                    case ".TIF":
+                    case ".TIFF":
+                    case ".GIF":
+                    case ".ICO":
+                    case ".JFIF":
+                    case ".WEBP":
+                    case ".WBMP":
+                        filestream = new FileStream(filename, FileMode.Open, FileAccess.Read, FileShare.ReadWrite, 4096, FileOptions.SequentialScan);
+                        var sKBitmap = SKBitmap.Decode(filestream);
+                        await filestream.DisposeAsync().ConfigureAwait(false);
 
-                Bitmap image = magickImage.ToBitmap();
+                        if (sKBitmap == null) { return null; }
 
-                return image;
+                        var skPic = sKBitmap.ToWriteableBitmap();
+                        skPic.Freeze();
+                        sKBitmap.Dispose();
+                        return skPic;
+
+                    case ".DDS":
+                    case "TGA": // TODO some tga files are created upside down https://github.com/Ruben2776/PicView/issues/22
+                        filestream = new FileStream(filename, FileMode.Open, FileAccess.Read, FileShare.ReadWrite, 4096, FileOptions.SequentialScan);
+                        var image = Pfim.Pfim.FromStream(filestream);
+                        await filestream.DisposeAsync().ConfigureAwait(false);
+                        var pinnedArray = GCHandle.Alloc(image.Data, GCHandleType.Pinned);
+                        var addr = pinnedArray.AddrOfPinnedObject();
+                        var pfimPic = BitmapSource.Create(image.Width, image.Height, 96.0, 96.0,
+                            PixelFormat(image), null, addr, image.DataLen, image.Stride);
+                        image.Dispose();
+                        pfimPic.Freeze();
+                        return pfimPic;
+
+                    case ".PSD":
+                    case ".PSB":
+                    case ".SVG":
+                    case ".XCF":
+                        filestream = new FileStream(filename, FileMode.Open, FileAccess.Read, FileShare.ReadWrite, 4096, FileOptions.SequentialScan);
+                        var transMagick = new MagickImage();
+                        transMagick.Read(filestream);
+                        await filestream.DisposeAsync().ConfigureAwait(false);
+
+                        transMagick.Quality = 100;
+                        transMagick.ColorSpace = ColorSpace.Transparent;
+
+                        var psd = transMagick.ToBitmapSource();
+                        transMagick.Dispose();
+                        psd.Freeze();
+
+                        return psd;
+
+                    default: // some formats cause exceptions when using filestream, so defaulting to reading from file
+                        var magick = new MagickImage();
+                        magick.Read(filename);
+
+                        // Set values for maximum quality
+                        magick.Quality = 100;
+
+                        var pic = magick.ToBitmapSource();
+                        magick.Dispose();
+                        pic.Freeze();
+
+                        return pic;
+                }
             }
             catch (Exception e)
             {
 #if DEBUG
-                Debug.WriteLine("GetBitmap returned " + filename + " null, \n" + e.Message);
+                Debug.WriteLine("RenderToBitmapSource returned " + filename + " null, \n" + e.Message);
 #endif
                 return null;
             }
         }
+
+        private static PixelFormat PixelFormat(IImage image) => image.Format switch
+        {
+            ImageFormat.Rgb24 => PixelFormats.Bgr24,
+            ImageFormat.Rgba32 => PixelFormats.Bgr32,
+            ImageFormat.Rgb8 => PixelFormats.Gray8,
+            ImageFormat.R5g5b5a1 or ImageFormat.R5g5b5 => PixelFormats.Bgr555,
+            ImageFormat.R5g6b5 => PixelFormats.Bgr565,
+            _ => throw new Exception($"Unable to convert {image.Format} to WPF PixelFormat"),
+        };
 
         internal static Dictionary<string, string> GetExif(MagickImage image)
         {

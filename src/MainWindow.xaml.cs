@@ -76,21 +76,24 @@ namespace Zhai.PictureView
             ScaleTips.BeginAnimation(OpacityProperty, animation, HandoffBehavior.SnapshotAndReplace);
         }
 
-        private void ViewModel_CurrentPictureChanged(object sender, Picture picture)
+        private async void ViewModel_CurrentPictureChanged(object sender, Picture picture)
         {
+            var stream = XamlAnimatedGif.AnimationBehavior.GetSourceStream(Picture);
+
+            if (stream != null)
+            {
+                XamlAnimatedGif.AnimationBehavior.SetSourceUri(Picture, null);
+            }
+
             if (picture != null)
             {
-                InitPicture(picture);
+                await InitPicture(picture);
+
+                PictureList.ScrollIntoView(picture);
 
                 if (picture.IsAnimation)
                 {
-                    picture.PictureAnimating += (sender, e) =>
-                    {
-                        Picture.Source = e;
-                        Picture.InvalidateVisual();
-                    };
-
-                    picture.StartAnimate();
+                    XamlAnimatedGif.AnimationBehavior.SetSourceUri(Picture, new Uri(picture.PicturePath));
                 }
             }
         }
@@ -101,9 +104,13 @@ namespace Zhai.PictureView
         private double MoveRectOffsetY => Canvas.GetTop(MoveRect);
         private double ViewingAreaRatio => this.PictureBox.Width / this.MoveRect.RenderSize.Width;     //获取右侧大图框与透明矩形框的尺寸比率
 
-        private void InitPicture(Picture picture)
+        private async Task InitPicture(Picture picture)
         {
-            Picture.Source = picture.Draw();
+            var renderedPicture = await picture.DrawAsync();
+
+            if (picture != ViewModel.CurrentPicture) return;
+
+            Picture.Source = renderedPicture;
             Picture.Width = picture.PixelWidth;
             Picture.Height = picture.PixelHeight;
 
@@ -471,12 +478,16 @@ namespace Zhai.PictureView
             var dialog = new OpenFileDialog
             {
                 Filter =
-                "All supported (*.jpg;*.jpeg;*.png;*.gif;*.bmp;*.ico;*.tiff;*.wmf)|*.jpg;*.jpeg;*.png;*.gif;*.bmp;*.ico;*.tiff;*.wmf|" +
+                "All supported (*.jpg;*.jpeg;*.jpe;*.png;*.gif;*.bmp;*.ico;*.tif;*.tiff;*.jfif;*.webp;*.wbmp;*.wmf;*.pgm;*.hdr;*.cut;*.exr;*.dib;*.heic;*.emf;*.wpg;*.pcx;*.xbm;*.xpm;*.psd;*.psb;*.tga;*.dds;*.svg;*.xcf;*.3fr;*.arw;*.cr2;*.crw;*.dcr;*.dng;*.erf;*.kdc;*.mdc;*.mef;*.mos;*.mrw;*.nef;*.nrw;*.orf;*.pef;*.raf;*.raw;*.rw2;*.srf;*.x3f)|*.jpg;*.jpeg;*.jpe;*.png;*.gif;*.bmp;*.ico;*.tif;*.tiff;*.jfif;*.webp;*.wbmp;*.wmf;*.pgm;*.hdr;*.cut;*.exr;*.dib;*.heic;*.emf;*.wpg;*.pcx;*.xbm;*.xpm;*.psd;*.psb;*.tga;*.dds;*.svg;*.xcf;*.3fr;*.arw;*.cr2;*.crw;*.dcr;*.dng;*.erf;*.kdc;*.mdc;*.mef;*.mos;*.mrw;*.nef;*.nrw;*.orf;*.pef;*.raf;*.raw;*.rw2;*.srf;*.x3f|" +
                 "JPEG (*.jpg;*.jpeg)|*.jpg;*.jpeg|" +
                 "Portable Network Graphic (*.png)|*.png|" +
                 "Graphics Interchange Format (*.gif)|*.gif|" +
                 "Icon (*.ico)|*.ico|" +
-                "Other (*.tiff;*.wmf)|*.tiff;*.wmf|" +
+                "Photoshop (*.psd;*.psb)|*.psd;*.psb|" +
+                "Pfim (*.tga;*.dds)|*.tga;*.dds|" +
+                "Vector (*.svg;*.xcf)|*.svg;*.xcf|" +
+                "Camera (*.3fr;*.arw;*.cr2;*.crw;*.dcr;*.dng;*.erf;*.kdc;*.mdc;*.mef;*.mos;*.mrw;*.nef;*.nrw;*.orf;*.pef;*.raf;*.raw;*.rw2;*.srf;*.x3f)|*.3fr;*.arw;*.cr2;*.crw;*.dcr;*.dng;*.erf;*.kdc;*.mdc;*.mef;*.mos;*.mrw;*.nef;*.nrw;*.orf;*.pef;*.raf;*.raw;*.rw2;*.srf;*.x3f|" +
+                "Other (*.jpe;*.tif;*.jfif;*.webp;*.wbmp;*.tiff;*.wmf;*.pgm;*.hdr;*.cut;*.exr;*.dib;*.heic;*.emf;*.wpg;*.pcx;*.xbm;*.xpm)|*.jpe;*.tif;*.jfif;*.webp;*.wbmp;*.tiff;*.wmf;*.pgm;*.hdr;*.cut;*.exr;*.dib;*.heic;*.emf;*.wpg;*.pcx;*.xbm;*.xpm|" +
                 "All files (*.*)|*.*"
             };
 
