@@ -2,16 +2,13 @@
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
-using System.Linq;
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 
 namespace Zhai.PictureView
 {
-    /// <summary>
-    /// Interaction logic for App.xaml
-    /// </summary>
     public partial class App : Application
     {
         protected override void OnStartup(StartupEventArgs e)
@@ -22,6 +19,19 @@ namespace Zhai.PictureView
             int processorCount = Environment.ProcessorCount;
 
             ThreadPool.SetMinThreads(processorCount * 4, processorCount * 2);
+
+            // 打开图片
+            if (e.Args.Length == 1)
+            {
+                MainWindow mainWindow = this.MainWindow as MainWindow;
+
+                var filename = e.Args[0];
+
+                if (File.Exists(filename))
+                {
+                    mainWindow.OpenPicture(filename);
+                }
+            }
         }
     }
 }

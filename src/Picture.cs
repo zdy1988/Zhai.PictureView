@@ -13,7 +13,7 @@ using System.Windows.Media.Imaging;
 
 namespace Zhai.PictureView
 {
-    internal class Picture : BaseViewModel, IDisposable
+    internal class Picture : BaseViewModel
     {
         public string Name { get; }
 
@@ -101,23 +101,36 @@ namespace Zhai.PictureView
 
             if (!string.IsNullOrWhiteSpace(PicturePath))
             {
-                ThreadPool.QueueUserWorkItem(async _ =>
+                ThreadPool.QueueUserWorkItem(_ =>
                 {
-                    await Task.Delay(2000);
-
                     try
                     {
                         var thumbSource = ImageDecoder.GetThumb(PicturePath);
 
-                        App.Current.Dispatcher.Invoke(() => ThumbSource = thumbSource);
-
-                        ThumbState = PictureState.Loaded;
+                        if (thumbSource != null)
+                        {
+                            App.Current.Dispatcher.Invoke(() =>
+                            {
+                                ThumbSource = thumbSource;
+                                ThumbState = PictureState.Loaded;
+                            });
+                        }
+                        else
+                        {
+                            App.Current.Dispatcher.Invoke(() =>
+                            {
+                                ThumbSource = PictureStateResources.ImageFailed;
+                                ThumbState = PictureState.Failed;
+                            });
+                        }
                     }
                     catch
                     {
-                        App.Current.Dispatcher.Invoke(() => ThumbSource = PictureStateResources.ImageFailed);
-
-                        ThumbState = PictureState.Failed;
+                        App.Current.Dispatcher.Invoke(() =>
+                        {
+                            ThumbSource = PictureStateResources.ImageFailed;
+                            ThumbState = PictureState.Failed;
+                        });
                     }
                 });
             }
@@ -127,24 +140,31 @@ namespace Zhai.PictureView
         {
             try
             {
-                PictureState = PictureState.Loading;
-
                 if (PictureSource == null || PictureState == PictureState.Failed)
                 {
-                    await Task.Run(async () =>
+                    PictureState = PictureState.Loading;
+
+                    var imageSource = await Task.Run(async () => await ImageDecoder.GetBitmapSource(PicturePath));
+
+                    if (imageSource != null)
                     {
-                        var imageSource = await ImageDecoder.GetBitmapSource(PicturePath);
-
-                        App.Current.Dispatcher.Invoke(() => PictureSource = imageSource);
-                    });
+                        PictureSource = imageSource;
+                        PictureState = PictureState.Loaded;
+                    }
+                    else
+                    {
+                        PictureSource = PictureStateResources.ImageFailed;
+                        PictureState = PictureState.Failed;
+                    }
                 }
-
-                PictureState = PictureState.Loaded;
+                else
+                {
+                    PictureState = PictureState.Loaded;
+                }
             }
             catch
             {
-                App.Current.Dispatcher.Invoke(() => PictureSource = PictureStateResources.ImageFailed);
-
+                PictureSource = PictureStateResources.ImageFailed;
                 PictureState = PictureState.Failed;
             }
 
@@ -168,7 +188,9 @@ namespace Zhai.PictureView
             return ms;
         }
 
-        public void Dispose()
+
+
+        public override void Clean()
         {
             ThumbSource = null;
             PictureSource = null;

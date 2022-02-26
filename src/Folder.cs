@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Zhai.PictureView
 {
-    internal class Folder : ObservableCollection<Picture>
+    internal class Folder : ObservableCollection<Picture>, IClean
     {
         public String FolderPath { get; }
 
@@ -26,6 +26,7 @@ namespace Zhai.PictureView
                 }
             }
         }
+
 
         internal static bool IsSupportedFile(string filename)
         {
@@ -57,6 +58,20 @@ namespace Zhai.PictureView
                 // Non supported
                 _ => false,
             };
+        }
+
+
+        public void Clean()
+        {
+            if (this.Any())
+            {
+                foreach (var item in this)
+                {
+                    item.Clean();
+                }
+
+                this.Clear();
+            }
         }
     }
 }

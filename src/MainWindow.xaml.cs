@@ -46,7 +46,7 @@ namespace Zhai.PictureView
             InitSyncUpdateMoveRectTimer();
         }
 
-        private void InitFloder(string filename)
+        public void OpenPicture(string filename)
         {
             var directory = System.IO.Path.GetDirectoryName(filename);
 
@@ -54,8 +54,12 @@ namespace Zhai.PictureView
 
             if (!security.AreAccessRulesProtected)
             {
+                var oldFolder = ViewModel.Folder;
+
                 ViewModel.Folder = new Folder(directory);
                 ViewModel.CurrentPicture = ViewModel.Folder.Where(t => t.PicturePath == filename).FirstOrDefault();
+
+                oldFolder?.Clean();
 
                 VisualStateManager.GoToElementState(this, "PictureListViewShow", true);
             }
@@ -492,7 +496,7 @@ namespace Zhai.PictureView
             };
 
             if (dialog.ShowDialog() is true)
-                InitFloder(dialog.FileName);
+                OpenPicture(dialog.FileName);
         }
 
         private void ZoomInButton_Click(object sender, RoutedEventArgs e)
@@ -593,7 +597,7 @@ namespace Zhai.PictureView
 
                 ViewModel.Folder.Remove(deletePicture);
 
-                deletePicture.Dispose();
+                deletePicture.Clean();
 
                 try
                 {

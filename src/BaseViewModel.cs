@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Zhai.PictureView
 {
-    internal abstract class BaseViewModel : INotifyPropertyChanged
+    internal abstract class BaseViewModel : INotifyPropertyChanged, IClean
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -22,5 +22,12 @@ namespace Zhai.PictureView
             OnPropertyChanged(propertyName);
             return true;
         }
+
+        public abstract void Clean();
+    }
+
+    internal interface IClean
+    { 
+        void Clean();
     }
 }

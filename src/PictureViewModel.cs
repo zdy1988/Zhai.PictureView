@@ -56,7 +56,7 @@ namespace Zhai.PictureView
             }
         }
 
-        private int displayedPictureIndex;
+        private int displayedPictureIndex = 1;
         public int DisplayedPictureIndex
         {
             get => displayedPictureIndex;
@@ -94,5 +94,11 @@ namespace Zhai.PictureView
         public event EventHandler<Picture> CurrentPictureChanged;
 
         public event EventHandler<Double> ScaleChanged;
+
+
+        public override void Clean()
+        {
+            Folder.Clean();
+        }
     }
 }
