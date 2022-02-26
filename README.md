@@ -20,7 +20,11 @@ RAW camera formats may be slower to load
 # Thanks
 
 [Magick.NET](https://github.com/dlemstra/Magick.NET) 
+
 [PicView](https://github.com/Ruben2776/PicView)
+
 [XamlAnimatedGif](https://github.com/XamlAnimatedGif/XamlAnimatedGif)
+
 [Pfim](https://nickbabcock.github.io/Pfim/)
+
 [SkiaSharp](https://github.com/mono/SkiaSharp)
