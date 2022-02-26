@@ -1,7 +1,5 @@
 ﻿using ImageMagick;
 using Pfim;
-using SkiaSharp;
-using SkiaSharp.Views.WPF;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -115,28 +113,29 @@ namespace Zhai.PictureView
 
                 switch (Path.GetExtension(filename).ToUpperInvariant())
                 {
-                    case ".JPG":
-                    case ".JPEG":
-                    case ".JPE":
-                    case ".PNG":
-                    case ".BMP":
-                    case ".TIF":
-                    case ".TIFF":
-                    case ".GIF":
-                    case ".ICO":
-                    case ".JFIF":
-                    case ".WEBP":
-                    case ".WBMP":
-                        filestream = new FileStream(filename, FileMode.Open, FileAccess.Read, FileShare.ReadWrite, 4096, FileOptions.SequentialScan);
-                        var sKBitmap = SKBitmap.Decode(filestream);
-                        await filestream.DisposeAsync().ConfigureAwait(false);
+                    //SkiaSharp BUG https://github.com/mono/SkiaSharp/issues/1551
+                    //case ".JPG":
+                    //case ".JPEG":
+                    //case ".JPE":
+                    //case ".PNG":
+                    //case ".BMP":
+                    //case ".TIF":
+                    //case ".TIFF":
+                    //case ".GIF":
+                    //case ".ICO":
+                    //case ".JFIF":
+                    //case ".WEBP":
+                    //case ".WBMP":
+                    //    filestream = new FileStream(filename, FileMode.Open, FileAccess.Read, FileShare.ReadWrite, 4096, FileOptions.SequentialScan);
+                    //    var sKBitmap = SKBitmap.Decode(filestream);
+                    //    await filestream.DisposeAsync().ConfigureAwait(false);
 
-                        if (sKBitmap == null) { return null; }
+                    //    if (sKBitmap == null) { return null; }
 
-                        var skPic = sKBitmap.ToWriteableBitmap();
-                        skPic.Freeze();
-                        sKBitmap.Dispose();
-                        return skPic;
+                    //    var skPic = sKBitmap.ToWriteableBitmap();
+                    //    skPic.Freeze();
+                    //    sKBitmap.Dispose();
+                    //    return skPic;
 
                     case ".DDS":
                     case "TGA": // TODO some tga files are created upside down https://github.com/Ruben2776/PicView/issues/22
