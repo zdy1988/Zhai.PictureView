@@ -31,6 +31,7 @@ namespace Zhai.PictureView
         public static extern IntPtr SendMessage(IntPtr hWnd, uint Msg, IntPtr wParam, IntPtr lParam);
 
 
+
         public FrameworkElement TitleBar
         {
             get { return (FrameworkElement)GetValue(TitleBarProperty); }
@@ -38,6 +39,16 @@ namespace Zhai.PictureView
         }
 
         public static readonly DependencyProperty TitleBarProperty = DependencyProperty.Register(nameof(TitleBar), typeof(FrameworkElement), typeof(PictureWindow), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.Inherits));
+
+        public Visibility TitleBarVisibility
+        {
+            get { return (Visibility)GetValue(TitleBarVisibilityProperty); }
+            set { SetValue(TitleBarVisibilityProperty, value); }
+        }
+
+        public static readonly DependencyProperty TitleBarVisibilityProperty = DependencyProperty.Register(nameof(TitleBarVisibility), typeof(Visibility), typeof(PictureWindow), new FrameworkPropertyMetadata(Visibility.Visible, FrameworkPropertyMetadataOptions.Inherits));
+
+
 
         public PictureWindow()
         {
@@ -88,6 +99,20 @@ namespace Zhai.PictureView
                     if (e.LeftButton == MouseButtonState.Pressed)
                     {
                         this.DragMove();
+                    }
+                };
+                TitleBar.MouseLeftButtonDown += (s, e) =>
+                {
+                    if (e.ClickCount == 2)
+                    {
+                        if (this.WindowState == WindowState.Maximized)
+                        {
+                            SystemCommands.RestoreWindow(this);
+                        }
+                        else
+                        {
+                            SystemCommands.MaximizeWindow(this);
+                        }
                     }
                 };
 

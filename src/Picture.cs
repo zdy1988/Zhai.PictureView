@@ -107,13 +107,15 @@ namespace Zhai.PictureView
 
                     try
                     {
-                        ThumbSource = ImageDecoder.GetThumb(PicturePath);
+                        var thumbSource = ImageDecoder.GetThumb(PicturePath);
+
+                        App.Current.Dispatcher.Invoke(() => ThumbSource = thumbSource);
 
                         ThumbState = PictureState.Loaded;
                     }
                     catch
                     {
-                        ThumbSource = PictureStateResources.ImageFailed;
+                        App.Current.Dispatcher.Invoke(() => ThumbSource = PictureStateResources.ImageFailed);
 
                         ThumbState = PictureState.Failed;
                     }
@@ -141,7 +143,7 @@ namespace Zhai.PictureView
             }
             catch
             {
-                PictureSource = PictureStateResources.ImageFailed;
+                App.Current.Dispatcher.Invoke(() => PictureSource = PictureStateResources.ImageFailed);
 
                 PictureState = PictureState.Failed;
             }

@@ -5,9 +5,10 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Zhai.PictureView"
         xmlns:Controls="clr-namespace:Zhai.PictureView.Controls"
-        Title=" ZHAI PictureView" Style="{StaticResource PictureWindow}"
+        Title="{Binding CurrentPicture, Converter={StaticResource PictureViewTitleConverter}}" 
+        Style="{StaticResource PictureWindow}"
         WindowStartupLocation ="CenterScreen"
-        Height="720" Width="960"
+        Height="720" Width="960" FontWeight="Thin"
         MinHeight="360" MinWidth="480"
         mc:Ignorable="d">
     <VisualStateManager.VisualStateGroups>
@@ -47,22 +48,32 @@
         </VisualStateGroup>
     </VisualStateManager.VisualStateGroups>
     <local:PictureWindow.TitleBar>
-        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" 
-                    Visibility="{Binding CurrentPicture, Converter={StaticResource NullableToVisibilityConverter}}">
-            <TextBlock Text=" : "/>
-            <TextBlock Text="{Binding CurrentPicture.Name}"/>
-            <TextBlock Text=" ( "/>
-            <TextBlock Text="{Binding CurrentPicture.Size, Converter={StaticResource ByteFormatter}}"/>
-            <TextBlock Text=" , "/>
-            <TextBlock Text="{Binding CurrentPicture.PixelWidth}"/>
-            <TextBlock Text="x"/>
-            <TextBlock Text="{Binding CurrentPicture.PixelHeight}"/>
-            <TextBlock Text=" 像素 )"/>
-            <TextBlock Text=" - "/>
-            <TextBlock Text="{Binding DisplayedPictureIndex}"/>
-            <TextBlock Text="/"/>
-            <TextBlock Text="{Binding Folder.Count}"/>
-        </StackPanel>
+        <DockPanel>
+            <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
+                <Button x:Name="AboutButton" Style="{StaticResource PictureView.IconButton2}" Click="AboutButton_Click" ToolTip="关于">
+                    <Path Data="{StaticResource Icon.About}"/>
+                </Button>
+                <Button x:Name="SettingsButton" Style="{StaticResource PictureView.IconButton2}" ToolTip="设置">
+                    <Path Data="{StaticResource Icon.Settings}"/>
+                </Button>
+            </StackPanel>
+            <StackPanel DockPanel.Dock="Left" Orientation="Horizontal" 
+                        VerticalAlignment="Center" Visibility="{Binding CurrentPicture, Converter={StaticResource NullableToVisibilityConverter}}">
+                <TextBlock Text=" : "/>
+                <TextBlock Text="{Binding CurrentPicture.Name}"/>
+                <TextBlock Text=" ( "/>
+                <TextBlock Text="{Binding CurrentPicture.Size, Converter={StaticResource ByteFormatter}}"/>
+                <TextBlock Text=" , "/>
+                <TextBlock Text="{Binding CurrentPicture.PixelWidth}"/>
+                <TextBlock Text="x"/>
+                <TextBlock Text="{Binding CurrentPicture.PixelHeight}"/>
+                <TextBlock Text=" 像素 )"/>
+                <TextBlock Text=" - "/>
+                <TextBlock Text="{Binding DisplayedPictureIndex}"/>
+                <TextBlock Text="/"/>
+                <TextBlock Text="{Binding Folder.Count}"/>
+            </StackPanel>
+        </DockPanel>
     </local:PictureWindow.TitleBar>
     <Grid>
         <Grid.ColumnDefinitions>
@@ -76,7 +87,7 @@
         </Grid.RowDefinitions>
         <Grid Grid.ColumnSpan="2" Grid.Row="0"/>
         <Grid Grid.Column="0" Grid.Row="1" x:Name="PictureListView" Width="110" Margin="-110 0 0 0">
-            <Border Padding="5 0 0 0" Margin="0 0 3 0">
+            <Border Padding="8 0 0 0" Margin="0 0 3 0">
                 <ListBox x:Name="PictureList"
                          ItemsSource="{Binding Folder}" 
                          Background="Transparent" BorderThickness="0"
@@ -305,7 +316,10 @@
                     <Button Style="{StaticResource PictureView.IconButton}" x:Name="DeleteButton" Click="DeleteButton_Click" ToolTip="删除">
                         <Path Data="{StaticResource Icon.Delete}"/>
                     </Button>
-                    <Button Style="{StaticResource PictureView.IconButton}" x:Name="AdjustButton" Click="DeleteButton_Click"  ToolTip="调整">
+                    <Button Style="{StaticResource PictureView.IconButton}" x:Name="PrintButton" ToolTip="打印">
+                        <Path Data="{StaticResource Icon.Print}"/>
+                    </Button>
+                    <Button Style="{StaticResource PictureView.IconButton}" x:Name="AdjustButton" ToolTip="调整">
                         <Path Data="{StaticResource Icon.Adjust}"/>
                     </Button>
                 </StackPanel>

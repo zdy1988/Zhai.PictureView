@@ -3,11 +3,16 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:Converters="clr-namespace:Zhai.PictureView.Converters"
              StartupUri="MainWindow.xaml">
+
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="pack://application:,,,/Zhai.PictureView;component/Themes/IconPack.xaml"/>
-                <ResourceDictionary Source="pack://application:,,,/Zhai.PictureView;component/Themes/Styles.xaml"/>
+                <ResourceDictionary Source="pack://application:,,,/Zhai.PictureView;component/Themes/Zhai.PictureView.IconPack.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/Zhai.PictureView;component/Themes/Zhai.PictureView.IconButton.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/Zhai.PictureView;component/Themes/Zhai.PictureView.CopyButton.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/Zhai.PictureView;component/Themes/Zhai.PictureView.LinkButton.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/Zhai.PictureView;component/Themes/Zhai.PictureView.ScrollBar.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/Zhai.PictureView;component/Themes/Zhai.PictureView.PictureWindow.xaml" />
             </ResourceDictionary.MergedDictionaries>
 
             <Converters:BoolToInverseBoolConverter x:Key="BoolToInverseBoolConverter"/>
@@ -18,6 +23,8 @@
             <Converters:LoadingVisibilityConverter x:Key="LoadingVisibilityConverter"/>
             <Converters:ThumbBoxVisibilityConverter x:Key="ThumbBoxVisibilityConverter"/>
             <Converters:ScaleTipsConverter x:Key="ScaleTipsConverter"/>
+            <Converters:PictureViewTitleConverter x:Key="PictureViewTitleConverter"/>
         </ResourceDictionary>
     </Application.Resources>
+
 </Application>

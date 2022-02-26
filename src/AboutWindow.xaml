@@ -1,0 +1,85 @@
+﻿<local:PictureWindow x:Class="Zhai.PictureView.AboutWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Zhai.PictureView"
+        xmlns:Controls="clr-namespace:Zhai.PictureView.Controls"
+        Style="{StaticResource PictureWindow}"
+        WindowStartupLocation ="CenterScreen"             
+        Title="AboutWindow"
+        TitleBarVisibility="Collapsed"
+        FontWeight="Thin"
+        ResizeMode="NoResize"
+        Width="420" Height="306"
+        mc:Ignorable="d">
+    <Border Background="#FF303030">
+        <Grid Margin="24">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="0"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <Border Grid.Row="0"/>
+            <Border Grid.Row="1">
+                <StackPanel>
+                    <StackPanel.Resources>
+                        <Style TargetType="{x:Type TextBlock}">
+                            <Setter Property="TextWrapping" Value="Wrap"/>
+                            <Setter Property="Margin" Value="0 6 0 0"/>
+                        </Style>
+                        <Style TargetType="{x:Type Controls:LinkButton}" BasedOn="{StaticResource PictureView.LinkButton}">
+                            <Setter Property="Height" Value="16"/>
+                            <Setter Property="Margin" Value="0 0 0 -4"/>
+                        </Style>
+                        <Style TargetType="{x:Type Controls:CopyButton}" BasedOn="{StaticResource PictureView.CopyButton}">
+                            <Setter Property="Margin" Value="4 0 0 -3"/>
+                            <Setter Property="ToolTip" Value="复制"/>
+                        </Style>
+                    </StackPanel.Resources>
+                    <StackPanel Orientation="Horizontal" Margin="0 0 0 12">
+                        <Image Source="/favicon.ico" Width="24" Height="24" Margin="0 0 4 0"/>
+                        <TextBlock Text="DY ' PICTURE" FontSize="24" Margin="0" VerticalAlignment="Center"/>
+
+
+                    </StackPanel>
+
+                    <TextBlock Margin="0 0 0 7" FontSize="11" VerticalAlignment="Bottom">
+                        <Run>公测版本 </Run>
+                        <Run x:Name="TextBlock_Version">1.0.0.0</Run>
+                        <Run> (</Run>
+                        <Run x:Name="TextBlock_ApplicationIntPtrSize">32</Run>
+                        <Run> 位)</Run>
+                    </TextBlock>
+
+                    <TextBlock>
+                        <Run x:Name="TextBlock_Name"></Run>
+                        <Run> </Run>
+                        <Run x:Name="TextBlock_Description"></Run>
+                    </TextBlock>
+
+                    <TextBlock Margin="0 14 0 0">
+                        <Run>我的个人网站：</Run>
+                        <Controls:LinkButton NavigateUri="https://www.zdyla.com"/>
+                        <Controls:CopyButton CopyText="https://www.zdyla.com"/>
+                    </TextBlock>
+                    <TextBlock>
+                        <Run>我的邮箱：</Run>
+                        <Controls:LinkButton Content="virus.zhh@gmail.com" NavigateUri="mailto:virus.zhh@gmail.com"/>
+                        <Controls:CopyButton CopyText="virus.zhh@gmail.com"/>
+                    </TextBlock>
+                    <TextBlock>
+                        <Run>项目GitHub：</Run>
+                        <Controls:LinkButton NavigateUri="https://github.com/zdy1988/Zhai.PictureView"/>
+                        <Controls:CopyButton CopyText="https://github.com/zdy1988/Zhai.PictureView"/>
+                    </TextBlock>
+
+                    <TextBlock Margin="0 14 0 0">
+                        <Run>Copyright </Run>
+                        <Run x:Name="TextBlock_Copyright">2022</Run>
+                        <Run> ZDY 保留所有权利。</Run>
+                    </TextBlock>
+                </StackPanel>
+            </Border>
+        </Grid>
+    </Border>
+</local:PictureWindow>
