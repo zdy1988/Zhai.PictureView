@@ -1,0 +1,34 @@
+﻿<local:PictureWindow x:Class="Zhai.PictureView.ExifWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Zhai.PictureView"
+        Style="{StaticResource PictureWindow}"
+        WindowStartupLocation ="CenterScreen" 
+        ResizeMode="NoResize"
+        Title="{Binding Name}" 
+        Height="320" Width="320"
+        mc:Ignorable="d">
+    <Grid Background="{StaticResource PictureWindowPaperColorBrush}">
+        <ScrollViewer Margin="13 48 12 16">
+            <ItemsControl ItemsSource="{Binding PictureExif}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel IsItemsHost="True"/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Border Padding="0 2">
+                            <DockPanel>
+                                <TextBlock Text="{Binding Key}" FontWeight="Regular" DockPanel.Dock="Left" Margin="0 0 8 0"/>
+                                <TextBlock Text="{Binding Value}" TextWrapping="Wrap"/>
+                            </DockPanel>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </ScrollViewer>
+    </Grid>
+</local:PictureWindow>

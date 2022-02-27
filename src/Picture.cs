@@ -63,7 +63,7 @@ namespace Zhai.PictureView
             set => SetProperty(ref pictureState, value);
         }
 
-        public Dictionary<string, string> Exif { get; private set; }
+        public PictureExif PictureExif { get; private set; }
 
         public bool IsAnimation
         {
@@ -146,9 +146,10 @@ namespace Zhai.PictureView
 
                     var imageSource = await Task.Run(async () => await ImageDecoder.GetBitmapSource(PicturePath));
 
-                    if (imageSource != null)
+                    if (imageSource != null&&imageSource.Item1!=null)
                     {
-                        PictureSource = imageSource;
+                        PictureSource = imageSource.Item1;
+                        PictureExif = imageSource.Item2;
                         PictureState = PictureState.Loaded;
                     }
                     else

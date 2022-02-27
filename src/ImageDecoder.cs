@@ -105,11 +105,12 @@ namespace Zhai.PictureView
             }
         }
 
-        internal static async Task<BitmapSource> GetBitmapSource(string filename)
+        internal static async Task<Tuple<BitmapSource, PictureExif>> GetBitmapSource(string filename)
         {
             try
             {
                 FileStream filestream;
+                PictureExif exif;
 
                 switch (Path.GetExtension(filename).ToUpperInvariant())
                 {
@@ -148,7 +149,8 @@ namespace Zhai.PictureView
                             PixelFormat(image), null, addr, image.DataLen, image.Stride);
                         image.Dispose();
                         pfimPic.Freeze();
-                        return pfimPic;
+                        exif = GetExif(filename, pfimPic);
+                        return new Tuple<BitmapSource, PictureExif>(pfimPic, exif);
 
                     case ".PSD":
                     case ".PSB":
@@ -162,11 +164,13 @@ namespace Zhai.PictureView
                         transMagick.Quality = 100;
                         transMagick.ColorSpace = ColorSpace.Transparent;
 
+                        exif = GetMagickImageExif(transMagick);
+
                         var psd = transMagick.ToBitmapSource();
                         transMagick.Dispose();
                         psd.Freeze();
 
-                        return psd;
+                        return new Tuple<BitmapSource, PictureExif>(psd, exif);
 
                     default: // some formats cause exceptions when using filestream, so defaulting to reading from file
                         var magick = new MagickImage();
@@ -175,11 +179,13 @@ namespace Zhai.PictureView
                         // Set values for maximum quality
                         magick.Quality = 100;
 
+                        exif = GetMagickImageExif(magick);
+
                         var pic = magick.ToBitmapSource();
                         magick.Dispose();
                         pic.Freeze();
 
-                        return pic;
+                        return new Tuple<BitmapSource, PictureExif>(pic, exif);
                 }
             }
             catch (Exception e)
@@ -201,11 +207,24 @@ namespace Zhai.PictureView
             _ => throw new Exception($"Unable to convert {image.Format} to WPF PixelFormat"),
         };
 
-        internal static Dictionary<string, string> GetExif(MagickImage image)
+        internal static PictureExif GetExif(string filename, BitmapSource bitmap)
         {
-            var dictionary = new Dictionary<string, string>
+            var exif = new PictureExif
             {
-                { "图片名称", System.IO.Path.GetFileName(image.FileName) },
+                { "图片名称", Path.GetFileName(filename) },
+                { "图片路径", filename },
+                { "图片宽度", bitmap.PixelWidth.ToString() },
+                { "图片高度", bitmap.PixelHeight.ToString() },
+            };
+
+            return exif;
+        }
+
+        internal static PictureExif GetMagickImageExif(MagickImage image)
+        {
+            var exif = new PictureExif
+            {
+                { "图片名称", Path.GetFileName(image.FileName) },
                 { "图片路径", image.FileName }
             };
 
@@ -213,25 +232,25 @@ namespace Zhai.PictureView
 
             if (profile != null)
             {
-                dictionary.Add("图片宽度", image.Width.ToString());
-                dictionary.Add("图片高度", image.Height.ToString());
+                exif.Add("图片宽度", image.Width.ToString());
+                exif.Add("图片高度", image.Height.ToString());
 
                 foreach (var value in profile.Values)
                 {
-                    if (TryGetExif(value, out string name, out string description))
+                    if (TryGetExifValue(value, out string name, out string description))
                     {
-                        if (!dictionary.ContainsKey(name))
+                        if (!exif.ContainsKey(name))
                         {
-                            dictionary.Add(name, description);
+                            exif.Add(name, description);
                         }
                     }
                 }
             }
 
-            return dictionary;
+            return exif;
         }
 
-        internal static bool TryGetExif(IExifValue value, out string name, out string description)
+        internal static bool TryGetExifValue(IExifValue value, out string name, out string description)
         {
             name = string.Empty;
 

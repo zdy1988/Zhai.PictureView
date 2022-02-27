@@ -612,7 +612,22 @@ namespace Zhai.PictureView
 
         private void AutoPlayButton_Click(object sender, RoutedEventArgs e)
         {
+            if (ViewModel.Folder == null || ViewModel.Folder.Count <= 1) return;
+
             ViewModel.IsPictureCarouselPlaing = !ViewModel.IsPictureCarouselPlaing;
+        }
+
+        private void InfoButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (ViewModel.CurrentPicture == null) return;
+
+            var window = new ExifWindow
+            {
+                Owner = App.Current.MainWindow,
+                DataContext = ViewModel.CurrentPicture
+            };
+
+            window.ShowDialog();
         }
 
         private void PictureListViewToggleButton_Click(object sender, RoutedEventArgs e)
@@ -688,5 +703,7 @@ namespace Zhai.PictureView
 
             window.ShowDialog();
         }
+
+
     }
 }

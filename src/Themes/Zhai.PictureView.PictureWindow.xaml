@@ -3,6 +3,8 @@
                     xmlns:local="clr-namespace:Zhai.PictureView"
                     xmlns:PresentationOptions="http://schemas.microsoft.com/winfx/2006/xaml/presentation/options">
 
+    <SolidColorBrush x:Key="PictureWindowPaperColorBrush" Color="#FF303030" PresentationOptions:Freeze="True"/>
+    
     <SolidColorBrush x:Key="PictureWindowBackground" Color="#70000000" PresentationOptions:Freeze="True"/>
 
     <ControlTemplate x:Key="PictureWindowTemplete" TargetType="{x:Type local:PictureWindow}">
@@ -105,6 +107,7 @@
         <Setter Property="AllowsTransparency" Value="True"/>
         <Setter Property="WindowStyle" Value="None"/>
         <Setter Property="Foreground" Value="#FFF"/>
+        <Setter Property="FontWeight" Value="Thin"/>
         <Setter Property="Template" Value="{StaticResource PictureWindowTemplete}"/>
     </Style>
 

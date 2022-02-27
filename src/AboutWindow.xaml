@@ -7,13 +7,12 @@
         xmlns:Controls="clr-namespace:Zhai.PictureView.Controls"
         Style="{StaticResource PictureWindow}"
         WindowStartupLocation ="CenterScreen"             
-        Title="AboutWindow"
+        Title="关于 ZDY ' PICTURE"
         TitleBarVisibility="Collapsed"
-        FontWeight="Thin"
         ResizeMode="NoResize"
         Width="420" Height="306"
         mc:Ignorable="d">
-    <Border Background="#FF303030">
+    <Border Background="{StaticResource PictureWindowPaperColorBrush}">
         <Grid Margin="24">
             <Grid.RowDefinitions>
                 <RowDefinition Height="0"/>

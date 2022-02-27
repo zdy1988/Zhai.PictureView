@@ -8,7 +8,7 @@
         Title="{Binding CurrentPicture, Converter={StaticResource PictureViewTitleConverter}}" 
         Style="{StaticResource PictureWindow}"
         WindowStartupLocation ="CenterScreen"
-        Height="720" Width="960" FontWeight="Thin"
+        Height="720" Width="960"
         MinHeight="360" MinWidth="480"
         mc:Ignorable="d">
     <VisualStateManager.VisualStateGroups>
@@ -356,6 +356,9 @@
                     </Button>
                     <Button Style="{StaticResource PictureView.IconButton}" x:Name="AdjustButton" ToolTip="调整">
                         <Path Data="{StaticResource Icon.Adjust}"/>
+                    </Button>
+                    <Button Style="{StaticResource PictureView.IconButton}" x:Name="InfoButton" Click="InfoButton_Click" ToolTip="图片信息">
+                        <Path Data="{StaticResource Icon.Info}"/>
                     </Button>
                 </StackPanel>
             </StackPanel>
