@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Media.Effects;
 using System.Windows.Threading;
@@ -48,6 +49,11 @@ namespace Zhai.PictureView
                 if (SetProperty(ref currentPicture, value))
                 {
                     CurrentPictureChanged?.Invoke(this, value);
+
+                    if (value.ThumbState == PictureState.Failed)
+                    {
+                        ThreadPool.QueueUserWorkItem(_ => value.DrawThumb());
+                    }
                 }
             }
         }
