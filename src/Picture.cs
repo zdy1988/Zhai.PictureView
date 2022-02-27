@@ -101,36 +101,27 @@ namespace Zhai.PictureView
 
             if (!string.IsNullOrWhiteSpace(PicturePath))
             {
-                ThreadPool.QueueUserWorkItem(_ =>
+                ThreadPool.QueueUserWorkItem(async _ =>
                 {
                     try
                     {
-                        var thumbSource = ImageDecoder.GetThumb(PicturePath);
+                        var thumbSource = await Task.Run(()=> ImageDecoder.GetThumb(PicturePath));
 
                         if (thumbSource != null)
                         {
-                            App.Current.Dispatcher.Invoke(() =>
-                            {
-                                ThumbSource = thumbSource;
-                                ThumbState = PictureState.Loaded;
-                            });
+                            ThumbSource = thumbSource;
+                            ThumbState = PictureState.Loaded;
                         }
                         else
                         {
-                            App.Current.Dispatcher.Invoke(() =>
-                            {
-                                ThumbSource = PictureStateResources.ImageFailed;
-                                ThumbState = PictureState.Failed;
-                            });
+                            ThumbSource = PictureStateResources.ImageFailed;
+                            ThumbState = PictureState.Failed;
                         }
                     }
                     catch
                     {
-                        App.Current.Dispatcher.Invoke(() =>
-                        {
-                            ThumbSource = PictureStateResources.ImageFailed;
-                            ThumbState = PictureState.Failed;
-                        });
+                        ThumbSource = PictureStateResources.ImageFailed;
+                        ThumbState = PictureState.Failed;
                     }
                 });
             }

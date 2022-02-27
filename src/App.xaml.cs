@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
+using System.Diagnostics;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
@@ -14,6 +15,8 @@ namespace Zhai.PictureView
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
+
+            HandleException();
 
             // 当前计算机上的处理器数量
             int processorCount = Environment.ProcessorCount;
@@ -35,5 +38,42 @@ namespace Zhai.PictureView
         internal static MainWindow PictureWindow => App.Current.MainWindow as MainWindow;
 
         internal static PictureWindowViewModel PictureWindowViewModel => PictureWindow.DataContext as PictureWindowViewModel;
+
+        private static void HandleException(Action<object, UnhandledExceptionEventArgs> centralizedExceptionHander = null)
+        {
+            if (centralizedExceptionHander == null)
+            {
+                centralizedExceptionHander = (sender, e) =>
+                {
+                    if (e.ExceptionObject is Exception ex)
+                    {
+                        Debug.WriteLine($"{nameof(Application)} - {ex.GetType().Name} : {ex.Message}");
+                    }
+                };
+            }
+
+            App.Current.DispatcherUnhandledException += (sender, e) =>
+            {
+                e.Handled = true;
+                centralizedExceptionHander?.Invoke(sender, new UnhandledExceptionEventArgs(e.Exception, false));
+            };
+
+            App.Current.Dispatcher.UnhandledException += (sender, e) =>
+            {
+                e.Handled = true;
+                centralizedExceptionHander?.Invoke(sender, new UnhandledExceptionEventArgs(e.Exception, false));
+            };
+
+            AppDomain.CurrentDomain.UnhandledException += (sender, e) =>
+            {
+                centralizedExceptionHander?.Invoke(sender, e);
+            };
+
+            TaskScheduler.UnobservedTaskException += (sender, e) =>
+            {
+                e.SetObserved();
+                centralizedExceptionHander?.Invoke(sender, new UnhandledExceptionEventArgs(e.Exception, false));
+            };
+        }
     }
 }
