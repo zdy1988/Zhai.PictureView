@@ -1,5 +1,6 @@
 ﻿using Microsoft.Win32;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Security.AccessControl;
@@ -37,6 +38,8 @@ namespace Zhai.PictureView
             PreviewKeyDown += MainWindow_PreviewKeyDown;
 
             InitSyncUpdateMoveRectTimer();
+
+            VisualStateManager.GoToElementState(this.PictureEditView, "PictureEditViewHide", true);
         }
 
         public void OpenPicture(string filename)
@@ -47,14 +50,14 @@ namespace Zhai.PictureView
 
             if (!security.AreAccessRulesProtected)
             {
+                VisualStateManager.GoToElementState(this.PictureListView, "PictureListViewShow", true);
+
                 var oldFolder = ViewModel.Folder;
 
                 ViewModel.Folder = new Folder(directory);
                 ViewModel.CurrentPicture = ViewModel.Folder.Where(t => t.PicturePath == filename).FirstOrDefault();
 
                 oldFolder?.Clean();
-
-                VisualStateManager.GoToElementState(this, "PictureListViewShow", true);
             }
             else
             {
@@ -110,6 +113,8 @@ namespace Zhai.PictureView
             Picture.Source = renderedPicture;
             Picture.Width = picture.PixelWidth;
             Picture.Height = picture.PixelHeight;
+
+            EffectList.SelectedItem = ViewModel.Effects.Last();
 
             if (picture.PixelWidth >= picture.PixelHeight)
             {
@@ -617,6 +622,22 @@ namespace Zhai.PictureView
             ViewModel.IsPictureCarouselPlaing = !ViewModel.IsPictureCarouselPlaing;
         }
 
+        private void AdjustButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (ViewModel.Folder == null || ViewModel.Folder.Count <= 1) return;
+
+            if (ViewModel.CurrentPicture != null)
+            {
+                ViewModel.IsShowPictureEditView = !ViewModel.IsShowPictureEditView;
+
+                VisualStateManager.GoToElementState(this.PictureEditView, ViewModel.IsShowPictureEditView ? "PictureEditViewShow" : "PictureEditViewHide", true);
+            }
+            else
+            {
+                VisualStateManager.GoToElementState(this.PictureEditView, "PictureEditViewHide", true);
+            }
+        }
+
         private void InfoButton_Click(object sender, RoutedEventArgs e)
         {
             if (ViewModel.CurrentPicture == null) return;
@@ -638,11 +659,11 @@ namespace Zhai.PictureView
             {
                 ViewModel.IsShowPictureListView = !ViewModel.IsShowPictureListView;
 
-                VisualStateManager.GoToElementState(this, ViewModel.IsShowPictureListView ? "PictureListViewShow" : "PictureListViewHide", true);
+                VisualStateManager.GoToElementState(this.PictureListView, ViewModel.IsShowPictureListView ? "PictureListViewShow" : "PictureListViewHide", true);
             }
             else
             {
-                VisualStateManager.GoToElementState(this, "PictureListViewHide", true);
+                VisualStateManager.GoToElementState(this.PictureListView, "PictureListViewHide", true);
             }
         }
 
@@ -703,7 +724,5 @@ namespace Zhai.PictureView
 
             window.ShowDialog();
         }
-
-
     }
 }

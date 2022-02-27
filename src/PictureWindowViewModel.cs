@@ -5,6 +5,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Media.Effects;
 using System.Windows.Threading;
 
 namespace Zhai.PictureView
@@ -29,6 +30,13 @@ namespace Zhai.PictureView
         {
             get => isShowPictureListView;
             set => SetProperty(ref isShowPictureListView, value);
+        }
+
+        private bool isShowPictureEditView = false;
+        public bool IsShowPictureEditView
+        {
+            get => isShowPictureEditView;
+            set => SetProperty(ref isShowPictureEditView, value);
         }
 
         private Picture currentPicture;
@@ -110,6 +118,24 @@ namespace Zhai.PictureView
             }
         }
 
+        private KeyValuePair<String, ShaderEffect> currentPictureEffect;
+        public KeyValuePair<String, ShaderEffect> CurrentPictureEffect
+        {
+            get => currentPictureEffect;
+            set => SetProperty(ref currentPictureEffect, value);
+        }
+
+
+        public Dictionary<String, ShaderEffect> Effects { get; }
+
+        public PictureWindowViewModel()
+        {
+            Effects = System.Reflection.Assembly.GetExecutingAssembly().GetTypes()
+                .Where(t => t.FullName.Contains("Zhai.PictureView.ShaderEffects"))
+                .ToDictionary(x => x.Name, x => System.Activator.CreateInstance(x) as System.Windows.Media.Effects.ShaderEffect);
+
+            Effects.Add("Original", null);
+        }
 
         public event EventHandler<Picture> CurrentPictureChanged;
 

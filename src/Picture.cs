@@ -1,14 +1,6 @@
-﻿using ImageMagick;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Drawing;
+﻿using System;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
-using System.Windows.Controls;
 using System.Windows.Media.Imaging;
 
 namespace Zhai.PictureView
@@ -35,7 +27,7 @@ namespace Zhai.PictureView
             set => SetProperty(ref pixelHeight, value);
         }
 
-        private BitmapSource thumbSource;
+        private BitmapSource thumbSource = PictureStateResources.ImageLoading;
         public BitmapSource ThumbSource
         {
             get => thumbSource;
@@ -49,7 +41,7 @@ namespace Zhai.PictureView
             set => SetProperty(ref thumbState, value);
         }
 
-        private BitmapSource pictureSource;
+        private BitmapSource pictureSource = PictureStateResources.ImageLoading;
         public BitmapSource PictureSource
         {
             get => pictureSource;
@@ -84,8 +76,6 @@ namespace Zhai.PictureView
             Size = file.Length;
 
             PicturePath = filename;
-
-            DrawThumb();
         }
 
 
@@ -96,34 +86,30 @@ namespace Zhai.PictureView
                 return;
 
             ThumbState = PictureState.Loading;
-
             ThumbSource = PictureStateResources.ImageLoading;
 
             if (!string.IsNullOrWhiteSpace(PicturePath))
             {
-                ThreadPool.QueueUserWorkItem(async _ =>
+                try
                 {
-                    try
-                    {
-                        var thumbSource = await Task.Run(()=> ImageDecoder.GetThumb(PicturePath));
+                    var thumbSource = ImageDecoder.GetThumb(PicturePath);
 
-                        if (thumbSource != null)
-                        {
-                            ThumbSource = thumbSource;
-                            ThumbState = PictureState.Loaded;
-                        }
-                        else
-                        {
-                            ThumbSource = PictureStateResources.ImageFailed;
-                            ThumbState = PictureState.Failed;
-                        }
+                    if (thumbSource != null)
+                    {
+                        ThumbSource = thumbSource;
+                        ThumbState = PictureState.Loaded;
                     }
-                    catch
+                    else
                     {
                         ThumbSource = PictureStateResources.ImageFailed;
                         ThumbState = PictureState.Failed;
                     }
-                });
+                }
+                catch
+                {
+                    ThumbSource = PictureStateResources.ImageFailed;
+                    ThumbState = PictureState.Failed;
+                }
             }
         }
 

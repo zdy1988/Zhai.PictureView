@@ -18,11 +18,6 @@ namespace Zhai.PictureView
 
             HandleException();
 
-            // 当前计算机上的处理器数量
-            int processorCount = Environment.ProcessorCount;
-
-            ThreadPool.SetMinThreads(processorCount * 4, processorCount * 2);
-
             // 打开图片
             if (e.Args.Length == 1)
             {

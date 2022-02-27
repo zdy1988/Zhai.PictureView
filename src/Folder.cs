@@ -24,7 +24,21 @@ namespace Zhai.PictureView
                 {
                     Add(new Picture(file.FullName));
                 }
+
+                LoadThumbnails();
             }
+        }
+
+        public async void LoadThumbnails()
+        {
+            await Task.Run(() =>
+            {
+                foreach (var pic in this)
+                {
+                    pic.DrawThumb();
+                }
+
+            }).ConfigureAwait(false);
         }
 
 
