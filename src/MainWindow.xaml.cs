@@ -1,28 +1,21 @@
 ﻿using Microsoft.Win32;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Security.AccessControl;
-using System.Text;
 using System.Threading.Tasks;
 using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
 using System.Windows.Media.Animation;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+using System.Windows.Threading;
 
 namespace Zhai.PictureView
 {
     public partial class MainWindow : PictureWindow
     {
-        readonly PictureViewModel ViewModel = new();
+        readonly PictureWindowViewModel ViewModel = new();
 
         public MainWindow()
         {
@@ -350,10 +343,7 @@ namespace Zhai.PictureView
 
             syncUpdateMoveRectTimer.Elapsed += (sender, e) =>
             {
-                this.Dispatcher.Invoke(() =>
-                {
-                    UpdateMoveRect();
-                });
+                App.Current.Dispatcher.Invoke(() => UpdateMoveRect());
 
                 syncUpdateMoveRectTimer.Enabled = false;
             };
@@ -605,6 +595,24 @@ namespace Zhai.PictureView
                 }
                 catch { }
             }
+        }
+
+        private void PrintButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (ViewModel.CurrentPicture == null) return;
+
+            using (var p = new System.Diagnostics.Process())
+            {
+                p.StartInfo.FileName = ViewModel.CurrentPicture.PicturePath;
+                p.StartInfo.Verb = "print";
+                p.StartInfo.UseShellExecute = true;
+                p.Start();
+            }
+        }
+
+        private void AutoPlayButton_Click(object sender, RoutedEventArgs e)
+        {
+            ViewModel.IsPictureCarouselPlaing = !ViewModel.IsPictureCarouselPlaing;
         }
 
         private void PictureListViewToggleButton_Click(object sender, RoutedEventArgs e)

@@ -307,6 +307,41 @@
                     <Button Style="{StaticResource PictureView.IconButton}" x:Name="RotateRightButton" Click="RotateRightButton_Click" ToolTip="右转90度">
                         <Path Data="{StaticResource Icon.RotateRight}"/>
                     </Button>
+                    <Button x:Name="AutoPlayButton" Click="AutoPlayButton_Click" ToolTip="自动播放"
+                            Visibility="{Binding Folder, Converter={StaticResource CollectionLengthToVisibilityConverter}}">
+                        <Button.Style>
+                            <Style TargetType="{x:Type Button}" BasedOn="{StaticResource PictureView.IconButton}">
+                                <Setter Property="RenderTransformOrigin" Value="0.5,0.5"/>
+                                <Setter Property="RenderTransform">
+                                    <Setter.Value>
+                                        <TransformGroup>
+                                            <ScaleTransform ScaleX="1" ScaleY="1"/>
+                                        </TransformGroup>
+                                    </Setter.Value>
+                                </Setter>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsPictureCarouselPlaing}" Value="True">
+                                        <DataTrigger.EnterActions>
+                                            <BeginStoryboard x:Name="PictureCarouselPlaingAnimation">
+                                                <Storyboard RepeatBehavior="Forever">
+                                                    <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)">
+                                                        <EasingDoubleKeyFrame Value="0.75" KeyTime="00:00:02"/>
+                                                    </DoubleAnimationUsingKeyFrames>
+                                                    <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)">
+                                                        <EasingDoubleKeyFrame Value="0.75" KeyTime="00:00:02"/>
+                                                    </DoubleAnimationUsingKeyFrames>
+                                                </Storyboard>
+                                            </BeginStoryboard>
+                                        </DataTrigger.EnterActions>
+                                        <DataTrigger.ExitActions>
+                                            <StopStoryboard BeginStoryboardName="PictureCarouselPlaingAnimation"></StopStoryboard>
+                                        </DataTrigger.ExitActions>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                        <Path Data="{StaticResource Icon.Play}"/>
+                    </Button>
                     <Button Style="{StaticResource PictureView.IconButton}" x:Name="PrevButton" Click="PrevButton_Click" ToolTip="上一张">
                         <Path Data="{StaticResource Icon.ArrowLeft}"/>
                     </Button>
@@ -316,7 +351,7 @@
                     <Button Style="{StaticResource PictureView.IconButton}" x:Name="DeleteButton" Click="DeleteButton_Click" ToolTip="删除">
                         <Path Data="{StaticResource Icon.Delete}"/>
                     </Button>
-                    <Button Style="{StaticResource PictureView.IconButton}" x:Name="PrintButton" ToolTip="打印">
+                    <Button Style="{StaticResource PictureView.IconButton}" x:Name="PrintButton" Click="PrintButton_Click" ToolTip="打印">
                         <Path Data="{StaticResource Icon.Print}"/>
                     </Button>
                     <Button Style="{StaticResource PictureView.IconButton}" x:Name="AdjustButton" ToolTip="调整">

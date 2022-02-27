@@ -23,15 +23,17 @@ namespace Zhai.PictureView
             // 打开图片
             if (e.Args.Length == 1)
             {
-                MainWindow mainWindow = this.MainWindow as MainWindow;
-
                 var filename = e.Args[0];
 
                 if (File.Exists(filename))
                 {
-                    mainWindow.OpenPicture(filename);
+                    App.PictureWindow.OpenPicture(filename);
                 }
             }
         }
+
+        internal static MainWindow PictureWindow => App.Current.MainWindow as MainWindow;
+
+        internal static PictureWindowViewModel PictureWindowViewModel => PictureWindow.DataContext as PictureWindowViewModel;
     }
 }

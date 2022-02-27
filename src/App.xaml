@@ -19,6 +19,7 @@
             <Converters:NullableToBoolConverter x:Key="NullableToBoolConverter"/>
             <Converters:NullableToVisibilityConverter x:Key="NullableToVisibilityConverter"/>
             <Converters:NullableToInverseVisibilityConverter x:Key="NullableToInverseVisibilityConverter"/>
+            <Converters:CollectionLengthToVisibilityConverter x:Key="CollectionLengthToVisibilityConverter"/>
             <Converters:ByteFormatter x:Key="ByteFormatter"/>
             <Converters:LoadingVisibilityConverter x:Key="LoadingVisibilityConverter"/>
             <Converters:ThumbBoxVisibilityConverter x:Key="ThumbBoxVisibilityConverter"/>

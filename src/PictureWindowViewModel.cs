@@ -5,10 +5,11 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Threading;
 
 namespace Zhai.PictureView
 {
-    internal class PictureViewModel : BaseViewModel
+    internal class PictureWindowViewModel : BaseViewModel
     {
         private Folder folder;
         public Folder Folder
@@ -86,6 +87,25 @@ namespace Zhai.PictureView
                 if (SetProperty(ref scale, value))
                 {
                     ScaleChanged?.Invoke(this, value);
+                }
+            }
+        }
+
+        private bool isPictureCarouselPlaing = false;
+        public bool IsPictureCarouselPlaing
+        {
+            get => isPictureCarouselPlaing;
+            set
+            {
+                if (SetProperty(ref isPictureCarouselPlaing, value))
+                {
+                    if (Folder.Any())
+                    {
+                        if (value)
+                            PictureCarousel.Instance.Play();
+                        else
+                            PictureCarousel.Instance.Stop();
+                    }
                 }
             }
         }
