@@ -12,6 +12,8 @@
                 <ResourceDictionary Source="pack://application:,,,/Zhai.PictureView;component/Themes/Zhai.PictureView.CopyButton.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/Zhai.PictureView;component/Themes/Zhai.PictureView.LinkButton.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/Zhai.PictureView;component/Themes/Zhai.PictureView.ScrollBar.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/Zhai.PictureView;component/Themes/Zhai.PictureView.Silder.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/Zhai.PictureView;component/Themes/Zhai.PictureView.ListDetailView.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/Zhai.PictureView;component/Themes/Zhai.PictureView.PictureWindow.xaml" />
             </ResourceDictionary.MergedDictionaries>
 

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -124,23 +125,25 @@ namespace Zhai.PictureView
             }
         }
 
-        private KeyValuePair<String, ShaderEffect> currentPictureEffect;
-        public KeyValuePair<String, ShaderEffect> CurrentPictureEffect
+        private PictureEffect currentPictureEffect;
+        public PictureEffect CurrentPictureEffect
         {
             get => currentPictureEffect;
             set => SetProperty(ref currentPictureEffect, value);
         }
 
 
-        public Dictionary<String, ShaderEffect> Effects { get; }
+        public ObservableCollection<PictureEffect> Effects { get; }
 
         public PictureWindowViewModel()
         {
-            Effects = System.Reflection.Assembly.GetExecutingAssembly().GetTypes()
+            var effects = System.Reflection.Assembly.GetExecutingAssembly().GetTypes()
                 .Where(t => t.FullName.Contains("Zhai.PictureView.ShaderEffects"))
-                .ToDictionary(x => x.Name, x => System.Activator.CreateInstance(x) as System.Windows.Media.Effects.ShaderEffect);
+                .Select(t => new PictureEffect(t.Name, System.Activator.CreateInstance(t) as ShaderEffect));
 
-            Effects.Add("Original", null);
+            Effects = new ObservableCollection<PictureEffect>(effects);
+
+            Effects.Insert(0, new PictureEffect("Original", null));
         }
 
         public event EventHandler<Picture> CurrentPictureChanged;
