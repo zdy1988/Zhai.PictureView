@@ -16,13 +16,13 @@ namespace Zhai.PictureView
 {
     public partial class MainWindow : PictureWindow
     {
-        readonly PictureWindowViewModel ViewModel = new();
+        PictureWindowViewModel ViewModel => this.DataContext as PictureWindowViewModel;
 
         public MainWindow()
         {
             InitializeComponent();
 
-            DataContext = ViewModel;
+            Loaded += MainWindow_Loaded;
 
             ViewModel.CurrentPictureChanged += ViewModel_CurrentPictureChanged;
             ViewModel.ScaleChanged += ViewModel_ScaleChanged;
@@ -40,6 +40,16 @@ namespace Zhai.PictureView
             InitSyncUpdateMoveRectTimer();
 
             VisualStateManager.GoToElementState(this.PictureEditView, "PictureEditViewHide", true);
+        }
+
+        private void MainWindow_Loaded(object sender, RoutedEventArgs e)
+        {
+            var arg = Application.Current.Properties["ArbitraryArgName"];
+
+            if (arg != null)
+            {
+                OpenPicture(arg.ToString());
+            }
         }
 
         public void OpenPicture(string filename)
@@ -476,18 +486,7 @@ namespace Zhai.PictureView
         {
             var dialog = new OpenFileDialog
             {
-                Filter =
-                "All supported (*.jpg;*.jpeg;*.jpe;*.png;*.gif;*.bmp;*.ico;*.tif;*.tiff;*.jfif;*.webp;*.wbmp;*.wmf;*.pgm;*.hdr;*.cut;*.exr;*.dib;*.heic;*.emf;*.wpg;*.pcx;*.xbm;*.xpm;*.psd;*.psb;*.tga;*.dds;*.svg;*.xcf;*.3fr;*.arw;*.cr2;*.crw;*.dcr;*.dng;*.erf;*.kdc;*.mdc;*.mef;*.mos;*.mrw;*.nef;*.nrw;*.orf;*.pef;*.raf;*.raw;*.rw2;*.srf;*.x3f)|*.jpg;*.jpeg;*.jpe;*.png;*.gif;*.bmp;*.ico;*.tif;*.tiff;*.jfif;*.webp;*.wbmp;*.wmf;*.pgm;*.hdr;*.cut;*.exr;*.dib;*.heic;*.emf;*.wpg;*.pcx;*.xbm;*.xpm;*.psd;*.psb;*.tga;*.dds;*.svg;*.xcf;*.3fr;*.arw;*.cr2;*.crw;*.dcr;*.dng;*.erf;*.kdc;*.mdc;*.mef;*.mos;*.mrw;*.nef;*.nrw;*.orf;*.pef;*.raf;*.raw;*.rw2;*.srf;*.x3f|" +
-                "JPEG (*.jpg;*.jpeg)|*.jpg;*.jpeg|" +
-                "Portable Network Graphic (*.png)|*.png|" +
-                "Graphics Interchange Format (*.gif)|*.gif|" +
-                "Icon (*.ico)|*.ico|" +
-                "Photoshop (*.psd;*.psb)|*.psd;*.psb|" +
-                "Pfim (*.tga;*.dds)|*.tga;*.dds|" +
-                "Vector (*.svg;*.xcf)|*.svg;*.xcf|" +
-                "Camera (*.3fr;*.arw;*.cr2;*.crw;*.dcr;*.dng;*.erf;*.kdc;*.mdc;*.mef;*.mos;*.mrw;*.nef;*.nrw;*.orf;*.pef;*.raf;*.raw;*.rw2;*.srf;*.x3f)|*.3fr;*.arw;*.cr2;*.crw;*.dcr;*.dng;*.erf;*.kdc;*.mdc;*.mef;*.mos;*.mrw;*.nef;*.nrw;*.orf;*.pef;*.raf;*.raw;*.rw2;*.srf;*.x3f|" +
-                "Other (*.jpe;*.tif;*.jfif;*.webp;*.wbmp;*.tiff;*.wmf;*.pgm;*.hdr;*.cut;*.exr;*.dib;*.heic;*.emf;*.wpg;*.pcx;*.xbm;*.xpm)|*.jpe;*.tif;*.jfif;*.webp;*.wbmp;*.tiff;*.wmf;*.pgm;*.hdr;*.cut;*.exr;*.dib;*.heic;*.emf;*.wpg;*.pcx;*.xbm;*.xpm|" +
-                "All files (*.*)|*.*"
+                Filter = PictureSupport.Filter
             };
 
             if (dialog.ShowDialog() is true)
@@ -718,6 +717,16 @@ namespace Zhai.PictureView
         private void AboutButton_Click(object sender, RoutedEventArgs e)
         {
             var window = new AboutWindow
+            {
+                Owner = App.Current.MainWindow
+            };
+
+            window.ShowDialog();
+        }
+
+        private void SettingsButton_Click(object sender, RoutedEventArgs e)
+        {
+            var window = new SettingsWindow
             {
                 Owner = App.Current.MainWindow
             };

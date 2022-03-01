@@ -10,7 +10,7 @@
         Title="关于 ZDY ' PICTURE"
         TitleBarVisibility="Collapsed"
         ResizeMode="NoResize"
-        Width="420" Height="306"
+        Width="420" Height="310"
         mc:Ignorable="d">
     <Border Background="{StaticResource PictureWindowPaperColorBrush}">
         <Grid Margin="24">

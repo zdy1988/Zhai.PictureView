@@ -51,7 +51,7 @@ namespace Zhai.PictureView
                 {
                     CurrentPictureChanged?.Invoke(this, value);
 
-                    if (value.ThumbState == PictureState.Failed)
+                    if (value != null && value.ThumbState == PictureState.Failed)
                     {
                         ThreadPool.QueueUserWorkItem(_ => value.DrawThumb());
                     }

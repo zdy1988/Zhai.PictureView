@@ -8,7 +8,7 @@
         WindowStartupLocation ="CenterScreen" 
         ResizeMode="NoResize"
         Title="{Binding Name}" 
-        Height="320" Width="320"
+        Height="300" Width="400"
         mc:Ignorable="d">
     <Grid Background="{StaticResource PictureWindowPaperColorBrush}">
         <ScrollViewer Margin="13 48 12 16">

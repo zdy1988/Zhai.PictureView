@@ -14,20 +14,19 @@ namespace Zhai.PictureView
     {
         protected override void OnStartup(StartupEventArgs e)
         {
-            base.OnStartup(e);
-
-            HandleException();
-
-            // 打开图片
-            if (e.Args.Length == 1)
+            if (e != null && e.Args.Length == 1)
             {
                 var filename = e.Args[0];
 
                 if (File.Exists(filename))
                 {
-                    App.PictureWindow.OpenPicture(filename);
+                    Properties["ArbitraryArgName"] = e.Args[0];
                 }
             }
+
+            HandleException();
+
+            base.OnStartup(e);
         }
 
         internal static MainWindow PictureWindow => App.Current.MainWindow as MainWindow;

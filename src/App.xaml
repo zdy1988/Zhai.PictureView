@@ -2,6 +2,10 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:Converters="clr-namespace:Zhai.PictureView.Converters"
+             xmlns:local="clr-namespace:Zhai.PictureView"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:d1p1="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             d1p1:Ignorable="d"
              StartupUri="MainWindow.xaml">
 
     <Application.Resources>
@@ -9,12 +13,15 @@
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="pack://application:,,,/Zhai.PictureView;component/Themes/Zhai.PictureView.IconPack.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/Zhai.PictureView;component/Themes/Zhai.PictureView.IconButton.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/Zhai.PictureView;component/Themes/Zhai.PictureView.CheckBox.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/Zhai.PictureView;component/Themes/Zhai.PictureView.CopyButton.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/Zhai.PictureView;component/Themes/Zhai.PictureView.LinkButton.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/Zhai.PictureView;component/Themes/Zhai.PictureView.ScrollBar.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/Zhai.PictureView;component/Themes/Zhai.PictureView.Silder.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/Zhai.PictureView;component/Themes/Zhai.PictureView.TabControl.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/Zhai.PictureView;component/Themes/Zhai.PictureView.ListDetailView.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/Zhai.PictureView;component/Themes/Zhai.PictureView.PictureWindow.xaml" />
+
             </ResourceDictionary.MergedDictionaries>
 
             <Converters:BoolToInverseBoolConverter x:Key="BoolToInverseBoolConverter"/>
@@ -27,6 +34,9 @@
             <Converters:ThumbBoxVisibilityConverter x:Key="ThumbBoxVisibilityConverter"/>
             <Converters:ScaleTipsConverter x:Key="ScaleTipsConverter"/>
             <Converters:PictureViewTitleConverter x:Key="PictureViewTitleConverter"/>
+
+
+            <local:ViewModelLocator x:Key="Locator" d:IsDataSource="True" />
         </ResourceDictionary>
     </Application.Resources>
 

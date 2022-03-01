@@ -7,6 +7,7 @@
         xmlns:Controls="clr-namespace:Zhai.PictureView.Controls"
         Title="{Binding CurrentPicture, Converter={StaticResource PictureViewTitleConverter}}" 
         Style="{StaticResource PictureWindow}"
+        DataContext="{Binding PictureWindow, Source={StaticResource Locator}}"
         WindowStartupLocation ="CenterScreen"
         Height="720" Width="960"
         MinHeight="450" MinWidth="600"
@@ -17,7 +18,7 @@
                 <Button x:Name="AboutButton" Style="{StaticResource PictureView.IconButton2}" Click="AboutButton_Click" ToolTip="关于">
                     <Path Data="{StaticResource Icon.About}"/>
                 </Button>
-                <Button x:Name="SettingsButton" Style="{StaticResource PictureView.IconButton2}" ToolTip="设置">
+                <Button x:Name="SettingsButton" Style="{StaticResource PictureView.IconButton2}" Click="SettingsButton_Click" ToolTip="设置">
                     <Path Data="{StaticResource Icon.Settings}"/>
                 </Button>
             </StackPanel>
@@ -91,8 +92,6 @@
             <Border Padding="8 0 0 0" Margin="0 0 3 0"
                     Visibility="{Binding CurrentPicture, Converter={StaticResource NullableToVisibilityConverter}}">
                 <DockPanel>
-                    <TextBlock DockPanel.Dock="Top" Text="缩略图" Margin="5 12 0 12"/>
-
                     <ListBox x:Name="PictureList"
                          ItemsSource="{Binding Folder}" 
                          Background="Transparent" BorderThickness="0"
@@ -297,53 +296,51 @@
             </VisualStateManager.VisualStateGroups>
             <Border Padding="8 0 0 0" Margin="0 0 3 0">
                 <DockPanel>
-                    <TextBlock DockPanel.Dock="Top" Text="滤镜" Margin="1 12 0 12"/>
-                    <Grid>
-                        <ListBox x:Name="EffectList" Margin="-3 0 0 0"
+                    <ListBox x:Name="EffectList" Margin="-3 0 0 0"
                                  ItemsSource="{Binding Effects}"
                                  SelectedItem="{Binding CurrentPictureEffect}"
                                  Background="Transparent" BorderThickness="0"
                                  ScrollViewer.HorizontalScrollBarVisibility="Disabled">
-                            <ListBox.ItemsPanel>
-                                <ItemsPanelTemplate>
-                                    <WrapPanel IsItemsHost="True"/>
-                                </ItemsPanelTemplate>
-                            </ListBox.ItemsPanel>
-                            <ListBox.ItemContainerStyle>
-                                <Style TargetType="{x:Type ListBoxItem}">
-                                    <Setter Property="Margin" Value="2"/>
-                                    <Setter Property="Padding" Value="0"/>
-                                    <Setter Property="BorderThickness" Value="2"/>
-                                    <Setter Property="BorderBrush" Value="Transparent"/>
-                                    <Setter Property="Template">
-                                        <Setter.Value>
-                                            <ControlTemplate TargetType="{x:Type ListBoxItem}">
-                                                <StackPanel>
-                                                    <Border CornerRadius="2" Width="60" Height="60" HorizontalAlignment="Left"
+                        <ListBox.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <WrapPanel IsItemsHost="True"/>
+                            </ItemsPanelTemplate>
+                        </ListBox.ItemsPanel>
+                        <ListBox.ItemContainerStyle>
+                            <Style TargetType="{x:Type ListBoxItem}">
+                                <Setter Property="Margin" Value="2"/>
+                                <Setter Property="Padding" Value="0"/>
+                                <Setter Property="BorderThickness" Value="2"/>
+                                <Setter Property="BorderBrush" Value="Transparent"/>
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="{x:Type ListBoxItem}">
+                                            <StackPanel>
+                                                <Border CornerRadius="2" Width="60" Height="60" HorizontalAlignment="Left"
                                                             BorderThickness="{TemplateBinding BorderThickness}" BorderBrush="{TemplateBinding BorderBrush}"
                                                             Padding="{TemplateBinding Padding}" SnapsToDevicePixels="true">
-                                                        <Image Stretch="UniformToFill"
+                                                    <Image Stretch="UniformToFill"
                                                                Source="{Binding DataContext.CurrentPicture.ThumbSource, RelativeSource={RelativeSource AncestorType=ListBox}}" 
                                                                Effect="{Binding Effect}"
                                                                ToolTip="{Binding Name}"/>
-                                                    </Border>
-                                                </StackPanel>
-                                                <ControlTemplate.Triggers>
-                                                    <Trigger Property="IsMouseOver" Value="True">
-                                                        <Setter Property="BorderBrush" Value="DeepSkyBlue"/>
-                                                    </Trigger>
-                                                    <Trigger Property="IsSelected" Value="True">
-                                                        <Setter Property="BorderBrush" Value="DeepSkyBlue"/>
-                                                        <Setter Property="BorderThickness" Value="2"/>
-                                                        <Setter Property="Margin" Value="2"/>
-                                                    </Trigger>
-                                                </ControlTemplate.Triggers>
-                                            </ControlTemplate>
-                                        </Setter.Value>
-                                    </Setter>
-                                </Style>
-                            </ListBox.ItemContainerStyle>
-                            <!--<Controls:ListDetailView.ItemDetailTemplate>
+                                                </Border>
+                                            </StackPanel>
+                                            <ControlTemplate.Triggers>
+                                                <Trigger Property="IsMouseOver" Value="True">
+                                                    <Setter Property="BorderBrush" Value="DeepSkyBlue"/>
+                                                </Trigger>
+                                                <Trigger Property="IsSelected" Value="True">
+                                                    <Setter Property="BorderBrush" Value="DeepSkyBlue"/>
+                                                    <Setter Property="BorderThickness" Value="2"/>
+                                                    <Setter Property="Margin" Value="2"/>
+                                                </Trigger>
+                                            </ControlTemplate.Triggers>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </Style>
+                        </ListBox.ItemContainerStyle>
+                        <!--<Controls:ListDetailView.ItemDetailTemplate>
                                 <DataTemplate>
                                     <Border Height="100" Margin="4 0 10 0">
                                         <StackPanel>
@@ -353,8 +350,7 @@
                                     </Border>
                                 </DataTemplate>
                             </Controls:ListDetailView.ItemDetailTemplate>-->
-                        </ListBox>
-                    </Grid>
+                    </ListBox>
                 </DockPanel>
             </Border>
         </Grid>
