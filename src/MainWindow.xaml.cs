@@ -39,7 +39,7 @@ namespace Zhai.PictureView
 
             InitSyncUpdateMoveRectTimer();
 
-            VisualStateManager.GoToElementState(this.PictureEditView, "PictureEditViewHide", true);
+            VisualStateManager.GoToElementState(this.PictureEditView, ViewModel.IsShowPictureEditView ? "PictureEditViewShow" : "PictureEditViewHide", false);
         }
 
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
@@ -60,14 +60,15 @@ namespace Zhai.PictureView
 
             if (!security.AreAccessRulesProtected)
             {
-                VisualStateManager.GoToElementState(this.PictureListView, "PictureListViewShow", true);
-
                 var oldFolder = ViewModel.Folder;
 
                 ViewModel.Folder = new Folder(directory);
                 ViewModel.CurrentPicture = ViewModel.Folder.Where(t => t.PicturePath == filename).FirstOrDefault();
 
                 oldFolder?.Clean();
+
+                ViewModel.IsShowPictureListView = ViewModel.Folder != null && ViewModel.Folder.Count > 1;
+                VisualStateManager.GoToElementState(this.PictureListView, ViewModel.IsShowPictureListView ? "PictureListViewShow" : "PictureListViewHide", false);
             }
             else
             {
@@ -623,7 +624,7 @@ namespace Zhai.PictureView
 
         private void AdjustButton_Click(object sender, RoutedEventArgs e)
         {
-            if (ViewModel.Folder == null || ViewModel.Folder.Count <= 1) return;
+            if (ViewModel.Folder == null || ViewModel.Folder.Count <= 0) return;
 
             if (ViewModel.CurrentPicture != null)
             {
@@ -633,7 +634,7 @@ namespace Zhai.PictureView
             }
             else
             {
-                VisualStateManager.GoToElementState(this.PictureEditView, "PictureEditViewHide", true);
+                VisualStateManager.GoToElementState(this.PictureEditView, "PictureEditViewHide", false);
             }
         }
 
@@ -652,7 +653,7 @@ namespace Zhai.PictureView
 
         private void PictureListViewToggleButton_Click(object sender, RoutedEventArgs e)
         {
-            if (ViewModel.Folder == null || ViewModel.Folder.Count <= 1) return;
+            if (ViewModel.Folder == null || ViewModel.Folder.Count <= 0) return;
 
             if (ViewModel.CurrentPicture != null)
             {
@@ -662,7 +663,7 @@ namespace Zhai.PictureView
             }
             else
             {
-                VisualStateManager.GoToElementState(this.PictureListView, "PictureListViewHide", true);
+                VisualStateManager.GoToElementState(this.PictureListView, "PictureListViewHide", false);
             }
         }
 

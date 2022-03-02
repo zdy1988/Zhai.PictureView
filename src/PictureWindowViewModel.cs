@@ -135,6 +135,7 @@ namespace Zhai.PictureView
 
         public ObservableCollection<PictureEffect> Effects { get; }
 
+
         public PictureWindowViewModel()
         {
             var effects = System.Reflection.Assembly.GetExecutingAssembly().GetTypes()
@@ -145,6 +146,8 @@ namespace Zhai.PictureView
 
             Effects.Insert(0, new PictureEffect("Original", null));
         }
+
+
 
         public event EventHandler<Picture> CurrentPictureChanged;
 
