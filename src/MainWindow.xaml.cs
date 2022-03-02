@@ -52,18 +52,16 @@ namespace Zhai.PictureView
             }
         }
 
-        public void OpenPicture(string filename)
+        public void OpenPicture(DirectoryInfo dir, string filename = null, List<DirectoryInfo> borthers = null)
         {
-            var directory = System.IO.Path.GetDirectoryName(filename);
+            var newFolder = new Folder(dir, borthers);
 
-            var security = new DirectorySecurity(directory, AccessControlSections.Access);
-
-            if (!security.AreAccessRulesProtected)
+            if (newFolder.IsAccessed)
             {
                 var oldFolder = ViewModel.Folder;
 
-                ViewModel.Folder = new Folder(directory);
-                ViewModel.CurrentPicture = ViewModel.Folder.Where(t => t.PicturePath == filename).FirstOrDefault();
+                ViewModel.Folder = newFolder;
+                ViewModel.CurrentPicture = (filename == null ? ViewModel.Folder : ViewModel.Folder.Where(t => t.PicturePath == filename)).FirstOrDefault();
 
                 oldFolder?.Clean();
 
@@ -72,9 +70,12 @@ namespace Zhai.PictureView
             }
             else
             {
-                MessageBox.Show($"软件对路径：“{directory}”没有访问权限！");
+                MessageBox.Show($"软件对路径：“{dir.FullName}”没有访问权限！");
             }
         }
+
+        public void OpenPicture(string filename)
+            => OpenPicture(Directory.GetParent(filename), filename);
 
         private void ViewModel_ScaleChanged(object sender, double e)
         {
@@ -542,7 +543,7 @@ namespace Zhai.PictureView
 
         private void NextButton_Click(object sender, RoutedEventArgs e)
         {
-            if (ViewModel.Folder == null || ViewModel.Folder.Count <= 1) return;
+            if (ViewModel.Folder == null || !ViewModel.Folder.Any()) return;
 
             var index = ViewModel.CurrentPictureIndex + 1;
 
@@ -550,17 +551,61 @@ namespace Zhai.PictureView
             {
                 ViewModel.CurrentPictureIndex = index;
             }
+            else
+            {
+                var canNextFolder = ViewModel.Folder.GetNext(out DirectoryInfo next);
+
+                if (canNextFolder)
+                {
+                    var navWindow = new NavWindow("Next")
+                    {
+                        Owner = App.Current.MainWindow,
+                        DataContext = ViewModel.Folder.Current
+                    };
+
+                    if (navWindow.ShowDialog() == true)
+                    {
+                        OpenPicture(next, null, ViewModel.Folder.Borthers);
+
+                        return;
+                    }
+                }
+
+                ViewModel.CurrentPictureIndex = 0;
+            }
         }
 
         private void PrevButton_Click(object sender, RoutedEventArgs e)
         {
-            if (ViewModel.Folder == null || ViewModel.Folder.Count <= 1) return;
+            if (ViewModel.Folder == null || !ViewModel.Folder.Any()) return;
 
             var index = ViewModel.CurrentPictureIndex - 1;
 
             if (index >= 0)
             {
                 ViewModel.CurrentPictureIndex = index;
+            }
+            else
+            {
+                var canPrevFolder = ViewModel.Folder.GetPrev(out DirectoryInfo prev);
+
+                if (canPrevFolder)
+                {
+                    var navWindow = new NavWindow("Prev")
+                    {
+                        Owner = App.Current.MainWindow,
+                        DataContext = ViewModel.Folder.Current
+                    };
+
+                    if (navWindow.ShowDialog() == true)
+                    {
+                        OpenPicture(prev, null, ViewModel.Folder.Borthers);
+
+                        return;
+                    }
+                }
+
+                ViewModel.CurrentPictureIndex = ViewModel.Folder.Count - 1;
             }
         }
 

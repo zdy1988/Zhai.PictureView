@@ -13,6 +13,7 @@
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="pack://application:,,,/Zhai.PictureView;component/Themes/Zhai.PictureView.IconPack.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/Zhai.PictureView;component/Themes/Zhai.PictureView.IconButton.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/Zhai.PictureView;component/Themes/Zhai.PictureView.Button.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/Zhai.PictureView;component/Themes/Zhai.PictureView.CheckBox.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/Zhai.PictureView;component/Themes/Zhai.PictureView.CopyButton.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/Zhai.PictureView;component/Themes/Zhai.PictureView.LinkButton.xaml" />

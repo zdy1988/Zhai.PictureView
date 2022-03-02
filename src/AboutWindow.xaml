@@ -9,6 +9,7 @@
         WindowStartupLocation ="CenterScreen"             
         Title="关于 ZDY ' PICTURE"
         TitleBarVisibility="Collapsed"
+        ShowInTaskbar="False"
         ResizeMode="NoResize"
         Width="420" Height="310"
         mc:Ignorable="d">

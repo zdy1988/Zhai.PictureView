@@ -7,6 +7,7 @@
         Style="{StaticResource PictureWindow}"
         DataContext="{Binding SettingsWindow, Source={StaticResource Locator}}"
         WindowStartupLocation ="CenterScreen" 
+        ShowInTaskbar="False"
         ResizeMode="NoResize"
         Title="Settings" 
         Height="420" Width="560"

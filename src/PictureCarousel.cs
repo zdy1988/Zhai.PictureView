@@ -24,7 +24,7 @@ namespace Zhai.PictureView
         {
             var newIndex = App.PictureWindowViewModel.CurrentPictureIndex + 1;
 
-            if (newIndex > App.PictureWindowViewModel.Folder.Count)
+            if (newIndex > App.PictureWindowViewModel.Folder.Count - 1)
             {
                 newIndex = 0;
             }
