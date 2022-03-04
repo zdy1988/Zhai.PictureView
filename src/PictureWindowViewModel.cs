@@ -18,13 +18,7 @@ namespace Zhai.PictureView
         public Folder Folder
         {
             get => folder;
-            set
-            {
-                if (SetProperty(ref folder, value))
-                {
-                    IsShowPictureListView = folder?.Count > 1;
-                }
-            }
+            set => SetProperty(ref folder, value);
         }
 
         private bool isShowPictureListView = false;
@@ -51,10 +45,10 @@ namespace Zhai.PictureView
                 {
                     CurrentPictureChanged?.Invoke(this, value);
 
-                    if (value != null && value.ThumbState == PictureState.Failed)
-                    {
-                        ThreadPool.QueueUserWorkItem(_ => value.DrawThumb());
-                    }
+                    //if (value != null && value.ThumbState == PictureState.Failed)
+                    //{
+                    //    ThreadPool.QueueUserWorkItem(_ => value.DrawThumb());
+                    //}
                 }
             }
         }

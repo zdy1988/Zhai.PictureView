@@ -26,6 +26,8 @@
             </ResourceDictionary.MergedDictionaries>
 
             <Converters:BoolToInverseBoolConverter x:Key="BoolToInverseBoolConverter"/>
+            <Converters:BoolToInverseVisibilityConverter x:Key="BoolToInverseVisibilityConverter"/>
+            <Converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
             <Converters:NullableToBoolConverter x:Key="NullableToBoolConverter"/>
             <Converters:NullableToVisibilityConverter x:Key="NullableToVisibilityConverter"/>
             <Converters:NullableToInverseVisibilityConverter x:Key="NullableToInverseVisibilityConverter"/>

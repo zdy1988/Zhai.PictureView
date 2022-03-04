@@ -8,6 +8,8 @@ using System.Security.AccessControl;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Threading;
 
 namespace Zhai.PictureView
 {
@@ -26,48 +28,35 @@ namespace Zhai.PictureView
 
             Current = dir;
 
-            var files = dir.EnumerateFiles().Where(PictureSupportExpression);
-
-            if (files.Any())
+            if (borthers != null)
             {
-                foreach (var file in files)
-                {
-                    Add(new Picture(file.FullName));
-                }
-
-                LoadThumbnails();
-
-                if (borthers != null)
-                {
-                    Borthers = borthers;
-                }
-                else
-                {
-                    LoadBorthers();
-                }
+                Borthers = borthers;
             }
-        }
-
-        public Folder(string filename)
-            : this(new DirectoryInfo(filename))
-        {
-
         }
 
 
         readonly Func<FileInfo, bool> PictureSupportExpression = file => (file.Attributes & (FileAttributes.Hidden | FileAttributes.System | FileAttributes.Temporary)) == 0 && PictureSupport.IsSupported(file.FullName);
 
-
-        public async void LoadThumbnails()
+        public async Task LoadAsync()
         {
-            await Task.Run(() =>
-            {
-                foreach (var pic in this)
-                {
-                    pic.DrawThumb();
-                }
+            var files = Current.EnumerateFiles().Where(PictureSupportExpression);
 
-            }).ConfigureAwait(false);
+            if (files.Any())
+            {
+                await Task.Run(() =>
+                {
+                    foreach (var file in files)
+                    {
+                        Application.Current.Dispatcher.Invoke(() => Add(new Picture(file.FullName)));
+                    };
+
+                });
+
+                if (Borthers == null)
+                {
+                    LoadBorthers();
+                }
+            }
         }
 
         public void LoadBorthers()

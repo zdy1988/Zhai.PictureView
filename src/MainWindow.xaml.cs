@@ -42,17 +42,17 @@ namespace Zhai.PictureView
             VisualStateManager.GoToElementState(this.PictureEditView, ViewModel.IsShowPictureEditView ? "PictureEditViewShow" : "PictureEditViewHide", false);
         }
 
-        private void MainWindow_Loaded(object sender, RoutedEventArgs e)
+        private async void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
             var arg = Application.Current.Properties["ArbitraryArgName"];
 
             if (arg != null)
             {
-                OpenPicture(arg.ToString());
+                await OpenPicture(arg.ToString());
             }
         }
 
-        public void OpenPicture(DirectoryInfo dir, string filename = null, List<DirectoryInfo> borthers = null)
+        public async Task OpenPicture(DirectoryInfo dir, string filename = null, List<DirectoryInfo> borthers = null)
         {
             var newFolder = new Folder(dir, borthers);
 
@@ -61,6 +61,8 @@ namespace Zhai.PictureView
                 var oldFolder = ViewModel.Folder;
 
                 ViewModel.Folder = newFolder;
+                await ViewModel.Folder.LoadAsync();
+                ViewModel.IsShowPictureListView = ViewModel.Folder?.Count > 1;
                 ViewModel.CurrentPicture = (filename == null ? ViewModel.Folder : ViewModel.Folder.Where(t => t.PicturePath == filename)).FirstOrDefault();
 
                 oldFolder?.Clean();
@@ -74,7 +76,7 @@ namespace Zhai.PictureView
             }
         }
 
-        public void OpenPicture(string filename)
+        public Task OpenPicture(string filename)
             => OpenPicture(Directory.GetParent(filename), filename);
 
         private void ViewModel_ScaleChanged(object sender, double e)
@@ -239,7 +241,7 @@ namespace Zhai.PictureView
             Picture.SetValue(Canvas.LeftProperty, x);
             Picture.SetValue(Canvas.TopProperty, y);
 
- 
+
             UpdateMoveRect();
         }
 
@@ -484,7 +486,7 @@ namespace Zhai.PictureView
 
         #region Contorllers
 
-        private void OpenButton_Click(object sender, RoutedEventArgs e)
+        private async void OpenButton_Click(object sender, RoutedEventArgs e)
         {
             var dialog = new OpenFileDialog
             {
@@ -492,7 +494,7 @@ namespace Zhai.PictureView
             };
 
             if (dialog.ShowDialog() is true)
-                OpenPicture(dialog.FileName);
+                await OpenPicture(dialog.FileName);
         }
 
         private void ZoomInButton_Click(object sender, RoutedEventArgs e)
@@ -541,7 +543,7 @@ namespace Zhai.PictureView
             ViewModel.RotateAngle -= 90;
         }
 
-        private void NextButton_Click(object sender, RoutedEventArgs e)
+        private async void NextButton_Click(object sender, RoutedEventArgs e)
         {
             if (ViewModel.Folder == null || !ViewModel.Folder.Any()) return;
 
@@ -565,7 +567,7 @@ namespace Zhai.PictureView
 
                     if (navWindow.ShowDialog() == true)
                     {
-                        OpenPicture(next, null, ViewModel.Folder.Borthers);
+                        await OpenPicture(next, null, ViewModel.Folder.Borthers);
 
                         return;
                     }
@@ -575,7 +577,7 @@ namespace Zhai.PictureView
             }
         }
 
-        private void PrevButton_Click(object sender, RoutedEventArgs e)
+        private async void PrevButton_Click(object sender, RoutedEventArgs e)
         {
             if (ViewModel.Folder == null || !ViewModel.Folder.Any()) return;
 
@@ -599,7 +601,7 @@ namespace Zhai.PictureView
 
                     if (navWindow.ShowDialog() == true)
                     {
-                        OpenPicture(prev, null, ViewModel.Folder.Borthers);
+                        await OpenPicture(prev, null, ViewModel.Folder.Borthers);
 
                         return;
                     }
@@ -778,6 +780,16 @@ namespace Zhai.PictureView
             };
 
             window.ShowDialog();
+        }
+
+        private async void PictureWindow_Drop(object sender, DragEventArgs e)
+        {
+            var filename = ((System.Array)e.Data.GetData(DataFormats.FileDrop)).GetValue(0).ToString();
+
+            if (File.Exists(filename) && PictureSupport.IsSupported(filename))
+            {
+                await OpenPicture(filename);
+            }
         }
     }
 }
