@@ -98,7 +98,7 @@
                          ItemsSource="{Binding Folder}" 
                          Background="Transparent" BorderThickness="0"
                          VirtualizingPanel.ScrollUnit="Pixel"
-                         VirtualizingPanel.VirtualizationMode="Recycling"
+                         VirtualizingPanel.VirtualizationMode="Standard"
                          VirtualizingPanel.IsVirtualizing="True"
                          VirtualizingPanel.IsContainerVirtualizable="True"
                          VirtualizingPanel.CacheLengthUnit="Item"
