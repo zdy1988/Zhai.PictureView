@@ -4,13 +4,14 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Security.AccessControl;
+using System.Threading;
 using System.Threading.Tasks;
-using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media.Animation;
 using System.Windows.Threading;
+using Timer = System.Timers.Timer;
 
 namespace Zhai.PictureView
 {
@@ -21,6 +22,8 @@ namespace Zhai.PictureView
         public MainWindow()
         {
             InitializeComponent();
+
+            InitializeMainWindow();
 
             Loaded += MainWindow_Loaded;
 
@@ -40,6 +43,16 @@ namespace Zhai.PictureView
             InitSyncUpdateMoveRectTimer();
 
             VisualStateManager.GoToElementState(this.PictureEditView, ViewModel.IsShowPictureEditView ? "PictureEditViewShow" : "PictureEditViewHide", false);
+        }
+
+        private void InitializeMainWindow()
+        {
+            var settings = Properties.Settings.Default;
+
+            if (settings.StartWindowMaximized)
+            {
+                this.WindowState = WindowState.Maximized;
+            }
         }
 
         private async void MainWindow_Loaded(object sender, RoutedEventArgs e)
@@ -62,10 +75,10 @@ namespace Zhai.PictureView
 
                 ViewModel.Folder = newFolder;
                 await ViewModel.Folder.LoadAsync();
-                ViewModel.IsShowPictureListView = ViewModel.Folder?.Count > 1;
+                ViewModel.CanPictureCarouselPlay = ViewModel.Folder?.Count > 1;
                 ViewModel.CurrentPicture = (filename == null ? ViewModel.Folder : ViewModel.Folder.Where(t => t.PicturePath == filename)).FirstOrDefault();
 
-                oldFolder?.Clean();
+                ThreadPool.QueueUserWorkItem(_ => this.Dispatcher.Invoke(() => oldFolder?.Clean()));
 
                 ViewModel.IsShowPictureListView = ViewModel.Folder != null && ViewModel.Folder.Count > 1;
                 VisualStateManager.GoToElementState(this.PictureListView, ViewModel.IsShowPictureListView ? "PictureListViewShow" : "PictureListViewHide", false);
@@ -666,7 +679,10 @@ namespace Zhai.PictureView
         {
             if (ViewModel.Folder == null || ViewModel.Folder.Count <= 1) return;
 
-            ViewModel.IsPictureCarouselPlaing = !ViewModel.IsPictureCarouselPlaing;
+            if (ViewModel.CanPictureCarouselPlay)
+            {
+                ViewModel.IsPictureCarouselPlaing = !ViewModel.IsPictureCarouselPlaing;
+            }
         }
 
         private void AdjustButton_Click(object sender, RoutedEventArgs e)
@@ -747,6 +763,10 @@ namespace Zhai.PictureView
             else if (e.Key == Key.Back)
             {
                 ResetPicture();
+            }
+            else if (e.Key == Key.Tab)
+            { 
+                ViewModel.IsShowGallery = !ViewModel.IsShowGallery;
             }
         }
 

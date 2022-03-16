@@ -6,6 +6,41 @@ ZHAI PICTURE VIEW build for .Net 6
 
 ![Snapshot](/Snapshot.jpg)
 
+![Snapshot](/Snapshot2.jpg)
+
+## Future
+
+- [x] Dragging
+- [x] Rotate Left/Right
+- [x] Zoom In/Out
+- [x] Zoom In/Out based on a point
+- [x] Double click to zoom in
+- [x] Thumb list
+- [x] Thumb map
+- [x] Auto Play
+- [x] Print Picture
+- [x] Delete Picture
+- [x] Prev Picture
+- [x] Next Picture
+- [x] Prev Picture Floder
+- [x] Next Picture Floder
+- [x] Exif
+- [x] Effects
+- [x] Gallery
+
+## Shortcuts
+
+| Keys      | Description |
+| ----------- | ----------- |
+| Key.Left      | Prev Picture or Prev Picture Floder     |
+| Key.Right   | Next Picture or Next Picture Floder       |
+| Key.Up or Key.OemPlus | Zoom In |
+| Key.Down or Key.OemMinus | Zoom Out |
+| Key.OemPeriod | Rotate Right |
+| Key.OemComma | Rotate Left |
+| Key.Back | Reset |
+| Key.Tab | Show/Hide Gallery |
+
 ## File support
 
 ```
@@ -17,7 +52,7 @@ ZHAI PICTURE VIEW build for .Net 6
 
 RAW camera formats may be slower to load
 
-# Thanks
+## Thanks
 
 [Magick.NET](https://github.com/dlemstra/Magick.NET) 
 
@@ -28,3 +63,5 @@ RAW camera formats may be slower to load
 [Pfim](https://nickbabcock.github.io/Pfim/)
 
 [SkiaSharp](https://github.com/mono/SkiaSharp)
+
+[VirtualizingWrapPanel](https://github.com/sbaeumlisberger/VirtualizingWrapPanel)

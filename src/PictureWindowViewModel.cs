@@ -100,6 +100,13 @@ namespace Zhai.PictureView
             }
         }
 
+        private bool canPictureCarouselPlay = false;
+        public bool CanPictureCarouselPlay
+        {
+            get => canPictureCarouselPlay;
+            set => SetProperty(ref canPictureCarouselPlay, value);
+        }
+
         private bool isPictureCarouselPlaing = false;
         public bool IsPictureCarouselPlaing
         {
@@ -117,6 +124,13 @@ namespace Zhai.PictureView
                     }
                 }
             }
+        }
+
+        private bool isShowGallery = false;
+        public bool IsShowGallery
+        {
+            get => isShowGallery;
+            set => SetProperty(ref isShowGallery, value);
         }
 
         private PictureEffect currentPictureEffect;

@@ -11,7 +11,7 @@
 
 	<PropertyGroup>
 		<Title>ZHAI PICTURE VIEW</Title>
-		<Version>1.1.0.304</Version>
+		<Version>1.1.0.316</Version>
 		<Authors>ZDY</Authors>
 		<Copyright>Copyright © 2022 ZDY 保留所有权利。</Copyright>
 		<Description>诞生于我（ZDY）的个人兴趣，我会在有限的时间里维护这个软件。如果在使用的过程中发现什么BUG，欢迎发送描述信息和图片到我的邮箱，也可以在我的GitHub上留言，我会尽力改进软件...</Description>
@@ -77,12 +77,13 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Magick.NET-Q16-AnyCPU" Version="10.0.0" />
-		<PackageReference Include="Magick.NET.SystemDrawing" Version="4.0.17" />
-		<PackageReference Include="Magick.NET.SystemWindowsMedia" Version="4.0.17" />
+		<PackageReference Include="Magick.NET-Q16-AnyCPU" Version="10.1.0" />
+		<PackageReference Include="Magick.NET.SystemDrawing" Version="4.0.18" />
+		<PackageReference Include="Magick.NET.SystemWindowsMedia" Version="4.0.18" />
 		<PackageReference Include="Microsoft-WindowsAPICodePack-Shell" Version="1.1.4" />
 		<PackageReference Include="Pfim" Version="0.10.3" />
 		<PackageReference Include="System.Drawing.Common" Version="7.0.0-preview.1.22076.8" />
+		<PackageReference Include="VirtualizingWrapPanel" Version="1.5.7" />
 		<PackageReference Include="XamlAnimatedGif" Version="2.0.2" />
 	</ItemGroup>
 
@@ -138,6 +139,21 @@
 		<Resource Include="ShaderEffects\PsEffects\TransparentAlternatingScanlinesEffect.ps" />
 		<Resource Include="ShaderEffects\PsEffects\UnderwaterEffect.ps" />
 		<Resource Include="ShaderEffects\PsEffects\WaveWarperEffect.ps" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Compile Update="Properties\Settings.Designer.cs">
+	    <DesignTimeSharedInput>True</DesignTimeSharedInput>
+	    <AutoGen>True</AutoGen>
+	    <DependentUpon>Settings.settings</DependentUpon>
+	  </Compile>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Update="Properties\Settings.settings">
+	    <Generator>SettingsSingleFileGenerator</Generator>
+	    <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+	  </None>
 	</ItemGroup>
 
 </Project>

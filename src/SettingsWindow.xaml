@@ -16,9 +16,17 @@
         <Grid Margin="13 36 12 16">
             <Border BorderBrush="#56EEEEEE" BorderThickness="1 0 0 0" Margin="60.5 0 0 0" Panel.ZIndex="-100"/>
             <TabControl TabStripPlacement="Left">
+                <TabItem Header="基本设置">
+                    <StackPanel Margin="12 8.5 0 0">
+                        <StackPanel Orientation="Horizontal" Margin="0 0 16 8">
+                            <TextBlock Margin="0 0 8 0" Text="启动时全屏显示"/>
+                            <CheckBox IsChecked="{Binding StartWindowMaximized}"/>
+                        </StackPanel>
+                    </StackPanel>
+                </TabItem>
                 <TabItem Header="文件关联">
-                    <StackPanel Margin="12 0 0 0">
-                        <TextBlock Text="设置默认使用ZDY ' PICTURE打开以下文件类型" Margin="-1 8 0 18"/>
+                    <StackPanel Margin="12 8.5 0 0">
+                        <TextBlock Text="设置默认使用ZDY ' PICTURE打开以下文件类型" Margin="-1 0 0 18"/>
                         <ItemsControl ItemsSource="{Binding AllSupported}" HorizontalAlignment="Left">
                             <ItemsControl.ItemsPanel>
                                 <ItemsPanelTemplate>

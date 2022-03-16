@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Zhai.PictureView"
+        xmlns:wpftk="clr-namespace:WpfToolkit.Controls;assembly=VirtualizingWrapPanel"
         xmlns:Controls="clr-namespace:Zhai.PictureView.Controls"
         xmlns:XamlServices="clr-namespace:Zhai.PictureView.XamlServices"
         Title="{Binding CurrentPicture, Converter={StaticResource PictureViewTitleConverter}}" 
@@ -357,7 +358,7 @@
                 </DockPanel>
             </Border>
         </Grid>
-        <Grid Grid.ColumnSpan="3" Grid.Row="2">
+        <Grid Grid.ColumnSpan="3" Grid.Row="2" x:Name="PictureController">
             <StackPanel HorizontalAlignment="Left" VerticalAlignment="Center" Orientation="Horizontal" Margin="8">
                 <StackPanel Orientation="Horizontal" IsEnabled="{Binding CurrentPicture, Converter={StaticResource NullableToBoolConverter}}">
                     <Button x:Name="PictureListViewToggleButton" Click="PictureListViewToggleButton_Click">
@@ -425,7 +426,7 @@
                         <Path Data="{StaticResource Icon.RotateRight}"/>
                     </Button>
                     <Button x:Name="AutoPlayButton" Click="AutoPlayButton_Click" ToolTip="自动播放"
-                            Visibility="{Binding IsShowPictureListView, Converter={StaticResource BoolToVisibilityConverter}}">
+                            Visibility="{Binding CanPictureCarouselPlay, Converter={StaticResource BoolToVisibilityConverter}}">
                         <Button.Style>
                             <Style TargetType="{x:Type Button}" BasedOn="{StaticResource PictureView.IconButton}">
                                 <Setter Property="RenderTransformOrigin" Value="0.5,0.5"/>
@@ -479,6 +480,80 @@
                     </Button>
                 </StackPanel>
             </StackPanel>
+        </Grid>
+        <Grid Grid.ColumnSpan="3" Grid.RowSpan="3" x:Name="GalleryView" 
+              Background="{StaticResource PictureWindowPaperColorBrush}" 
+              Visibility="{Binding IsShowGallery, Converter={StaticResource BoolToVisibilityConverter}}">
+            <ListView ItemsSource="{Binding ElementName=PictureList, Path=Items}"
+                      SelectedItem="{Binding CurrentPicture}"
+                      Margin="3 36 3 8" Background="Transparent" BorderThickness="0"
+                      VirtualizingPanel.CacheLengthUnit="Item"
+                      VirtualizingPanel.ScrollUnit="Pixel"
+                      VirtualizingPanel.VirtualizationMode="Standard">
+                <ListBox.ItemContainerStyle>
+                    <Style TargetType="{x:Type ListBoxItem}">
+                        <Setter Property="Margin" Value="0"/>
+                        <Setter Property="Padding" Value="0"/>
+                        <Setter Property="BorderThickness" Value="2"/>
+                        <Setter Property="BorderBrush" Value="Transparent"/>
+                        <Setter Property="RenderTransformOrigin" Value="0.5,0.5"/>
+                        <Setter Property="RenderTransform">
+                            <Setter.Value>
+                                <ScaleTransform CenterX="0.5" CenterY="0.5" ScaleX="0.95" ScaleY="0.95" />
+                            </Setter.Value>
+                        </Setter>
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="{x:Type ListBoxItem}">
+                                    <Border BorderBrush="{TemplateBinding BorderBrush}" HorizontalAlignment="Center" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" Padding="{TemplateBinding Padding}" SnapsToDevicePixels="true">
+                                        <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                                    </Border>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter Property="RenderTransform">
+                                                <Setter.Value>
+                                                    <ScaleTransform CenterX="0.5" CenterY="0.5" ScaleX="1" ScaleY="1" />
+                                                </Setter.Value>
+                                            </Setter>
+                                        </Trigger>
+                                        <Trigger Property="IsSelected" Value="True">
+                                            <Setter Property="BorderBrush" Value="DeepSkyBlue"/>
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </ListBox.ItemContainerStyle>
+                <ListView.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <wpftk:VirtualizingWrapPanel Orientation="Vertical" SpacingMode="StartAndEndOnly" StretchItems="True"/>
+                    </ItemsPanelTemplate>
+                </ListView.ItemsPanel>
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <Border Width="120" Height="120">
+                            <Image Stretch="Uniform" Source="{Binding ThumbSource}" ToolTip="{Binding Name}"
+                                   XamlServices:PictureService.Picture="{Binding}"/>
+                        </Border>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+            <Grid.Style>
+                <Style TargetType="{x:Type Grid}">
+                    <Style.Triggers>
+                        <Trigger Property="Visibility" Value="Visible">
+                            <Trigger.EnterActions>
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <DoubleAnimation Storyboard.TargetProperty="Opacity" From="0" To="1" Duration="0:0:0.3"/>
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </Trigger.EnterActions>
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </Grid.Style>
         </Grid>
     </Grid>
 </local:PictureWindow>

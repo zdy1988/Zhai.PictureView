@@ -12,6 +12,20 @@ namespace Zhai.PictureView
 {
     internal class SettingsWindowViewModel: BaseViewModel
     {
+        private bool startWindowMaximized = Properties.Settings.Default.StartWindowMaximized;
+        public bool StartWindowMaximized
+        {
+            get => startWindowMaximized;
+            set
+            {
+                if (SetProperty(ref startWindowMaximized, value))
+                {
+                    Properties.Settings.Default.StartWindowMaximized = value;
+                    Properties.Settings.Default.Save();
+                }
+            }
+        }
+
         public List<PictureSupportedItem> AllSupported { get; }
 
         public SettingsWindowViewModel()
