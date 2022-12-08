@@ -12,7 +12,7 @@ namespace Zhai.PictureView.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "17.0.3.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "17.3.0.0")]
     internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
         
         private static Settings defaultInstance = ((Settings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new Settings())));
@@ -26,12 +26,36 @@ namespace Zhai.PictureView.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool StartWindowMaximized {
+        public bool IsStartWindowMaximized {
             get {
-                return ((bool)(this["StartWindowMaximized"]));
+                return ((bool)(this["IsStartWindowMaximized"]));
             }
             set {
-                this["StartWindowMaximized"] = value;
+                this["IsStartWindowMaximized"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool IsWindowDarked {
+            get {
+                return ((bool)(this["IsWindowDarked"]));
+            }
+            set {
+                this["IsWindowDarked"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool IsWindowTransparency {
+            get {
+                return ((bool)(this["IsWindowTransparency"]));
+            }
+            set {
+                this["IsWindowTransparency"] = value;
             }
         }
     }

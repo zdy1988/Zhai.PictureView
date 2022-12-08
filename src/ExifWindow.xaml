@@ -5,14 +5,17 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Zhai.PictureView"
         Style="{StaticResource PictureWindow}"
+        IsTransparency="False"
+        Theme="{Binding SettingsWindow.IsWindowDarked, Source={StaticResource Locator}, Converter={StaticResource PictureViewThemeConverter}}"             
         WindowStartupLocation ="CenterScreen" 
         ResizeMode="NoResize"
         ShowInTaskbar="False"
+        Icon="/favicon.ico"
         Title="{Binding Name}" 
         Height="300" Width="400"
         mc:Ignorable="d">
-    <Grid Background="{StaticResource PictureWindowPaperColorBrush}">
-        <ScrollViewer Margin="13 48 12 16">
+    <Grid>
+        <ScrollViewer Margin="16 16 8 16">
             <ItemsControl ItemsSource="{Binding PictureExif}">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>

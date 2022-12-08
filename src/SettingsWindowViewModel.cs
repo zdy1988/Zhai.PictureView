@@ -12,15 +12,43 @@ namespace Zhai.PictureView
 {
     internal class SettingsWindowViewModel: BaseViewModel
     {
-        private bool startWindowMaximized = Properties.Settings.Default.StartWindowMaximized;
-        public bool StartWindowMaximized
+        private bool isStartWindowMaximized = Properties.Settings.Default.IsStartWindowMaximized;
+        public bool IsStartWindowMaximized
         {
-            get => startWindowMaximized;
+            get => isStartWindowMaximized;
             set
             {
-                if (SetProperty(ref startWindowMaximized, value))
+                if (SetProperty(ref isStartWindowMaximized, value))
                 {
-                    Properties.Settings.Default.StartWindowMaximized = value;
+                    Properties.Settings.Default.IsStartWindowMaximized = value;
+                    Properties.Settings.Default.Save();
+                }
+            }
+        }
+
+        private bool isWindowDarked = Properties.Settings.Default.IsWindowDarked;
+        public bool IsWindowDarked
+        {
+            get => isWindowDarked;
+            set
+            {
+                if (SetProperty(ref isWindowDarked, value))
+                {
+                    Properties.Settings.Default.IsWindowDarked = value;
+                    Properties.Settings.Default.Save();
+                }
+            }
+        }
+
+        private bool isWindowTransparency = Properties.Settings.Default.IsWindowTransparency;
+        public bool IsWindowTransparency
+        {
+            get => isWindowTransparency;
+            set
+            {
+                if (SetProperty(ref isWindowTransparency, value))
+                {
+                    Properties.Settings.Default.IsWindowTransparency = value;
                     Properties.Settings.Default.Save();
                 }
             }

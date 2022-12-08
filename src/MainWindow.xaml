@@ -7,6 +7,10 @@
         xmlns:wpftk="clr-namespace:WpfToolkit.Controls;assembly=VirtualizingWrapPanel"
         xmlns:Controls="clr-namespace:Zhai.PictureView.Controls"
         xmlns:XamlServices="clr-namespace:Zhai.PictureView.XamlServices"
+        AppName="ZDY ' PICTURE"
+        Theme="{Binding SettingsWindow.IsWindowDarked, Source={StaticResource Locator}, Converter={StaticResource PictureViewThemeConverter}}" 
+        IsTransparency="{Binding SettingsWindow.IsWindowTransparency, Source={StaticResource Locator}}" 
+        IsTopmostButtonEnabled="True"
         Title="{Binding CurrentPicture, Converter={StaticResource PictureViewTitleConverter}}" 
         Style="{StaticResource PictureWindow}"
         DataContext="{Binding PictureWindow, Source={StaticResource Locator}}"
@@ -15,8 +19,9 @@
         WindowStartupLocation ="CenterScreen"
         Height="720" Width="960"
         MinHeight="450" MinWidth="600"
+        Icon="/favicon.ico"
         mc:Ignorable="d">
-    <local:PictureWindow.TitleBar>
+    <local:PictureWindow.TitleBarContent>
         <DockPanel>
             <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
                 <Button x:Name="AboutButton" Style="{StaticResource PictureView.IconButton2}" Click="AboutButton_Click" ToolTip="关于">
@@ -43,7 +48,7 @@
                 <TextBlock Text="{Binding Folder.Count}"/>
             </StackPanel>
         </DockPanel>
-    </local:PictureWindow.TitleBar>
+    </local:PictureWindow.TitleBarContent>
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto"/>
@@ -51,7 +56,7 @@
             <ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="36"/>
+            <RowDefinition Height="0"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
@@ -93,7 +98,7 @@
                     </VisualState>
                 </VisualStateGroup>
             </VisualStateManager.VisualStateGroups>
-            <Border Padding="8 0 0 0" Margin="0 0 3 0"
+            <Border Margin="8 6 3 0"
                     Visibility="{Binding CurrentPicture, Converter={StaticResource NullableToVisibilityConverter}}">
                 <ListBox x:Name="PictureList"
                          ItemsSource="{Binding Folder}" 
@@ -129,7 +134,7 @@
                             <Setter Property="Template">
                                 <Setter.Value>
                                     <ControlTemplate TargetType="{x:Type ListBoxItem}">
-                                        <Border CornerRadius="2" BorderBrush="{TemplateBinding BorderBrush}" HorizontalAlignment="Center" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" Padding="{TemplateBinding Padding}" SnapsToDevicePixels="true">
+                                        <Border CornerRadius="2" BorderBrush="{TemplateBinding BorderBrush}" HorizontalAlignment="Left" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" Padding="{TemplateBinding Padding}" SnapsToDevicePixels="true">
                                             <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
                                         </Border>
                                         <ControlTemplate.Triggers>
@@ -260,7 +265,7 @@
                 <Controls:Loading Visibility="{Binding CurrentPicture.PictureState, Converter={StaticResource LoadingVisibilityConverter}}" />
             </Border>
         </Grid>
-        <Grid Grid.Column="2" Grid.Row="1" x:Name="PictureEditView" Width="207" Margin="0 0 -207 0">
+        <Grid Grid.Column="2" Grid.Row="1" x:Name="PictureEditView" Width="155" Margin="0 0 -151 0">
             <VisualStateManager.VisualStateGroups>
                 <VisualStateGroup x:Name="PictureEditViewStates">
                     <VisualStateGroup.Transitions>
@@ -297,7 +302,7 @@
                     </VisualState>
                 </VisualStateGroup>
             </VisualStateManager.VisualStateGroups>
-            <Border Padding="8 0 0 0" Margin="0 0 3 0"
+            <Border Padding="12 6 0 0" Margin="0 0 3 0"
                     Visibility="{Binding IsShowPictureEditView, Converter={StaticResource BoolToVisibilityConverter}}">
                 <DockPanel>
                     <ListBox x:Name="EffectList" Margin="-3 0 0 0"
@@ -344,16 +349,6 @@
                                 </Setter>
                             </Style>
                         </ListBox.ItemContainerStyle>
-                        <!--<Controls:ListDetailView.ItemDetailTemplate>
-                                <DataTemplate>
-                                    <Border Height="100" Margin="4 0 10 0">
-                                        <StackPanel>
-                                            <TextBlock Text="{Binding Name}"/>
-                                            <Slider Maximum="100" Minimum="0" Value="50"/>
-                                        </StackPanel>
-                                    </Border>
-                                </DataTemplate>
-                            </Controls:ListDetailView.ItemDetailTemplate>-->
                     </ListBox>
                 </DockPanel>
             </Border>
@@ -396,18 +391,18 @@
                             <Style TargetType="{x:Type Button}" BasedOn="{StaticResource PictureView.IconButton}">
                                 <Setter Property="Content">
                                     <Setter.Value>
-                                        <Path Data="{StaticResource Icon.Adapt}"/>
+                                        <Path Data="{StaticResource Icon.Origin}"/>
                                     </Setter.Value>
                                 </Setter>
-                                <Setter Property="ToolTip" Value="适应屏幕"/>
+                                <Setter Property="ToolTip" Value="原图大小"/>
                                 <Style.Triggers>
                                     <DataTrigger Binding="{Binding Scale}" Value="1.0">
                                         <Setter Property="Content">
                                             <Setter.Value>
-                                                <Path Data="{StaticResource Icon.Origin}"/>
+                                                <Path Data="{StaticResource Icon.Adapt}"/>
                                             </Setter.Value>
                                         </Setter>
-                                        <Setter Property="ToolTip" Value="原图大小"/>
+                                        <Setter Property="ToolTip" Value="适应屏幕"/>
                                     </DataTrigger>
                                 </Style.Triggers>
                             </Style>
@@ -481,8 +476,7 @@
                 </StackPanel>
             </StackPanel>
         </Grid>
-        <Grid Grid.ColumnSpan="3" Grid.RowSpan="3" x:Name="GalleryView" 
-              Background="{StaticResource PictureWindowPaperColorBrush}" 
+        <Grid Grid.ColumnSpan="3" Grid.RowSpan="3" x:Name="GalleryView" Background="{StaticResource PictureWindowDarkBackgroundColorBrush}"
               Visibility="{Binding IsShowGallery, Converter={StaticResource BoolToVisibilityConverter}}">
             <ListView ItemsSource="{Binding ElementName=PictureList, Path=Items}"
                       SelectedItem="{Binding CurrentPicture}"

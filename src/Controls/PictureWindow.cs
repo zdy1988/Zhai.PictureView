@@ -30,15 +30,43 @@ namespace Zhai.PictureView
         [DllImport("user32.dll", CharSet = CharSet.Auto)]
         public static extern IntPtr SendMessage(IntPtr hWnd, uint Msg, IntPtr wParam, IntPtr lParam);
 
-
-
-        public FrameworkElement TitleBar
-        {
-            get { return (FrameworkElement)GetValue(TitleBarProperty); }
-            set { SetValue(TitleBarProperty, value); }
+        public enum WindowTheme
+        { 
+            Dark,
+            Light
         }
 
-        public static readonly DependencyProperty TitleBarProperty = DependencyProperty.Register(nameof(TitleBar), typeof(FrameworkElement), typeof(PictureWindow), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.Inherits));
+        public string AppName
+        {
+            get { return (string)GetValue(AppNameProperty); }
+            set { SetValue(AppNameProperty, value); }
+        }
+
+        public static readonly DependencyProperty AppNameProperty = DependencyProperty.Register(nameof(AppName), typeof(string), typeof(PictureWindow), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.Inherits));
+
+        public WindowTheme Theme
+        {
+            get { return (WindowTheme)GetValue(ThemeProperty); }
+            set { SetValue(ThemeProperty, value); }
+        }
+
+        public static readonly DependencyProperty ThemeProperty = DependencyProperty.Register(nameof(Theme), typeof(WindowTheme), typeof(PictureWindow), new FrameworkPropertyMetadata(WindowTheme.Dark, FrameworkPropertyMetadataOptions.Inherits));
+
+        public bool IsTransparency
+        {
+            get { return (bool)GetValue(IsTransparencyProperty); }
+            set { SetValue(IsTransparencyProperty, value); }
+        }
+
+        public static readonly DependencyProperty IsTransparencyProperty = DependencyProperty.Register(nameof(IsTransparency), typeof(bool), typeof(PictureWindow), new FrameworkPropertyMetadata(true, FrameworkPropertyMetadataOptions.Inherits));
+
+        public FrameworkElement TitleBarContent
+        {
+            get { return (FrameworkElement)GetValue(TitleBarContentProperty); }
+            set { SetValue(TitleBarContentProperty, value); }
+        }
+
+        public static readonly DependencyProperty TitleBarContentProperty = DependencyProperty.Register(nameof(TitleBarContent), typeof(FrameworkElement), typeof(PictureWindow), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.Inherits));
 
         public Visibility TitleBarVisibility
         {
@@ -48,6 +76,13 @@ namespace Zhai.PictureView
 
         public static readonly DependencyProperty TitleBarVisibilityProperty = DependencyProperty.Register(nameof(TitleBarVisibility), typeof(Visibility), typeof(PictureWindow), new FrameworkPropertyMetadata(Visibility.Visible, FrameworkPropertyMetadataOptions.Inherits));
 
+        public bool IsTopmostButtonEnabled
+        {
+            get { return (bool)GetValue(IsTopmostButtonEnabledProperty); }
+            set { SetValue(IsTopmostButtonEnabledProperty, value); }
+        }
+
+        public static readonly DependencyProperty IsTopmostButtonEnabledProperty = DependencyProperty.Register(nameof(IsTopmostButtonEnabled), typeof(bool), typeof(PictureWindow), new FrameworkPropertyMetadata(false, FrameworkPropertyMetadataOptions.Inherits));
 
 
         public PictureWindow()

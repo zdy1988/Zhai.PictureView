@@ -20,7 +20,6 @@
                 <ResourceDictionary Source="pack://application:,,,/Zhai.PictureView;component/Themes/Zhai.PictureView.ScrollBar.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/Zhai.PictureView;component/Themes/Zhai.PictureView.Silder.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/Zhai.PictureView;component/Themes/Zhai.PictureView.TabControl.xaml" />
-                <ResourceDictionary Source="pack://application:,,,/Zhai.PictureView;component/Themes/Zhai.PictureView.ListDetailView.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/Zhai.PictureView;component/Themes/Zhai.PictureView.PictureWindow.xaml" />
 
             </ResourceDictionary.MergedDictionaries>
@@ -37,6 +36,7 @@
             <Converters:ThumbBoxVisibilityConverter x:Key="ThumbBoxVisibilityConverter"/>
             <Converters:ScaleTipsConverter x:Key="ScaleTipsConverter"/>
             <Converters:PictureViewTitleConverter x:Key="PictureViewTitleConverter"/>
+            <Converters:PictureViewThemeConverter x:Key="PictureViewThemeConverter"/>
 
 
             <local:ViewModelLocator x:Key="Locator" d:IsDataSource="True" />

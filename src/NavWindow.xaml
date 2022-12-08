@@ -6,13 +6,16 @@
         xmlns:local="clr-namespace:Zhai.PictureView"
         xmlns:Controls="clr-namespace:Zhai.PictureView.Controls"
         Style="{StaticResource PictureWindow}"
+        IsTransparency="False"
+        Theme="{Binding SettingsWindow.IsWindowDarked, Source={StaticResource Locator}, Converter={StaticResource PictureViewThemeConverter}}"
         WindowStartupLocation ="CenterScreen" 
         ResizeMode="NoResize"
         ShowInTaskbar="False"
-        Title="{Binding Name}" 
+        Icon="/favicon.ico"
+        Title="{Binding Name, StringFormat=导航到 : {0}}" 
         Height="240" Width="400"
         mc:Ignorable="d">
-    <Grid Background="{StaticResource PictureWindowPaperColorBrush}">
+    <Grid>
 
         <StackPanel VerticalAlignment="Center">
 

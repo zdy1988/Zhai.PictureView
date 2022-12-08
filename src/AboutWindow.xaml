@@ -6,6 +6,8 @@
         xmlns:local="clr-namespace:Zhai.PictureView"
         xmlns:Controls="clr-namespace:Zhai.PictureView.Controls"
         Style="{StaticResource PictureWindow}"
+        IsTransparency="False"
+        Theme="{Binding SettingsWindow.IsWindowDarked, Source={StaticResource Locator}, Converter={StaticResource PictureViewThemeConverter}}"             
         WindowStartupLocation ="CenterScreen"             
         Title="关于 ZDY ' PICTURE"
         TitleBarVisibility="Collapsed"
@@ -13,7 +15,7 @@
         ResizeMode="NoResize"
         Width="420" Height="310"
         mc:Ignorable="d">
-    <Border Background="{StaticResource PictureWindowPaperColorBrush}">
+    <Border>
         <Grid Margin="24">
             <Grid.RowDefinitions>
                 <RowDefinition Height="0"/>

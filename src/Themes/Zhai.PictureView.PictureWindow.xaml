@@ -3,15 +3,21 @@
                     xmlns:local="clr-namespace:Zhai.PictureView"
                     xmlns:PresentationOptions="http://schemas.microsoft.com/winfx/2006/xaml/presentation/options">
 
-    <SolidColorBrush x:Key="PictureWindowPaperColorBrush" Color="#FF303030" PresentationOptions:Freeze="True"/>
-    
-    <SolidColorBrush x:Key="PictureWindowBackground" Color="#70000000" PresentationOptions:Freeze="True"/>
+    <SolidColorBrush x:Key="PictureWindowDarkTitleBarBackgroundColorBrush" Color="#2f3339" PresentationOptions:Freeze="True"/>
+    <SolidColorBrush x:Key="PictureWindowDarkBackgroundColorBrush" Color="#1e1e1e" PresentationOptions:Freeze="True"/>
+    <SolidColorBrush x:Key="PictureWindowLightTitleBarBackgroundColorBrush" Color="#ebeff8" PresentationOptions:Freeze="True"/>
+    <SolidColorBrush x:Key="PictureWindowLightBackgroundColorBrush" Color="#fafcff" PresentationOptions:Freeze="True"/>
+
+    <SolidColorBrush x:Key="PictureWindowDarkTitleBarTransparencyBackgroundColorBrush" Color="#702f3339" PresentationOptions:Freeze="True"/>
+    <SolidColorBrush x:Key="PictureWindowDarkTransparencyBackgroundColorBrush" Color="#701e1e1e" PresentationOptions:Freeze="True"/>
+    <SolidColorBrush x:Key="PictureWindowLightTitleBarTransparencyBackgroundColorBrush" Color="#70ebeff8" PresentationOptions:Freeze="True"/>
+    <SolidColorBrush x:Key="PictureWindowLightTransparencyBackgroundColorBrush" Color="#70fafcff" PresentationOptions:Freeze="True"/>
+
+    <DropShadowEffect x:Key="PictureWindowDarkShadowEffect" BlurRadius="15" Color="#000000" Direction="90" ShadowDepth="1"/>
+    <DropShadowEffect x:Key="PictureWindowLightShadowEffect" BlurRadius="15" Color="#9d9d9d" Direction="90" ShadowDepth="1"/>
 
     <ControlTemplate x:Key="PictureWindowTemplete" TargetType="{x:Type local:PictureWindow}">
-        <Border x:Name="Layout" BorderBrush="Transparent" BorderThickness="12">
-            <Border.Effect>
-                <DropShadowEffect BlurRadius="15" Color="#000000" Direction="90" ShadowDepth="1"/>
-            </Border.Effect>
+        <Border x:Name="Layout" BorderBrush="Transparent" BorderThickness="12" Effect="{StaticResource PictureWindowDarkShadowEffect}">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="2"/>
@@ -23,26 +29,25 @@
                     <ColumnDefinition/>
                     <ColumnDefinition Width="2"/>
                 </Grid.ColumnDefinitions>
-                <Grid Grid.Row="1" Grid.Column="1" Background="{StaticResource PictureWindowBackground}" >
-                    <ContentPresenter ClipToBounds="True" />
+                <Grid x:Name="Main" Grid.Row="1" Grid.Column="1" Background="Transparent" >
+                    <ContentPresenter x:Name="MainContent" ClipToBounds="True" Margin="0 36 0 0"/>
                     <DockPanel x:Name="TitleBar" VerticalAlignment="Top" Height="36" Panel.ZIndex="1" Background="Transparent">
-                        <StackPanel DockPanel.Dock="Left" Orientation="Horizontal"
-                                    Visibility="{TemplateBinding TitleBarVisibility}">
+                        <StackPanel DockPanel.Dock="Left" Orientation="Horizontal" Visibility="{TemplateBinding TitleBarVisibility}">
                             <Image x:Name="appIcon"
                                        Stretch="UniformToFill"
                                        Margin="12,0,0,0"
                                        Width="16" Height="16"
                                        HorizontalAlignment="Left"
                                        VerticalAlignment="Center"
-                                       Source="/favicon.ico"/>
+                                       Source="{Binding Icon, RelativeSource={RelativeSource AncestorType=Window}}"/>
                             <TextBlock x:Name="captionText"
                                    Margin="8,0,0,0"
-                                   Text="ZDY ' PICTURE"
+                                   Text="{TemplateBinding AppName}"
                                    VerticalAlignment="Center"
                                    TextWrapping="NoWrap" TextTrimming="CharacterEllipsis"/>
                         </StackPanel>
                         <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
-                            <Button x:Name="PinButton" Style="{StaticResource PictureView.IconButton2}" ToolTip="置顶">
+                            <Button x:Name="PinButton" Style="{StaticResource PictureView.IconButton2}" ToolTip="置顶" Visibility="Collapsed">
                                 <Path x:Name="PinButtonIcon" Data="{StaticResource Icon.Pin}" RenderTransformOrigin="0.5,0.5"/>
                             </Button>
                             <Button x:Name="MinimizeButton" Style="{StaticResource PictureView.IconButton2}" ToolTip="最小化">
@@ -58,8 +63,7 @@
                                 <Path Data="{StaticResource Icon.Close}"/>
                             </Button>
                         </StackPanel>
-                        <ContentControl Content="{TemplateBinding TitleBar}"
-                                        Visibility="{TemplateBinding TitleBarVisibility}"/>
+                        <ContentControl Content="{TemplateBinding TitleBarContent}" Visibility="{TemplateBinding TitleBarVisibility}"/>
                     </DockPanel>
                 </Grid>
                 <Rectangle Name="ResizeTopLeft" Fill="Transparent" Grid.Row="0" Grid.Column="0" Cursor="SizeNWSE" IsHitTestVisible="False"/>
@@ -100,6 +104,59 @@
                 </Setter>
                 <Setter TargetName="PinButtonIcon" Property="Fill" Value="{StaticResource PictureView.IconButton.HighlightBrush}"/>
             </Trigger>
+            <Trigger Property="Theme" Value="Light">
+                <Setter TargetName="Layout" Property="Effect" Value="{StaticResource PictureWindowLightShadowEffect}"/>
+            </Trigger>
+            <MultiTrigger>
+                <MultiTrigger.Conditions>
+                    <Condition Property="Theme" Value="Dark"/>
+                    <Condition Property="IsTransparency" Value="True"/>
+                </MultiTrigger.Conditions>
+                <MultiTrigger.Setters>
+                    <Setter TargetName="Main" Property="Background" Value="{StaticResource PictureWindowDarkTransparencyBackgroundColorBrush}"/>
+                    <Setter TargetName="TitleBar" Property="Background" Value="{StaticResource PictureWindowDarkTitleBarTransparencyBackgroundColorBrush}"/>
+                </MultiTrigger.Setters>
+            </MultiTrigger>
+            <MultiTrigger>
+                <MultiTrigger.Conditions>
+                    <Condition Property="Theme" Value="Light"/>
+                    <Condition Property="IsTransparency" Value="True"/>
+                </MultiTrigger.Conditions>
+                <MultiTrigger.Setters>
+                    <Setter TargetName="Main" Property="Background" Value="{StaticResource PictureWindowLightTransparencyBackgroundColorBrush}"/>
+                    <Setter TargetName="TitleBar" Property="Background" Value="{StaticResource PictureWindowLightTitleBarTransparencyBackgroundColorBrush}"/>
+                </MultiTrigger.Setters>
+            </MultiTrigger>
+            <MultiTrigger>
+                <MultiTrigger.Conditions>
+                    <Condition Property="Theme" Value="Dark"/>
+                    <Condition Property="IsTransparency" Value="False"/>
+                </MultiTrigger.Conditions>
+                <MultiTrigger.Setters>
+                    <Setter TargetName="Main" Property="Background" Value="{StaticResource PictureWindowDarkBackgroundColorBrush}"/>
+                    <Setter TargetName="TitleBar" Property="Background" Value="{StaticResource PictureWindowDarkTitleBarBackgroundColorBrush}"/>
+                </MultiTrigger.Setters>
+            </MultiTrigger>
+            <MultiTrigger>
+                <MultiTrigger.Conditions>
+                    <Condition Property="Theme" Value="Light"/>
+                    <Condition Property="IsTransparency" Value="False"/>
+                </MultiTrigger.Conditions>
+                <MultiTrigger.Setters>
+                    <Setter TargetName="Main" Property="Background" Value="{StaticResource PictureWindowLightBackgroundColorBrush}"/>
+                    <Setter TargetName="TitleBar" Property="Background" Value="{StaticResource PictureWindowLightTitleBarBackgroundColorBrush}"/>
+                </MultiTrigger.Setters>
+            </MultiTrigger>
+            <Trigger Property="TitleBarVisibility" Value="Collapsed">
+                <Setter TargetName="MainContent" Property="Margin" Value="0"/>
+                <Setter TargetName="TitleBar" Property="Background" Value="Transparent"/>
+            </Trigger>
+            <Trigger Property="IsTopmostButtonEnabled" Value="True">
+                <Setter TargetName="PinButton" Property="Visibility" Value="Visible"/>
+            </Trigger>
+            <Trigger Property="AppName" Value="{x:Null}">
+                <Setter TargetName="captionText" Property="Text" Value="{Binding Title, RelativeSource={RelativeSource AncestorType=Window}}"/>
+            </Trigger>
         </ControlTemplate.Triggers>
     </ControlTemplate>
 
@@ -109,6 +166,11 @@
         <Setter Property="Foreground" Value="#FFF"/>
         <Setter Property="FontWeight" Value="Thin"/>
         <Setter Property="Template" Value="{StaticResource PictureWindowTemplete}"/>
+        <Style.Triggers>
+            <Trigger Property="Theme" Value="Light">
+                <Setter Property="Foreground" Value="Black"/>
+            </Trigger>
+        </Style.Triggers>
     </Style>
 
 </ResourceDictionary>

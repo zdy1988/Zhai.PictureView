@@ -4,23 +4,34 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Zhai.PictureView"
+        IsTransparency="False"
+        Theme="{Binding SettingsWindow.IsWindowDarked, Source={StaticResource Locator}, Converter={StaticResource PictureViewThemeConverter}}"
         Style="{StaticResource PictureWindow}"
         DataContext="{Binding SettingsWindow, Source={StaticResource Locator}}"
         WindowStartupLocation ="CenterScreen" 
         ShowInTaskbar="False"
         ResizeMode="NoResize"
-        Title="Settings" 
-        Height="420" Width="560"
+        Icon="/favicon.ico"
+        Title="设置" 
+        Height="430" Width="560"
         mc:Ignorable="d">
-    <Border Background="{StaticResource PictureWindowPaperColorBrush}">
-        <Grid Margin="13 36 12 16">
-            <Border BorderBrush="#56EEEEEE" BorderThickness="1 0 0 0" Margin="60.5 0 0 0" Panel.ZIndex="-100"/>
+    <Border>
+        <Grid Margin="13 16 12 16">
+            <Border BorderBrush="#70666666" BorderThickness="1 0 0 0" Margin="60.5 0 0 0" Panel.ZIndex="-100"/>
             <TabControl TabStripPlacement="Left">
                 <TabItem Header="基本设置">
                     <StackPanel Margin="12 8.5 0 0">
                         <StackPanel Orientation="Horizontal" Margin="0 0 16 8">
                             <TextBlock Margin="0 0 8 0" Text="启动时全屏显示"/>
-                            <CheckBox IsChecked="{Binding StartWindowMaximized}"/>
+                            <CheckBox IsChecked="{Binding IsStartWindowMaximized}"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Margin="0 0 16 8">
+                            <TextBlock Margin="0 0 8 0" Text="是否使用深色皮肤"/>
+                            <CheckBox IsChecked="{Binding IsWindowDarked}"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Margin="0 0 16 8">
+                            <TextBlock Margin="0 0 8 0" Text="是否使用透明窗体"/>
+                            <CheckBox IsChecked="{Binding IsWindowTransparency}"/>
                         </StackPanel>
                     </StackPanel>
                 </TabItem>

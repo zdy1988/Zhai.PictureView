@@ -56,7 +56,7 @@
         </Setter>
     </Style>
     <Style TargetType="{x:Type ScrollBar}" BasedOn="{StaticResource ScrollBar.VerticalStyle}">
-        <Setter Property="Margin" Value="-6 0"/>
+        <Setter Property="Margin" Value="-2 0"/>
     </Style>
 
 </ResourceDictionary>

@@ -49,7 +49,7 @@ namespace Zhai.PictureView
         {
             var settings = Properties.Settings.Default;
 
-            if (settings.StartWindowMaximized)
+            if (settings.IsStartWindowMaximized)
             {
                 this.WindowState = WindowState.Maximized;
             }
@@ -130,6 +130,7 @@ namespace Zhai.PictureView
         private double MoveRectOffsetX => Canvas.GetLeft(MoveRect);
         private double MoveRectOffsetY => Canvas.GetTop(MoveRect);
         private double ViewingAreaRatio => this.PictureBox.Width / this.MoveRect.RenderSize.Width;     //获取右侧大图框与透明矩形框的尺寸比率
+        private double AdjustScale => Picture.Width / ViewModel.CurrentPicture.PixelWidth;
 
         private async Task InitPicture(Picture picture)
         {
@@ -158,16 +159,11 @@ namespace Zhai.PictureView
         }
 
 
-        double pictureWidth = 0;
-        double pictureHeight = 0;
-
-        readonly double minScale = 0.5;
+        readonly double minScale = 0.1;
         readonly double maxScale = 32;
 
         private void ResetPicture()
         {
-            ViewModel.Scale = 1.0;
-
             double width;
             double height;
 
@@ -196,8 +192,6 @@ namespace Zhai.PictureView
                 height = sourHeight;
             }
 
-            pictureWidth = width;
-            pictureHeight = height;
             Picture.Width = width;
             Picture.Height = height;
 
@@ -205,6 +199,8 @@ namespace Zhai.PictureView
             Picture.SetValue(Canvas.TopProperty, (PictureBox.Height - Picture.Height) * 0.5);
 
             UpdateMoveRect();
+
+            ViewModel.Scale = AdjustScale;
         }
 
 
@@ -223,14 +219,16 @@ namespace Zhai.PictureView
             }
             else
             {
+                if (Math.Round(_scale, 1) == 1.0)
+                    _scale = 1.0;
                 ViewModel.Scale = _scale;
             }
 
             double originWidth = Picture.Width;
             double originHeight = Picture.Height;
 
-            double newWidth = pictureWidth * ViewModel.Scale;
-            double newHeight = pictureHeight * ViewModel.Scale;
+            double newWidth = ViewModel.CurrentPicture.PixelWidth * ViewModel.Scale;
+            double newHeight = ViewModel.CurrentPicture.PixelHeight * ViewModel.Scale;
 
             double x = PictureOffsetX - (newWidth - originWidth) * 0.5;
             double y = PictureOffsetY - (newHeight - originHeight) * 0.5;
@@ -253,7 +251,6 @@ namespace Zhai.PictureView
 
             Picture.SetValue(Canvas.LeftProperty, x);
             Picture.SetValue(Canvas.TopProperty, y);
-
 
             UpdateMoveRect();
         }
@@ -528,7 +525,7 @@ namespace Zhai.PictureView
         {
             if (ViewModel.CurrentPicture == null) return;
 
-            if (ViewModel.Scale == 1.0)
+            if (AdjustScale != 1.0)
             {
                 ZoomPicture(ViewModel.CurrentPicture.PixelWidth / Picture.Width);
             }
