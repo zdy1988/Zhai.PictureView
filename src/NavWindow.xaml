@@ -19,7 +19,7 @@
 
         <StackPanel VerticalAlignment="Center">
 
-            <StackPanel HorizontalAlignment="Center" Margin="36 24 36 0">
+            <StackPanel HorizontalAlignment="Center" Margin="36 12 36 0">
                 <TextBlock Text="当前文件夹图片已浏览完毕！" Margin="0 0 0 12"/>
                 <TextBlock Margin="0 0 0 24" TextWrapping="Wrap">
                     <Run>是否前往下一个文件夹：</Run>
