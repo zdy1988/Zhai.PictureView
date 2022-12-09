@@ -47,19 +47,19 @@
                                    TextWrapping="NoWrap" TextTrimming="CharacterEllipsis"/>
                         </StackPanel>
                         <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
-                            <Button x:Name="PinButton" Style="{StaticResource PictureView.IconButton2}" ToolTip="置顶" Visibility="Collapsed">
+                            <Button x:Name="PinButton" Style="{StaticResource PictureView.TitleBar.IconButton}" ToolTip="置顶" Visibility="Collapsed">
                                 <Path x:Name="PinButtonIcon" Data="{StaticResource Icon.Pin}" RenderTransformOrigin="0.5,0.5"/>
                             </Button>
-                            <Button x:Name="MinimizeButton" Style="{StaticResource PictureView.IconButton2}" ToolTip="最小化">
+                            <Button x:Name="MinimizeButton" Style="{StaticResource PictureView.TitleBar.IconButton}" ToolTip="最小化">
                                 <Path Data="{StaticResource Icon.MinusScreen}"/>
                             </Button>
-                            <Button x:Name="MaximizeButton" Style="{StaticResource PictureView.IconButton2}" ToolTip="全屏">
+                            <Button x:Name="MaximizeButton" Style="{StaticResource PictureView.TitleBar.IconButton}" ToolTip="全屏">
                                 <Path Data="{StaticResource Icon.FullScreen}"/>
                             </Button>
-                            <Button x:Name="RestoreButton" Style="{StaticResource PictureView.IconButton2}" Visibility="Collapsed"  ToolTip="退出全屏">
+                            <Button x:Name="RestoreButton" Style="{StaticResource PictureView.TitleBar.IconButton}" Visibility="Collapsed"  ToolTip="退出全屏">
                                 <Path Data="{StaticResource Icon.RestoreScreen}"/>
                             </Button>
-                            <Button x:Name="CloseButton" Style="{StaticResource PictureView.IconButton3}" ToolTip="关闭">
+                            <Button x:Name="CloseButton" Style="{StaticResource PictureView.TitleBar.IconCloseButton}" ToolTip="关闭">
                                 <Path Data="{StaticResource Icon.Close}"/>
                             </Button>
                         </StackPanel>

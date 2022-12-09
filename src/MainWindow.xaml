@@ -24,10 +24,10 @@
     <local:PictureWindow.TitleBarContent>
         <DockPanel>
             <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
-                <Button x:Name="AboutButton" Style="{StaticResource PictureView.IconButton2}" Click="AboutButton_Click" ToolTip="关于">
+                <Button x:Name="AboutButton" Style="{StaticResource PictureView.TitleBar.IconButton}" Click="AboutButton_Click" ToolTip="关于">
                     <Path Data="{StaticResource Icon.About}"/>
                 </Button>
-                <Button x:Name="SettingsButton" Style="{StaticResource PictureView.IconButton2}" Click="SettingsButton_Click" ToolTip="设置">
+                <Button x:Name="SettingsButton" Style="{StaticResource PictureView.TitleBar.IconButton}" Click="SettingsButton_Click" ToolTip="设置">
                     <Path Data="{StaticResource Icon.Settings}"/>
                 </Button>
             </StackPanel>
@@ -247,11 +247,11 @@
             <Border x:Name="PageButton"
                     Visibility="{Binding CurrentPicture, Converter={StaticResource NullableToVisibilityConverter}}">
                 <Grid>
-                    <Button Style="{StaticResource PictureView.IconButton4}" Click="PrevButton_Click" ToolTip="上一张"
+                    <Button Style="{StaticResource PictureView.Navigation.IconButton}" Click="PrevButton_Click" ToolTip="上一张"
                             VerticalAlignment="Center" HorizontalAlignment="Left" Margin="24">
                         <Path Data="{StaticResource Icon.ChevronLeft}"/>
                     </Button>
-                    <Button Style="{StaticResource PictureView.IconButton4}" Click="NextButton_Click" ToolTip="下一张"
+                    <Button Style="{StaticResource PictureView.Navigation.IconButton}" Click="NextButton_Click" ToolTip="下一张"
                             VerticalAlignment="Center" HorizontalAlignment="Right" Margin="24">
                         <Path Data="{StaticResource Icon.ChevronRight}"/>
                     </Button>
