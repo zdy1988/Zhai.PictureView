@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Data;
-using static Zhai.PictureView.PictureWindow;
+using Zhai.FamilTheme;
 
 namespace Zhai.PictureView.Converters
 {
@@ -21,7 +21,7 @@ namespace Zhai.PictureView.Converters
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            throw new NotImplementedException();
+            return value is WindowTheme theme && theme == WindowTheme.Dark;
         }
     }
 }

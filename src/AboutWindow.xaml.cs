@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Reflection;
+using Zhai.FamilTheme;
 
 namespace Zhai.PictureView
 {
     /// <summary>
     /// AboutWindow.xaml 的交互逻辑
     /// </summary>
-    public partial class AboutWindow : PictureWindow
+    public partial class AboutWindow : TransparentWindow
     {
         public AboutWindow()
         {

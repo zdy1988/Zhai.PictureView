@@ -1,18 +1,16 @@
-﻿<local:PictureWindow x:Class="Zhai.PictureView.NavWindow"
+﻿<ZDY:TransparentWindow x:Class="Zhai.PictureView.NavWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:Zhai.PictureView"
-        xmlns:Controls="clr-namespace:Zhai.PictureView.Controls"
-        Style="{StaticResource PictureWindow}"
+        xmlns:ZDY="http://www.zdyla.com/coding"
         IsTransparency="False"
         Theme="{Binding SettingsWindow.IsWindowDarked, Source={StaticResource Locator}, Converter={StaticResource PictureViewThemeConverter}}"
         WindowStartupLocation ="CenterScreen" 
         ResizeMode="NoResize"
         ShowInTaskbar="False"
-        Icon="/favicon.ico"
-        Title="{Binding Name, StringFormat=导航到 : {0}}" 
+        Icon="favicon.ico"
+        Title="提示" 
         Height="240" Width="400"
         mc:Ignorable="d">
     <Grid>
@@ -22,18 +20,20 @@
             <StackPanel HorizontalAlignment="Center" Margin="36 12 36 0">
                 <TextBlock Text="当前文件夹图片已浏览完毕！" Margin="0 0 0 12"/>
                 <TextBlock Margin="0 0 0 24" TextWrapping="Wrap">
-                    <Run>是否前往下一个文件夹：</Run>
-                    <Controls:LinkButton Margin="0 -3.5" Cursor="Hand" FontWeight="Regular">
-                        <TextBlock Text="{Binding Name}" MaxWidth="160" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis"/>
-                    </Controls:LinkButton>
+                    <Run>是否</Run>
+                    <Run x:Name="NavigateText"/>
+                    <Run>：</Run>
+                    <ZDY:LinkButton Margin="0 -3.5" Cursor="Hand" FontWeight="Regular">
+                        <TextBlock x:Name="FolderName" MaxWidth="160" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis"/>
+                    </ZDY:LinkButton>
                 </TextBlock>
             </StackPanel>
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                <Button x:Name="NavigateButton" Margin="0 0 12 0" Click="NavigateButton_Click"/>
+                <ZDY:Button x:Name="NavigateButton" Content="{Binding ElementName=NavigateText, Path=Text}" Margin="0 0 12 0" Click="NavigateButton_Click"/>
 
-                <Button x:Name="CurrentButton" Content="留在当前文件夹" Click="CurrentButton_Click"/>
+                <ZDY:Button x:Name="CurrentButton" Content="留在当前文件夹" Click="CurrentButton_Click"/>
             </StackPanel>
         </StackPanel>
 
     </Grid>
-</local:PictureWindow>
+</ZDY:TransparentWindow>

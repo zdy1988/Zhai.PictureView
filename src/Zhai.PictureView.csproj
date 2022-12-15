@@ -11,7 +11,7 @@
 
 	<PropertyGroup>
 		<Title>ZHAI PICTURE VIEW</Title>
-		<Version>1.1.12.9</Version>
+		<Version>1.1.12.15</Version>
 		<Authors>ZDY</Authors>
 		<Copyright>Copyright © 2022 ZDY 保留所有权利。</Copyright>
 		<Description>诞生于我（ZDY）的个人兴趣，我会在有限的时间里维护这个软件。如果在使用的过程中发现什么BUG，欢迎发送描述信息和图片到我的邮箱，也可以在我的GitHub上留言，我会尽力改进软件...</Description>
@@ -21,6 +21,10 @@
 		<PackageIcon>favicon.png</PackageIcon>
 		<AssemblyOriginatorKeyFile>Zhai.PictureView.snk</AssemblyOriginatorKeyFile>
 	</PropertyGroup>
+
+	<ItemGroup>
+	  <Content Remove="C:\Users\zdyla\.nuget\packages\zhai.familtheme\1.0.0\contentFiles\any\net6.0-windows7.0\Resources\favicon.ico" />
+	</ItemGroup>
 
 	<ItemGroup>
 		<None Remove="favicon.ico" />
@@ -85,10 +89,13 @@
 		<PackageReference Include="System.Drawing.Common" Version="7.0.0-preview.1.22076.8" />
 		<PackageReference Include="VirtualizingWrapPanel" Version="1.5.7" />
 		<PackageReference Include="XamlAnimatedGif" Version="2.0.2" />
+		<PackageReference Include="Zhai.FamilTheme" Version="1.0.0" />
 	</ItemGroup>
 
 	<ItemGroup>
-		<Resource Include="favicon.ico" />
+		<Resource Include="favicon.ico">
+		  <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+		</Resource>
 		<Resource Include="Resources\image-failed.png" />
 		<Resource Include="Resources\image-loading.png" />
 		<Resource Include="ShaderEffects\PsEffects\BandedSwirlEffect.ps" />

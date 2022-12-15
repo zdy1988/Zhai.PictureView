@@ -11,13 +11,14 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using Zhai.FamilTheme;
 
 namespace Zhai.PictureView
 {
     /// <summary>
     /// SettingsWindow.xaml 的交互逻辑
     /// </summary>
-    public partial class SettingsWindow : PictureWindow
+    public partial class SettingsWindow : TransparentWindow
     {
         public SettingsWindow()
         {

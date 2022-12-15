@@ -10,12 +10,12 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media.Animation;
-using System.Windows.Threading;
+using Zhai.FamilTheme;
 using Timer = System.Timers.Timer;
 
 namespace Zhai.PictureView
 {
-    public partial class MainWindow : PictureWindow
+    public partial class MainWindow : TransparentWindow
     {
         PictureWindowViewModel ViewModel => this.DataContext as PictureWindowViewModel;
 
@@ -28,7 +28,6 @@ namespace Zhai.PictureView
             Loaded += MainWindow_Loaded;
 
             ViewModel.CurrentPictureChanged += ViewModel_CurrentPictureChanged;
-            ViewModel.ScaleChanged += ViewModel_ScaleChanged;
 
 
             PictureBox.SizeChanged += PictureBox_SizeChanged;
@@ -41,8 +40,6 @@ namespace Zhai.PictureView
             PreviewKeyDown += MainWindow_PreviewKeyDown;
 
             InitSyncUpdateMoveRectTimer();
-
-            VisualStateManager.GoToElementState(this.PictureEditView, ViewModel.IsShowPictureEditView ? "PictureEditViewShow" : "PictureEditViewHide", false);
         }
 
         private void InitializeMainWindow()
@@ -81,7 +78,6 @@ namespace Zhai.PictureView
                 ThreadPool.QueueUserWorkItem(_ => this.Dispatcher.Invoke(() => oldFolder?.Clean()));
 
                 ViewModel.IsShowPictureListView = ViewModel.Folder != null && ViewModel.Folder.Count > 1;
-                VisualStateManager.GoToElementState(this.PictureListView, ViewModel.IsShowPictureListView ? "PictureListViewShow" : "PictureListViewHide", false);
             }
             else
             {
@@ -91,17 +87,6 @@ namespace Zhai.PictureView
 
         public Task OpenPicture(string filename)
             => OpenPicture(Directory.GetParent(filename), filename);
-
-        private void ViewModel_ScaleChanged(object sender, double e)
-        {
-            var animation = new DoubleAnimation(1, 0, TimeSpan.FromMilliseconds(3000))
-            {
-                EasingFunction = new QuarticEase() { EasingMode = EasingMode.EaseOut },
-                FillBehavior = FillBehavior.Stop
-            };
-
-            ScaleTips.BeginAnimation(OpacityProperty, animation, HandoffBehavior.SnapshotAndReplace);
-        }
 
         private async void ViewModel_CurrentPictureChanged(object sender, Picture picture)
         {
@@ -569,7 +554,7 @@ namespace Zhai.PictureView
 
                 if (canNextFolder)
                 {
-                    var navWindow = new NavWindow("Next")
+                    var navWindow = new NavWindow("Next", next)
                     {
                         Owner = App.Current.MainWindow,
                         DataContext = ViewModel.Folder.Current
@@ -603,7 +588,7 @@ namespace Zhai.PictureView
 
                 if (canPrevFolder)
                 {
-                    var navWindow = new NavWindow("Prev")
+                    var navWindow = new NavWindow("Prev", prev)
                     {
                         Owner = App.Current.MainWindow,
                         DataContext = ViewModel.Folder.Current
@@ -682,22 +667,6 @@ namespace Zhai.PictureView
             }
         }
 
-        private void AdjustButton_Click(object sender, RoutedEventArgs e)
-        {
-            if (ViewModel.Folder == null || ViewModel.Folder.Count <= 0) return;
-
-            if (ViewModel.CurrentPicture != null)
-            {
-                ViewModel.IsShowPictureEditView = !ViewModel.IsShowPictureEditView;
-
-                VisualStateManager.GoToElementState(this.PictureEditView, ViewModel.IsShowPictureEditView ? "PictureEditViewShow" : "PictureEditViewHide", true);
-            }
-            else
-            {
-                VisualStateManager.GoToElementState(this.PictureEditView, "PictureEditViewHide", false);
-            }
-        }
-
         private void InfoButton_Click(object sender, RoutedEventArgs e)
         {
             if (ViewModel.CurrentPicture == null) return;
@@ -709,22 +678,6 @@ namespace Zhai.PictureView
             };
 
             window.ShowDialog();
-        }
-
-        private void PictureListViewToggleButton_Click(object sender, RoutedEventArgs e)
-        {
-            if (ViewModel.Folder == null || ViewModel.Folder.Count <= 0) return;
-
-            if (ViewModel.CurrentPicture != null)
-            {
-                ViewModel.IsShowPictureListView = !ViewModel.IsShowPictureListView;
-
-                VisualStateManager.GoToElementState(this.PictureListView, ViewModel.IsShowPictureListView ? "PictureListViewShow" : "PictureListViewHide", true);
-            }
-            else
-            {
-                VisualStateManager.GoToElementState(this.PictureListView, "PictureListViewHide", false);
-            }
         }
 
         #endregion

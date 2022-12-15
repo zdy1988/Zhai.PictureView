@@ -87,7 +87,7 @@ namespace Zhai.PictureView
             set => SetProperty(ref rotateAngle, value);
         }
 
-        private double scale = 1.0;
+        private double scale = 0.0;
         public double Scale
         {
             get => scale;

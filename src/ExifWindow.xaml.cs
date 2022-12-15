@@ -11,13 +11,14 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using Zhai.FamilTheme;
 
 namespace Zhai.PictureView
 {
     /// <summary>
     /// ExifWindow.xaml 的交互逻辑
     /// </summary>
-    public partial class ExifWindow : PictureWindow
+    public partial class ExifWindow : TransparentWindow
     {
         public ExifWindow()
         {

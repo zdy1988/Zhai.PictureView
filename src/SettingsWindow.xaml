@@ -1,44 +1,42 @@
-﻿<local:PictureWindow x:Class="Zhai.PictureView.SettingsWindow"
+﻿<ZDY:TransparentWindow x:Class="Zhai.PictureView.SettingsWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:Zhai.PictureView"
+        xmlns:ZDY="http://www.zdyla.com/coding" 
         IsTransparency="False"
         Theme="{Binding SettingsWindow.IsWindowDarked, Source={StaticResource Locator}, Converter={StaticResource PictureViewThemeConverter}}"
-        Style="{StaticResource PictureWindow}"
         DataContext="{Binding SettingsWindow, Source={StaticResource Locator}}"
         WindowStartupLocation ="CenterScreen" 
         ShowInTaskbar="False"
         ResizeMode="NoResize"
-        Icon="/favicon.ico"
+        Icon="favicon.ico"
         Title="设置" 
         Height="430" Width="560"
         mc:Ignorable="d">
     <Border>
-        <Grid Margin="13 16 12 16">
-            <Border BorderBrush="#70666666" BorderThickness="1 0 0 0" Margin="60.5 0 0 0" Panel.ZIndex="-100"/>
-            <TabControl TabStripPlacement="Left">
-                <TabItem Header="基本设置">
-                    <StackPanel Margin="12 8.5 0 0">
-                        <StackPanel Orientation="Horizontal" Margin="0 0 16 8">
-                            <TextBlock Margin="0 0 8 0" Text="启动时全屏显示"/>
-                            <CheckBox IsChecked="{Binding IsStartWindowMaximized}"/>
+        <Grid>
+            <ZDY:TabPanel>
+                <ZDY:TabItem Header="基本设置">
+                    <StackPanel Margin="14">
+                        <StackPanel Orientation="Horizontal" Margin="0 0 0 8">
+                            <ZDY:CheckBox IsChecked="{Binding IsStartWindowMaximized}"/>
+                            <TextBlock Margin="8 0" Text="启动时全屏显示"/>
                         </StackPanel>
-                        <StackPanel Orientation="Horizontal" Margin="0 0 16 8">
-                            <TextBlock Margin="0 0 8 0" Text="是否使用深色皮肤"/>
-                            <CheckBox IsChecked="{Binding IsWindowDarked}"/>
+                        <StackPanel Orientation="Horizontal" Margin="0 0 0 8">
+                            <ZDY:CheckBox IsChecked="{Binding IsWindowDarked}"/>
+                            <TextBlock Margin="8 0" Text="是否使用深色皮肤"/>
                         </StackPanel>
-                        <StackPanel Orientation="Horizontal" Margin="0 0 16 8">
-                            <TextBlock Margin="0 0 8 0" Text="是否使用透明窗体"/>
-                            <CheckBox IsChecked="{Binding IsWindowTransparency}"/>
+                        <StackPanel Orientation="Horizontal" Margin="0 0 0 8">
+                            <ZDY:CheckBox IsChecked="{Binding IsWindowTransparency}"/>
+                            <TextBlock Margin="8 0" Text="是否使用透明窗体"/>
                         </StackPanel>
                     </StackPanel>
-                </TabItem>
-                <TabItem Header="文件关联">
-                    <StackPanel Margin="12 8.5 0 0">
-                        <TextBlock Text="设置默认使用ZDY ' PICTURE打开以下文件类型" Margin="-1 0 0 18"/>
-                        <ItemsControl ItemsSource="{Binding AllSupported}" HorizontalAlignment="Left">
+                </ZDY:TabItem>
+                <ZDY:TabItem Header="文件关联">
+                    <StackPanel Margin="14">
+                        <TextBlock Text="设置使用 ZDY ' PICTURE 关联以下文件类型" Margin="-1 0 0 18"/>
+                        <ItemsControl ItemsSource="{Binding AllSupported}" Margin="2 0">
                             <ItemsControl.ItemsPanel>
                                 <ItemsPanelTemplate>
                                     <UniformGrid IsItemsHost="True" Columns="5"/>
@@ -47,18 +45,18 @@
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
                                     <StackPanel Orientation="Horizontal" Margin="0 0 16 8">
-                                        <CheckBox x:Name="ExtCheckBox" IsChecked="{Binding IsSupported}"/>
+                                        <ZDY:CheckBox x:Name="ExtCheckBox" IsChecked="{Binding IsSupported}"/>
                                         <TextBlock Margin="4 0 0 0" Text="{Binding Ext}"/>
                                     </StackPanel>
                                 </DataTemplate>
                             </ItemsControl.ItemTemplate>
                         </ItemsControl>
                     </StackPanel>
-                </TabItem>
-                <TabItem Header="其他设置">
+                </ZDY:TabItem>
+                <ZDY:TabItem Header="其他设置">
                     <TextBlock Text="Coming soon..." VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                </TabItem>
-            </TabControl>
+                </ZDY:TabItem>
+            </ZDY:TabPanel>
         </Grid>
     </Border>
-</local:PictureWindow>
+</ZDY:TransparentWindow>
