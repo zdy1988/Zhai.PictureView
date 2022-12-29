@@ -10,6 +10,8 @@
 
     <Application.Resources>
         <ResourceDictionary>
+            <ImageSource x:Key="AppIcon">pack://application:,,,/Zhai.PictureView;component/favicon.ico</ImageSource>
+            
             <local:ViewModelLocator x:Key="Locator" d:IsDataSource="True" />
         </ResourceDictionary>
     </Application.Resources>

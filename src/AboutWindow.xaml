@@ -39,7 +39,7 @@
                         </Style>
                     </StackPanel.Resources>
                     <StackPanel Orientation="Horizontal" Margin="0 0 0 12">
-                        <Image Source="/favicon.ico" Width="24" Height="24" Margin="0 0 4 0"/>
+                        <Image Source="{StaticResource AppIcon}" Width="24" Height="24" Margin="0 0 4 0"/>
                         <TextBlock Text="DY ' PICTURE" FontSize="24" Margin="0" VerticalAlignment="Center"/>
                     </StackPanel>
 

@@ -11,7 +11,7 @@
         WindowStartupLocation ="CenterScreen" 
         ShowInTaskbar="False"
         ResizeMode="NoResize"
-        Icon="favicon.ico"
+        Icon="{StaticResource AppIcon}"
         Title="设置" 
         Height="430" Width="560"
         mc:Ignorable="d">

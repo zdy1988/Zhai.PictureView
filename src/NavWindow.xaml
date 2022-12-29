@@ -10,7 +10,7 @@
         WindowStartupLocation ="CenterScreen" 
         ResizeMode="NoResize"
         ShowInTaskbar="False"
-        Icon="favicon.ico"
+        Icon="{StaticResource AppIcon}"
         Title="提示" 
         Height="240" Width="400"
         mc:Ignorable="d">
