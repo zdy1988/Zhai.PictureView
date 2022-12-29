@@ -10,10 +10,6 @@
 
     <Application.Resources>
         <ResourceDictionary>
-
-            <Converters:PictureViewThemeConverter x:Key="PictureViewThemeConverter"/>
-            <Converters:PictureViewTitleConverter x:Key="PictureViewTitleConverter"/>
-
             <local:ViewModelLocator x:Key="Locator" d:IsDataSource="True" />
         </ResourceDictionary>
     </Application.Resources>

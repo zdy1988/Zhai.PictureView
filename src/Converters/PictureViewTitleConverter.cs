@@ -5,10 +5,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Data;
+using Zhai.FamilTheme.Converters;
 
 namespace Zhai.PictureView.Converters
 {
-    internal class PictureViewTitleConverter : IValueConverter
+    internal class PictureViewTitleConverter : ConverterMarkupExtensionBase<PictureViewTitleConverter>, IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {

@@ -6,10 +6,11 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Data;
+using Zhai.FamilTheme.Converters;
 
 namespace Zhai.PictureView.Converters
 {
-    internal class ThumbBoxVisibilityConverter : IValueConverter
+    internal class ThumbBoxVisibilityConverter : ConverterMarkupExtensionBase<ThumbBoxVisibilityConverter>, IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {

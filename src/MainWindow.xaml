@@ -1,4 +1,4 @@
-﻿<ZDY:TransparentWindow x:Class="Zhai.PictureView.MainWindow"
+﻿<ZDY:GlassesWindow x:Class="Zhai.PictureView.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -6,15 +6,14 @@
         xmlns:ZDY="http://www.zdyla.com/coding"       
         xmlns:wpftk="clr-namespace:WpfToolkit.Controls;assembly=VirtualizingWrapPanel"
         xmlns:Converters="clr-namespace:Zhai.PictureView.Converters"  
-        xmlns:Controls="clr-namespace:Zhai.PictureView.Controls"
         xmlns:XamlServices="clr-namespace:Zhai.PictureView.XamlServices"
         AppName="ZDY ' PICTURE"
-        Theme="{Binding SettingsWindow.IsWindowDarked, Source={StaticResource Locator}, Converter={StaticResource PictureViewThemeConverter}, Mode=TwoWay}" 
+        Theme="{Binding SettingsWindow.IsWindowDarked, Source={StaticResource Locator}, Converter={Converters:PictureViewThemeConverter}, Mode=TwoWay}" 
         IsTransparency="{Binding SettingsWindow.IsWindowTransparency, Source={StaticResource Locator}, Mode=TwoWay}" 
         IsTopmostButtonEnabled="True"
         IsThemeButtonEnabled="True"
         IsTransparencyButtonEnabled="True"
-        Title="{Binding CurrentPicture, Converter={StaticResource PictureViewTitleConverter}}" 
+        Title="{Binding CurrentPicture, Converter={Converters:PictureViewTitleConverter}}" 
         DataContext="{Binding PictureWindow, Source={StaticResource Locator}}"
         AllowDrop="True"
         Drop="PictureWindow_Drop"
@@ -23,40 +22,26 @@
         MinHeight="450" MinWidth="600"
         Icon="favicon.ico"
         mc:Ignorable="d">
-    <ZDY:TransparentWindow.Resources>
-        <ZDY:BoolToInverseBoolConverter x:Key="BoolToInverseBoolConverter"/>
-        <ZDY:BoolToInverseVisibilityConverter x:Key="BoolToInverseVisibilityConverter"/>
-        <ZDY:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
-        <ZDY:NullableToBoolConverter x:Key="NullableToBoolConverter"/>
-        <ZDY:NullableToVisibilityConverter x:Key="NullableToVisibilityConverter"/>
-        <ZDY:NullableToInverseVisibilityConverter x:Key="NullableToInverseVisibilityConverter"/>
-        <ZDY:CollectionLengthToVisibilityConverter x:Key="CollectionLengthToVisibilityConverter"/>
-        <ZDY:ByteLengthToStringConverter x:Key="ByteLengthToStringConverter"/>
-
-        <Converters:LoadingVisibilityConverter x:Key="LoadingVisibilityConverter"/>
-        <Converters:ThumbBoxVisibilityConverter x:Key="ThumbBoxVisibilityConverter"/>
-        <Converters:ScaleAdaptToBoolConverter x:Key="ScaleAdaptToBoolConverter"/>
-        <Converters:ScaleTipsConverter x:Key="ScaleTipsConverter"/>
-
+    <ZDY:GlassesWindow.Resources>
         <Style TargetType="{x:Type ZDY:IconButton}">
             <Setter Property="Margin" Value="3"/>
         </Style>
         <Style TargetType="{x:Type ZDY:IconToggleButton}">
             <Setter Property="Margin" Value="3"/>
         </Style>
-    </ZDY:TransparentWindow.Resources>
-    <ZDY:TransparentWindow.TitleBarContent>
+    </ZDY:GlassesWindow.Resources>
+    <ZDY:GlassesWindow.TitleBarContent>
         <DockPanel>
             <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
                 <ZDY:IconButton x:Name="AboutButton" Icon="About" ToolTip="关于" Click="AboutButton_Click"/>
                 <ZDY:IconButton x:Name="SettingsButton" Icon="Settings" ToolTip="设置" Click="SettingsButton_Click"/>
             </StackPanel>
             <StackPanel DockPanel.Dock="Left" Orientation="Horizontal" 
-                        VerticalAlignment="Center" Visibility="{Binding CurrentPicture, Converter={StaticResource NullableToVisibilityConverter}}">
+                        VerticalAlignment="Center" Visibility="{Binding CurrentPicture, Converter={ZDY:NullableToVisibilityConverter}}">
                 <TextBlock Text=" : "/>
                 <TextBlock Text="{Binding CurrentPicture.Name}"/>
                 <TextBlock Text=" ( "/>
-                <TextBlock Text="{Binding CurrentPicture.Size, Converter={StaticResource ByteLengthToStringConverter}}"/>
+                <TextBlock Text="{Binding CurrentPicture.Size, Converter={ZDY:ByteLengthToStringConverter}}"/>
                 <TextBlock Text=" , "/>
                 <TextBlock Text="{Binding CurrentPicture.PixelWidth}"/>
                 <TextBlock Text="x"/>
@@ -68,11 +53,11 @@
                 <TextBlock Text="{Binding Folder.Count}"/>
             </StackPanel>
         </DockPanel>
-    </ZDY:TransparentWindow.TitleBarContent>
+    </ZDY:GlassesWindow.TitleBarContent>
     <Grid>
         <ZDY:Drawer IsOverlayed="False" IsLeftDrawerOpen="{Binding IsShowPictureListView}" IsRightDrawerOpen="{Binding IsShowPictureEditView}">
             <ZDY:Drawer.LeftDrawerContent>
-                <Border Width="110" Visibility="{Binding CurrentPicture, Converter={StaticResource NullableToVisibilityConverter}}">
+                <Border Width="110" Visibility="{Binding CurrentPicture, Converter={ZDY:NullableToVisibilityConverter}}">
                     <ZDY:ListBox x:Name="PictureList"
                          ItemsSource="{Binding Folder}"
                          VirtualizingPanel.ScrollUnit="Pixel"
@@ -88,7 +73,7 @@
                             <Style TargetType="{x:Type ZDY:ListBox}">
                                 <Setter Property="Margin" Value="8 6 8 6"/>
                                 <Style.Triggers>
-                                    <Trigger Property="IsVerticalScrollBarVisibled" Value="True">
+                                    <Trigger Property="ZDY:ScrollViewerExtension.IsVerticalScrollBarVisibled" Value="True">
                                         <Setter Property="Margin" Value="8 6 0 6"/>
                                     </Trigger>
                                 </Style.Triggers>
@@ -132,7 +117,7 @@
                 </Border>
             </ZDY:Drawer.LeftDrawerContent>
             <ZDY:Drawer.RightDrawerContent>
-                <Border Width="150" Visibility="{Binding CurrentPicture, Converter={StaticResource NullableToVisibilityConverter}}">
+                <Border Width="150" Visibility="{Binding CurrentPicture, Converter={ZDY:NullableToVisibilityConverter}}">
                     <ZDY:ListBox x:Name="EffectList" Margin="8 6 0 6"
                              ItemsSource="{Binding Effects}"
                              SelectedItem="{Binding CurrentPictureEffect}"
@@ -199,7 +184,7 @@
                             <Image.Style>
                                 <Style TargetType="{x:Type Image}">
                                     <Style.Triggers>
-                                        <DataTrigger Binding="{Binding CurrentPicture, Converter={StaticResource NullableToBoolConverter}}" Value="True">
+                                        <DataTrigger Binding="{Binding CurrentPicture, Converter={ZDY:NullableToBoolConverter}}" Value="True">
                                             <DataTrigger.Setters>
                                                 <Setter Property="Effect" Value="{Binding CurrentPictureEffect.Effect}"/>
                                             </DataTrigger.Setters>
@@ -212,8 +197,8 @@
                     <!--小图-->
                     <Grid x:Name="ThumbContainer" 
                           VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="2" 
-                          Visibility="{Binding Scale, Converter={StaticResource ThumbBoxVisibilityConverter}}"
-                          IsHitTestVisible="{Binding IsPictureMoving, Converter={StaticResource BoolToInverseBoolConverter}}">
+                          Visibility="{Binding Scale, Converter={Converters:ThumbBoxVisibilityConverter}}"
+                          IsHitTestVisible="{Binding IsPictureMoving, Converter={ZDY:BoolToInverseBoolConverter}}">
                         <Border Width="168" Height="168" BorderThickness="4" Background="Black" BorderBrush="#CC000000" ClipToBounds="True">
                             <Canvas x:Name="ThumbBox" MouseMove="MoveRect_MouseMove" RenderTransformOrigin="0.5,0.5" ClipToBounds="True">
                                 <Canvas.RenderTransform>
@@ -255,10 +240,10 @@
                         </Grid>
                     </Grid>
                     <!--图片比例提示-->
-                    <ZDY:Hint Text="{Binding Scale, Converter={StaticResource ScaleTipsConverter}}"/>
+                    <ZDY:Hint Text="{Binding Scale, Converter={Converters:ScaleTipsConverter}}" FontWeight="Normal" FontSize="16" CornerRadius="18"/>
                     <!--打开图片按钮-->
                     <Border x:Name="OpenButton2"
-                            Visibility="{Binding CurrentPicture, Converter={StaticResource NullableToInverseVisibilityConverter}}"
+                            Visibility="{Binding CurrentPicture, Converter={ZDY:NullableToInverseVisibilityConverter}}"
                             VerticalAlignment="Center" HorizontalAlignment="Center">
                         <StackPanel>
                             <Button HorizontalAlignment="Center" Cursor="Hand" Margin="0 0 0 30" Click="OpenButton_Click"
@@ -276,7 +261,7 @@
                     </Border>
                     <!--左右翻页按钮-->
                     <Border x:Name="PageButton"
-                            Visibility="{Binding CurrentPicture, Converter={StaticResource NullableToVisibilityConverter}}">
+                            Visibility="{Binding CurrentPicture, Converter={ZDY:NullableToVisibilityConverter}}">
                         <Grid>
                             <ZDY:IconButton Icon="ChevronLeftThin" Width="54" Height="54" IconSize="42" Margin="24" Click="PrevButton_Click" ToolTip="上一张" HorizontalAlignment="Left"/>
                             <ZDY:IconButton Icon="ChevronRightThin" Width="54" Height="54" IconSize="42" Margin="24" Click="NextButton_Click" ToolTip="下一张" HorizontalAlignment="Right"/>
@@ -284,29 +269,29 @@
                     </Border>
                     <!--Loading-->
                     <Border x:Name="Loading" 
-                            Visibility="{Binding CurrentPicture, Converter={StaticResource NullableToVisibilityConverter}}"
+                            Visibility="{Binding CurrentPicture, Converter={ZDY:NullableToVisibilityConverter}}"
                             Panel.ZIndex="100" IsHitTestVisible="False"
                             VerticalAlignment="Center" HorizontalAlignment="Center">
-                        <Controls:Loading Visibility="{Binding CurrentPicture.PictureState, Converter={StaticResource LoadingVisibilityConverter}}" />
+                        <ZDY:Loading Theme="Circle" Width="48" Height="48" Visibility="{Binding CurrentPicture.PictureState, Converter={Converters:LoadingVisibilityConverter}}"/>
                     </Border>
                 </Grid>
                 <Grid Grid.Row="1">
                     <StackPanel HorizontalAlignment="Left" VerticalAlignment="Center" Orientation="Horizontal" Margin="8">
                         <ZDY:IconToggleButton x:Name="PictureListViewToggleButton" Icon="ToggleRight" ToolTip="显示缩略图列表" CheckedIcon="ToggleLeft" CheckedToolTip="关闭缩略图列表" 
-                                          IsChecked="{Binding IsShowPictureListView}" IsEnabled="{Binding CurrentPicture, Converter={StaticResource NullableToBoolConverter}}"/>
+                                          IsChecked="{Binding IsShowPictureListView}" IsEnabled="{Binding CurrentPicture, Converter={ZDY:NullableToBoolConverter}}"/>
                     </StackPanel>
 
                     <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Orientation="Horizontal" Margin="8">
                         <ZDY:IconButton x:Name="OpenButton" Icon="Open" ToolTip="打开" Click="OpenButton_Click"/>
 
-                        <StackPanel x:Name="ControlPanel" Orientation="Horizontal" IsEnabled="{Binding CurrentPicture, Converter={StaticResource NullableToBoolConverter}}">
-                            <ZDY:IconToggleButton x:Name="ZoomQuickButton" Icon="Origin" ToolTip="原图大小" CheckedIcon="Adapt" CheckedToolTip="适应屏幕" IsChecked="{Binding Scale, Converter={StaticResource ScaleAdaptToBoolConverter}, Mode=OneWay}" Click="ZoomQuickButton_Click"/>
+                        <StackPanel x:Name="ControlPanel" Orientation="Horizontal" IsEnabled="{Binding CurrentPicture, Converter={ZDY:NullableToBoolConverter}}">
+                            <ZDY:IconToggleButton x:Name="ZoomQuickButton" Icon="Origin" ToolTip="原图大小" CheckedIcon="Adapt" CheckedToolTip="适应屏幕" IsChecked="{Binding Scale, Converter={Converters:ScaleAdaptToBoolConverter}, Mode=OneWay}" Click="ZoomQuickButton_Click"/>
                             <ZDY:IconButton x:Name="ZoomInButton" Icon="ZoomPlus" ToolTip="放大" Click="ZoomInButton_Click"/>
                             <ZDY:IconButton x:Name="ZoomOutButton" Icon="ZoomMinus" ToolTip="缩小" Click="ZoomOutButton_Click"/>
                             <ZDY:IconButton x:Name="RotateLeftButton" Icon="RotateLeft" ToolTip="左转90度" Click="RotateLeftButton_Click"/>
                             <ZDY:IconButton x:Name="RotateRightButton" Icon="RotateRight" ToolTip="右转90度" Click="RotateRightButton_Click"/>
 
-                            <ZDY:IconButton x:Name="AutoPlayButton" Icon="Play" ToolTip="自动播放" Click="AutoPlayButton_Click" Visibility="{Binding CanPictureCarouselPlay, Converter={StaticResource BoolToVisibilityConverter}}">
+                            <ZDY:IconButton x:Name="AutoPlayButton" Icon="Play" ToolTip="自动播放" Click="AutoPlayButton_Click" Visibility="{Binding CanPictureCarouselPlay, Converter={ZDY:BoolToVisibilityConverter}}">
                                 <ZDY:IconButton.Style>
                                     <Style TargetType="{x:Type ZDY:IconButton}">
                                         <Setter Property="RenderTransformOrigin" Value="0.5,0.5"/>
@@ -353,7 +338,7 @@
         </ZDY:Drawer>
         <Grid x:Name="GalleryView" 
               Background="#1e1e1e"
-              Visibility="{Binding IsShowGallery, Converter={StaticResource BoolToVisibilityConverter}}">
+              Visibility="{Binding IsShowGallery, Converter={ZDY:BoolToVisibilityConverter}}">
             <ZDY:ListBox ItemsSource="{Binding ElementName=PictureList, Path=Items}"
                           SelectedItem="{Binding CurrentPicture}"
                           Margin="3 8 3 8" Background="Transparent" BorderThickness="0"
@@ -419,4 +404,4 @@
             </Grid.Style>
         </Grid>
     </Grid>
-</ZDY:TransparentWindow>
+</ZDY:GlassesWindow>

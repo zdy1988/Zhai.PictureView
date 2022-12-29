@@ -141,7 +141,7 @@ namespace Zhai.PictureView
                     case ".DDS":
                     case "TGA": // TODO some tga files are created upside down https://github.com/Ruben2776/PicView/issues/22
                         filestream = new FileStream(filename, FileMode.Open, FileAccess.Read, FileShare.ReadWrite, 4096, FileOptions.SequentialScan);
-                        var image = Pfim.Pfim.FromStream(filestream);
+                        var image = Pfimage.FromStream(filestream);
                         await filestream.DisposeAsync().ConfigureAwait(false);
                         var pinnedArray = GCHandle.Alloc(image.Data, GCHandleType.Pinned);
                         var addr = pinnedArray.AddrOfPinnedObject();

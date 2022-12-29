@@ -5,10 +5,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Data;
+using Zhai.FamilTheme.Converters;
 
 namespace Zhai.PictureView.Converters
 {
-    internal class ScaleAdaptToBoolConverter : IValueConverter
+    internal class ScaleAdaptToBoolConverter : ConverterMarkupExtensionBase<ScaleAdaptToBoolConverter>, IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
