@@ -20,7 +20,7 @@
         WindowStartupLocation ="CenterScreen"
         Height="720" Width="960"
         MinHeight="450" MinWidth="600"
-        Icon="{StaticResource AppIcon}"
+        Icon="favicon.ico"
         mc:Ignorable="d">
     <ZDY:GlassesWindow.Resources>
         <Style TargetType="{x:Type ZDY:IconButton}">
