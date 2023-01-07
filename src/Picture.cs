@@ -2,10 +2,11 @@
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
+using Zhai.Famil.Common.Mvvm;
 
 namespace Zhai.PictureView
 {
-    internal class Picture : BaseViewModel
+    internal class Picture : ViewModelBase
     {
         public string Name { get; }
 
@@ -17,42 +18,42 @@ namespace Zhai.PictureView
         public double PixelWidth
         {
             get => pixelWidth;
-            set => SetProperty(ref pixelWidth, value);
+            set => Set(() => PixelWidth, ref pixelWidth, value);
         }
 
         private double pixelHeight;
         public double PixelHeight
         {
             get => pixelHeight;
-            set => SetProperty(ref pixelHeight, value);
+            set => Set(() => PixelHeight, ref pixelHeight, value);
         }
 
         private BitmapSource thumbSource = PictureStateResources.ImageLoading;
         public BitmapSource ThumbSource
         {
             get => thumbSource;
-            set => SetProperty(ref thumbSource, value);
+            set => Set(() => ThumbSource, ref thumbSource, value);
         }
 
         private PictureState thumbState = PictureState.Failed;
         public PictureState ThumbState
         {
             get => thumbState;
-            set => SetProperty(ref thumbState, value);
+            set => Set(() => ThumbState, ref thumbState, value);
         }
 
         private BitmapSource pictureSource = PictureStateResources.ImageLoading;
         public BitmapSource PictureSource
         {
             get => pictureSource;
-            set => SetProperty(ref pictureSource, value);
+            set => Set(() => PictureSource, ref pictureSource, value);
         }
 
         private PictureState pictureState = PictureState.Failed;
         public PictureState PictureState
         {
             get => pictureState;
-            set => SetProperty(ref pictureState, value);
+            set => Set(() => PictureState, ref pictureState, value);
         }
 
         public PictureExif PictureExif { get; private set; }
@@ -166,10 +167,10 @@ namespace Zhai.PictureView
             return ms;
         }
 
-
-
-        public override void Clean()
+        public override void Cleanup()
         {
+            base.Cleanup();
+
             ThumbSource = null;
             PictureSource = null;
 

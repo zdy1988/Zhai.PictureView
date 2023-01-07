@@ -13,7 +13,7 @@ using System.Windows.Threading;
 
 namespace Zhai.PictureView
 {
-    internal class Folder : ObservableCollection<Picture>, IClean
+    internal class Folder : ObservableCollection<Picture>
     {
         public DirectoryInfo Current { get; }
 
@@ -142,13 +142,13 @@ namespace Zhai.PictureView
             return true;
         }
 
-        public void Clean()
+        public void Cleanup()
         {
             if (this.Any())
             {
                 foreach (var item in this)
                 {
-                    item.Clean();
+                    item.Cleanup();
                 }
 
                 this.Clear();

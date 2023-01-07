@@ -6,11 +6,13 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Controls;
+using Zhai.Famil.Common.Mvvm;
 using Zhai.PictureView.NativeMethods;
 
 namespace Zhai.PictureView
 {
-    internal class SettingsWindowViewModel: BaseViewModel
+    internal class SettingsWindowViewModel : ViewModelBase
     {
         private bool isStartWindowMaximized = Properties.Settings.Default.IsStartWindowMaximized;
         public bool IsStartWindowMaximized
@@ -18,7 +20,7 @@ namespace Zhai.PictureView
             get => isStartWindowMaximized;
             set
             {
-                if (SetProperty(ref isStartWindowMaximized, value))
+                if (Set(() => IsStartWindowMaximized, ref isStartWindowMaximized, value))
                 {
                     Properties.Settings.Default.IsStartWindowMaximized = value;
                     Properties.Settings.Default.Save();
@@ -32,7 +34,7 @@ namespace Zhai.PictureView
             get => isWindowDarked;
             set
             {
-                if (SetProperty(ref isWindowDarked, value))
+                if (Set(() => IsWindowDarked, ref isWindowDarked, value))
                 {
                     Properties.Settings.Default.IsWindowDarked = value;
                     Properties.Settings.Default.Save();
@@ -46,7 +48,7 @@ namespace Zhai.PictureView
             get => isWindowTransparency;
             set
             {
-                if (SetProperty(ref isWindowTransparency, value))
+                if (Set(() => IsWindowTransparency, ref isWindowTransparency, value))
                 {
                     Properties.Settings.Default.IsWindowTransparency = value;
                     Properties.Settings.Default.Save();
@@ -60,15 +62,9 @@ namespace Zhai.PictureView
         {
             AllSupported = new List<PictureSupportedItem>(PictureSupport.All.Select(t => new PictureSupportedItem(t)));
         }
-
-
-        public override void Clean()
-        {
-            
-        }
     }
 
-    internal class PictureSupportedItem : BaseViewModel
+    internal class PictureSupportedItem : ViewModelBase
     {
         private string ext;
         public string Ext { get => ext; }
@@ -79,7 +75,7 @@ namespace Zhai.PictureView
             get => isSupported;
             set
             {
-                if (SetProperty(ref isSupported, value))
+                if (Set(() => IsSupported, ref isSupported, value))
                 {
                     SetAssociation(value);
                 }
@@ -105,11 +101,6 @@ namespace Zhai.PictureView
             {
                 FileAssociator.CreateInstance(ext).Delete();
             }
-        }
-
-        public override void Clean()
-        {
-
         }
     }
 }

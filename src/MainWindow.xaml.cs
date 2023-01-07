@@ -70,10 +70,10 @@ namespace Zhai.PictureView
 
                 ViewModel.Folder = newFolder;
                 await ViewModel.Folder.LoadAsync();
-                ViewModel.CanPictureCarouselPlay = ViewModel.Folder?.Count > 1;
+                ViewModel.IsPictureCountMoreThanOne = ViewModel.Folder?.Count > 1;
                 ViewModel.CurrentPicture = (filename == null ? ViewModel.Folder : ViewModel.Folder.Where(t => t.PicturePath == filename)).FirstOrDefault();
 
-                ThreadPool.QueueUserWorkItem(_ => this.Dispatcher.Invoke(() => oldFolder?.Clean()));
+                ThreadPool.QueueUserWorkItem(_ => this.Dispatcher.Invoke(() => oldFolder?.Cleanup()));
 
                 ViewModel.IsShowPictureListView = ViewModel.Folder != null && ViewModel.Folder.Count > 1;
             }
@@ -632,7 +632,7 @@ namespace Zhai.PictureView
 
                 ViewModel.Folder.Remove(deletePicture);
 
-                deletePicture.Clean();
+                deletePicture.Cleanup();
 
                 try
                 {
@@ -659,7 +659,7 @@ namespace Zhai.PictureView
         {
             if (ViewModel.Folder == null || ViewModel.Folder.Count <= 1) return;
 
-            if (ViewModel.CanPictureCarouselPlay)
+            if (ViewModel.IsPictureCountMoreThanOne)
             {
                 ViewModel.IsPictureCarouselPlaing = !ViewModel.IsPictureCarouselPlaing;
             }

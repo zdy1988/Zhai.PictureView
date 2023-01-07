@@ -9,30 +9,31 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Media.Effects;
 using System.Windows.Threading;
+using Zhai.Famil.Common.Mvvm;
 
 namespace Zhai.PictureView
 {
-    internal class PictureWindowViewModel : BaseViewModel
+    internal class PictureWindowViewModel : ViewModelBase
     {
         private Folder folder;
         public Folder Folder
         {
             get => folder;
-            set => SetProperty(ref folder, value);
+            set => Set(() => Folder, ref folder, value);
         }
 
         private bool isShowPictureListView = false;
         public bool IsShowPictureListView
         {
             get => isShowPictureListView;
-            set => SetProperty(ref isShowPictureListView, value);
+            set => Set(() => IsShowPictureListView, ref isShowPictureListView, value);
         }
 
         private bool isShowPictureEditView = false;
         public bool IsShowPictureEditView
         {
             get => isShowPictureEditView;
-            set => SetProperty(ref isShowPictureEditView, value);
+            set => Set(() => IsShowPictureEditView, ref isShowPictureEditView, value);
         }
 
         private Picture currentPicture;
@@ -41,7 +42,7 @@ namespace Zhai.PictureView
             get => currentPicture;
             set
             {
-                if (SetProperty(ref currentPicture, value))
+                if (Set(() => CurrentPicture, ref currentPicture, value))
                 {
                     CurrentPictureChanged?.Invoke(this, value);
 
@@ -59,7 +60,7 @@ namespace Zhai.PictureView
             get => currentPictureIndex;
             set
             {
-                if (SetProperty(ref currentPictureIndex, value))
+                if (Set(() => CurrentPictureIndex, ref currentPictureIndex, value))
                 {
                     DisplayedPictureIndex = value + 1;
                 }
@@ -70,21 +71,21 @@ namespace Zhai.PictureView
         public int DisplayedPictureIndex
         {
             get => displayedPictureIndex;
-            set => SetProperty(ref displayedPictureIndex, value);
+            set => Set(() => DisplayedPictureIndex, ref displayedPictureIndex, value);
         }
 
         private bool isPictureMoving = false;
         public bool IsPictureMoving
         {
             get => isPictureMoving;
-            set => SetProperty(ref isPictureMoving, value);
+            set => Set(() => IsPictureMoving, ref isPictureMoving, value);
         }
 
         private double rotateAngle = 0.0;
         public double RotateAngle
         {
             get => rotateAngle;
-            set => SetProperty(ref rotateAngle, value);
+            set => Set(() => RotateAngle, ref rotateAngle, value);
         }
 
         private double scale = 0.0;
@@ -93,18 +94,18 @@ namespace Zhai.PictureView
             get => scale;
             set
             {
-                if (SetProperty(ref scale, value))
+                if (Set(() => Scale, ref scale, value))
                 {
                     ScaleChanged?.Invoke(this, value);
                 }
             }
         }
 
-        private bool canPictureCarouselPlay = false;
-        public bool CanPictureCarouselPlay
+        private bool isPictureCountMoreThanOne = false;
+        public bool IsPictureCountMoreThanOne
         {
-            get => canPictureCarouselPlay;
-            set => SetProperty(ref canPictureCarouselPlay, value);
+            get => isPictureCountMoreThanOne;
+            set => Set(() => IsPictureCountMoreThanOne, ref isPictureCountMoreThanOne, value);
         }
 
         private bool isPictureCarouselPlaing = false;
@@ -113,7 +114,7 @@ namespace Zhai.PictureView
             get => isPictureCarouselPlaing;
             set
             {
-                if (SetProperty(ref isPictureCarouselPlaing, value))
+                if (Set(() => IsPictureCarouselPlaing, ref isPictureCarouselPlaing, value))
                 {
                     if (Folder.Any())
                     {
@@ -130,14 +131,14 @@ namespace Zhai.PictureView
         public bool IsShowGallery
         {
             get => isShowGallery;
-            set => SetProperty(ref isShowGallery, value);
+            set => Set(() => IsShowGallery, ref isShowGallery, value);
         }
 
         private PictureEffect currentPictureEffect;
         public PictureEffect CurrentPictureEffect
         {
             get => currentPictureEffect;
-            set => SetProperty(ref currentPictureEffect, value);
+            set => Set(() => CurrentPictureEffect, ref currentPictureEffect, value);
         }
 
 
@@ -161,10 +162,11 @@ namespace Zhai.PictureView
 
         public event EventHandler<Double> ScaleChanged;
 
-
-        public override void Clean()
+        public override void Cleanup()
         {
-            Folder.Clean();
+            base.Cleanup();
+
+            Folder.Cleanup();
         }
     }
 }

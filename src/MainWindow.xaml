@@ -263,7 +263,7 @@
                     <!--左右翻页按钮-->
                     <Border x:Name="PageButton"
                             Visibility="{Binding CurrentPicture, Converter={ZDY:NullableToVisibilityConverter}}">
-                        <Grid>
+                        <Grid Visibility="{Binding IsPictureCountMoreThanOne, Converter={ZDY:BoolToVisibilityConverter}}">
                             <ZDY:IconButton Icon="ChevronLeftThin" Width="54" Height="54" IconSize="42" Margin="24" Click="PrevButton_Click" ToolTip="上一张" HorizontalAlignment="Left"/>
                             <ZDY:IconButton Icon="ChevronRightThin" Width="54" Height="54" IconSize="42" Margin="24" Click="NextButton_Click" ToolTip="下一张" HorizontalAlignment="Right"/>
                         </Grid>
@@ -279,7 +279,8 @@
                 <Grid Grid.Row="1">
                     <StackPanel HorizontalAlignment="Left" VerticalAlignment="Center" Orientation="Horizontal" Margin="8">
                         <ZDY:IconToggleButton x:Name="PictureListViewToggleButton" Icon="ToggleRight" ToolTip="显示缩略图列表" CheckedIcon="ToggleLeft" CheckedToolTip="关闭缩略图列表" 
-                                          IsChecked="{Binding IsShowPictureListView}" IsEnabled="{Binding CurrentPicture, Converter={ZDY:NullableToBoolConverter}}"/>
+                                              IsChecked="{Binding IsShowPictureListView}" IsEnabled="{Binding CurrentPicture, Converter={ZDY:NullableToBoolConverter}}"
+                                              Visibility="{Binding IsPictureCountMoreThanOne, Converter={ZDY:BoolToVisibilityConverter}}"/>
                     </StackPanel>
 
                     <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Orientation="Horizontal" Margin="8">
@@ -292,7 +293,7 @@
                             <ZDY:IconButton x:Name="RotateLeftButton" Icon="RotateLeft" ToolTip="左转90度" Click="RotateLeftButton_Click"/>
                             <ZDY:IconButton x:Name="RotateRightButton" Icon="RotateRight" ToolTip="右转90度" Click="RotateRightButton_Click"/>
 
-                            <ZDY:IconButton x:Name="AutoPlayButton" Icon="Play" ToolTip="自动播放" Click="AutoPlayButton_Click" Visibility="{Binding CanPictureCarouselPlay, Converter={ZDY:BoolToVisibilityConverter}}">
+                            <ZDY:IconButton x:Name="AutoPlayButton" Icon="Play2" ToolTip="自动播放" Click="AutoPlayButton_Click" Visibility="{Binding IsPictureCountMoreThanOne, Converter={ZDY:BoolToVisibilityConverter}}">
                                 <ZDY:IconButton.Style>
                                     <Style TargetType="{x:Type ZDY:IconButton}">
                                         <Setter Property="RenderTransformOrigin" Value="0.5,0.5"/>
@@ -326,8 +327,8 @@
                                 </ZDY:IconButton.Style>
                             </ZDY:IconButton>
 
-                            <ZDY:IconButton x:Name="PrevButton" Icon="ArrowLeft" ToolTip="上一张" Click="PrevButton_Click"/>
-                            <ZDY:IconButton x:Name="NextButton" Icon="ArrowRight" ToolTip="下一张" Click="NextButton_Click"/>
+                            <ZDY:IconButton x:Name="PrevButton" Icon="ArrowLeft" ToolTip="上一张" Click="PrevButton_Click" Visibility="{Binding IsPictureCountMoreThanOne, Converter={ZDY:BoolToVisibilityConverter}}"/>
+                            <ZDY:IconButton x:Name="NextButton" Icon="ArrowRight" ToolTip="下一张" Click="NextButton_Click" Visibility="{Binding IsPictureCountMoreThanOne, Converter={ZDY:BoolToVisibilityConverter}}"/>
                             <ZDY:IconButton x:Name="DeleteButton" Icon="Delete" ToolTip="删除" Click="DeleteButton_Click"/>
                             <ZDY:IconButton x:Name="PrintButton" Icon="Print" ToolTip="打印" Click="PrintButton_Click"/>
                             <ZDY:IconToggleButton x:Name="AdjustButton" Icon="Adjust" ToolTip="调整" IsChecked="{Binding IsShowPictureEditView}"/>

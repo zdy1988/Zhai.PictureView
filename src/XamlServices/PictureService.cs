@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using Zhai.Core.Threading;
+using Zhai.Famil.Common.Threads;
 
 namespace Zhai.PictureView.XamlServices
 {
