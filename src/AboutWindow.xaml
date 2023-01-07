@@ -5,10 +5,11 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:Converters="clr-namespace:Zhai.PictureView.Converters"  
         xmlns:ZDY="http://www.zdyla.com/coding"
+        xmlns:Properties="clr-namespace:Zhai.PictureView.Properties"
+        Title="{Binding Path=AppName, Source={x:Static Properties:Settings.Default}, StringFormat=关于 {0}}"
         IsTransparency="False"
         Theme="{Binding SettingsWindow.IsWindowDarked, Source={StaticResource Locator}, Converter={Converters:PictureViewThemeConverter}}"             
         WindowStartupLocation ="CenterScreen"             
-        Title="关于 ZDY ' PICTURE"
         TitleBarVisibility="Collapsed"
         ShowInTaskbar="False"
         ResizeMode="NoResize"
@@ -40,7 +41,7 @@
                     </StackPanel.Resources>
                     <StackPanel Orientation="Horizontal" Margin="0 0 0 12">
                         <Image Source="favicon.ico" Width="24" Height="24" Margin="0 0 4 0"/>
-                        <TextBlock Text="DY ' PICTURE" FontSize="24" Margin="0" VerticalAlignment="Center"/>
+                        <TextBlock Text="{Binding Path=AppName2, Source={x:Static Properties:Settings.Default}}" FontSize="24" Margin="0" VerticalAlignment="Center"/>
                     </StackPanel>
 
                     <TextBlock Margin="0 0 0 7" FontSize="11" VerticalAlignment="Bottom">

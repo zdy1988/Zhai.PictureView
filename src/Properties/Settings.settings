@@ -11,5 +11,11 @@
     <Setting Name="IsWindowTransparency" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
     </Setting>
+    <Setting Name="AppName" Type="System.String" Scope="User">
+      <Value Profile="(Default)">ZDY ' PICTURE</Value>
+    </Setting>
+    <Setting Name="AppName2" Type="System.String" Scope="User">
+      <Value Profile="(Default)">DY ' PICTURE</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

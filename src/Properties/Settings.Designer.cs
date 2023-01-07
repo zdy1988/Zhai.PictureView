@@ -58,5 +58,29 @@ namespace Zhai.PictureView.Properties {
                 this["IsWindowTransparency"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("ZDY \' PICTURE")]
+        public string AppName {
+            get {
+                return ((string)(this["AppName"]));
+            }
+            set {
+                this["AppName"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("DY \' PICTURE")]
+        public string AppName2 {
+            get {
+                return ((string)(this["AppName2"]));
+            }
+            set {
+                this["AppName2"] = value;
+            }
+        }
     }
 }

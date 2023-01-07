@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Data;
-using Zhai.FamilTheme.Converters;
+using Zhai.Famil.Converters;
 
 namespace Zhai.PictureView.Converters
 {
@@ -13,7 +13,7 @@ namespace Zhai.PictureView.Converters
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            string title = " ZDY ' PICTURE";
+            string title = $" {Properties.Settings.Default.AppName}";
 
             if (value is Picture picture)
                 return $" {picture.Name} -{title}";

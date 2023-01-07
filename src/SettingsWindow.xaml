@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:Converters="clr-namespace:Zhai.PictureView.Converters"  
         xmlns:ZDY="http://www.zdyla.com/coding" 
+        xmlns:Properties="clr-namespace:Zhai.PictureView.Properties"
         IsTransparency="False"
         Theme="{Binding SettingsWindow.IsWindowDarked, Source={StaticResource Locator}, Converter={Converters:PictureViewThemeConverter}}"
         DataContext="{Binding SettingsWindow, Source={StaticResource Locator}}"
@@ -36,7 +37,7 @@
                 </ZDY:TabItem>
                 <ZDY:TabItem Header="文件关联">
                     <StackPanel Margin="14">
-                        <TextBlock Text="设置使用 ZDY ' PICTURE 关联以下文件类型" Margin="-1 0 0 18"/>
+                        <TextBlock Text="{Binding Path=AppName, Source={x:Static Properties:Settings.Default}, StringFormat=设置使用 {0} 关联以下文件类型}" Margin="-1 0 0 18"/>
                         <ItemsControl ItemsSource="{Binding AllSupported}" Margin="2 0">
                             <ItemsControl.ItemsPanel>
                                 <ItemsPanelTemplate>

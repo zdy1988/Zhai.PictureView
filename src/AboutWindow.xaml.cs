@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Reflection;
-using Zhai.FamilTheme;
+using Zhai.Famil.Controls;
 
 namespace Zhai.PictureView
 {
