@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -11,10 +12,11 @@ using System.Windows.Media.Effects;
 using System.Windows.Threading;
 using Zhai.Famil.Common.Mvvm;
 using Zhai.Famil.Common.Mvvm.Command;
+using Zhai.Famil.Controls;
 
 namespace Zhai.PictureView
 {
-    internal class PictureWindowViewModel : ViewModelBase
+    internal partial class PictureWindowViewModel : ViewModelBase
     {
         private Folder folder;
         public Folder Folder
@@ -171,11 +173,45 @@ namespace Zhai.PictureView
 
         }, () => CurrentPicture != null && CurrentPicture.IsLoaded)).Value;
 
+        public RelayCommand ExecuteSaveImageCommand => new Lazy<RelayCommand>(() => new RelayCommand(() =>
+        {
+            
+
+        }, () => CurrentPicture != null && CurrentPicture.IsLoaded)).Value;
+
+        public RelayCommand ExecuteSaveAsImageCommand => new Lazy<RelayCommand>(() => new RelayCommand(async () =>
+        {
+            if (Famil.Win32.CommonDialog.SaveFileDialog(Folder.Current.FullName, "", "另存为...", "", CurrentPicture.Extension, default, out string filename))
+            {
+                var isSuccess = await CurrentPicture.SaveAsync(filename);
+
+                if (isSuccess)
+                {
+                    SendNotificationMessage("保存成功！");
+                }
+                else
+                {
+                    SendNotificationMessage("保存失败！");
+                }
+            }
+
+        }, () => CurrentPicture != null && CurrentPicture.IsLoaded)).Value;
+
         public RelayCommand ExecuteCopyCurrentPicturePathCommand => new Lazy<RelayCommand>(() => new RelayCommand(() =>
         {
             System.Windows.Clipboard.SetText(CurrentPicture.PicturePath);
 
         })).Value;
+
+        public RelayCommand ExecuteOpenTheFolderCommand => new Lazy<RelayCommand>(() => new RelayCommand(() =>
+        {
+            var info = new System.Diagnostics.ProcessStartInfo("Explorer.exe")
+            {
+                Arguments = $"/select,{CurrentPicture.PicturePath}"
+            };
+            System.Diagnostics.Process.Start(info);
+
+        }, () => CurrentPicture != null)).Value;
 
         #endregion
 

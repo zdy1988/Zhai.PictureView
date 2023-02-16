@@ -5,6 +5,7 @@ using System;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using System.Windows;
@@ -144,7 +145,7 @@ namespace Zhai.PictureView
             catch (Exception e)
             {
 #if DEBUG
-                Debug.WriteLine("RenderToBitmapSource returned " + filename + " null, \n" + e.Message);
+                Trace.WriteLine($"{nameof(GetBitmapSourceAsync)} {filename} exception, \n {e.Message}");
 #endif
                 return null;
             }
@@ -429,5 +430,48 @@ namespace Zhai.PictureView
         }
 
         #endregion
+
+        public static async Task<bool> SaveImageAsync(Stream stream, string targetPath, int? quality = null, int? width = null, int? height = null)
+        {
+            try
+            {
+                using MagickImage magickImage = new();
+
+                if (stream is not null)
+                {
+                   await magickImage.ReadAsync(stream);
+                }
+                else
+                {
+                    return false;
+                }
+
+                if (quality is not null)
+                {
+                    magickImage.Quality = quality.Value;
+                }
+
+                if (width is not null)
+                {
+                    magickImage.Resize(width.Value, 0);
+                }
+                else if (height is not null)
+                {
+                    magickImage.Resize(0, height.Value);
+                }
+
+                await magickImage.WriteAsync(targetPath);
+            }
+            catch (Exception e)
+            {
+#if DEBUG
+                Trace.WriteLine($"{nameof(SaveImageAsync)} {targetPath} exception, \n {e.Message}");
+#endif
+
+                return false; 
+            }
+
+            return true;
+        }
     }
 }

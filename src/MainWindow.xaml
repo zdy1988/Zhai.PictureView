@@ -227,15 +227,15 @@
                                 <ZDY:ContextMenu>
                                     <MenuItem Icon="{ZDY:Icon Kind=VuesaxOutlineDocumentCopy}" Header="复制图片" Command="{Binding ExecuteCopyCurrentPictureSourceCommand}"/>
                                     <MenuItem Icon="{ZDY:Icon Kind=Copy2}" Header="复制图片地址" Command="{Binding ExecuteCopyCurrentPicturePathCommand}"/>
-                                    <MenuItem Icon="{ZDY:Icon Kind=Save}" Header="保存"/>
-                                    <MenuItem Icon="{ZDY:Icon Kind=SaveAs}" Header="另存为..."/>
-                                    <MenuItem Icon="{ZDY:Icon Kind=MessageEdit}" Header="重命名"/>
+                                    <MenuItem Icon="{ZDY:Icon Kind=Save}" Header="保存" Command="{Binding ExecuteSaveImageCommand}"/>
+                                    <MenuItem Icon="{ZDY:Icon Kind=SaveAs}" Header="另存为..." Command="{Binding ExecuteSaveAsImageCommand}"/>
                                     <MenuItem Icon="{ZDY:Icon Kind=Delete}" Header="删除" Click="DeleteButton_Click"/>
                                     <Separator/>
                                     <MenuItem Icon="{ZDY:Icon Kind=GalleryEdit}" Header="打开效果面板" Command="{Binding ExecuteTogglePictureEffectsViewCommand}" Visibility="{Binding IsShowPictureEffectsView, Converter={ZDY:BoolToInverseVisibilityConverter}}"/>
                                     <MenuItem Icon="{ZDY:Icon Kind=GalleryEdit}" Header="关闭效果面板" Command="{Binding ExecuteTogglePictureEffectsViewCommand}" Visibility="{Binding IsShowPictureEffectsView, Converter={ZDY:BoolToVisibilityConverter}}"/>
                                     <Separator/>
                                     <MenuItem Icon="{ZDY:Icon Kind=Info}" Header="图片信息" Click="InfoButton_Click"/>
+                                    <MenuItem Icon="{ZDY:Icon Kind=Folder2}" Header="打开所在的文件夹" Command="{Binding ExecuteOpenTheFolderCommand}"/>
                                 </ZDY:ContextMenu>
                             </Image.ContextMenu>
                         </Image>
@@ -440,5 +440,6 @@
                 </Style>
             </Grid.Style>
         </Grid>
+        <ZDY:Hint Text="{Binding NotificationMessage}" FontWeight="Normal" CornerRadius="4" Margin="0 -160 0 0" Background="{x:Static SystemColors.HighlightBrush}" Duration="0:0:5"/>
     </Grid>
 </ZDY:GlassesWindow>

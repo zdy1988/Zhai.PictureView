@@ -2,6 +2,9 @@
 <SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="Zhai.PictureView.Properties" GeneratedClassName="Settings">
   <Profiles />
   <Settings>
+    <Setting Name="AppName" Type="System.String" Scope="User">
+      <Value Profile="(Default)">ZDY ' PICTURE</Value>
+    </Setting>
     <Setting Name="IsStartWindowMaximized" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
@@ -11,11 +14,6 @@
     <Setting Name="IsWindowTransparency" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
     </Setting>
-    <Setting Name="AppName" Type="System.String" Scope="User">
-      <Value Profile="(Default)">ZDY ' PICTURE</Value>
-    </Setting>
-    <Setting Name="AppName2" Type="System.String" Scope="User">
-      <Value Profile="(Default)">DY ' PICTURE</Value>
-    </Setting>
+
   </Settings>
 </SettingsFile>

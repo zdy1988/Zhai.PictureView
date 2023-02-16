@@ -9,45 +9,59 @@ namespace Zhai.PictureView
 {
     internal static class PictureSupport
     {
-        internal static string[] All { get; } = new string[] {
-
-            // Standards
-            ".jpg", ".jpeg", ".jpe", ".png", ".bmp", ".tif", ".tiff", ".gif", ".ico", ".jfif", ".webp", ".wbmp",
-
-            // Non-standards
-
-            // Photoshop
-            ".psd", ".psb",
-
-            // Pfim
-            ".tga", ".dds",
-
-            // Vector
-            ".svg", // Maybe add svgz at some point
-            ".xcf",
-
-            // Camera
-            ".3fr", ".arw", ".cr2", ".crw", ".dcr", ".dng", ".erf", ".kdc", ".mdc", ".mef", ".mos", ".mrw", ".nef", ".nrw", ".orf",
-            ".pef", ".raf", ".raw", ".rw2", ".srf", ".x3f",
-
-            // Others
-            ".pgm", ".hdr", ".cut", ".exr", ".dib", ".heic", ".emf", ".wmf", ".wpg", ".pcx", ".xbm", ".xpm"
-
+        internal static string[] JPEG { get; } = new string[] {
+            ".jpg", ".jpeg"
         };
 
-        internal static string AllSupported = String.Join(";", All.Select(t => $"*{t}"));
+        internal static string[] PortableNetworkGraphic { get; } = new string[] {
+            ".png"
+        };
+
+        internal static string[] GraphicsInterchangeFormat { get; } = new string[] {
+            ".gif"
+        };
+
+        internal static string[] Icon { get; } = new string[] {
+            ".ico"
+        };
+
+        internal static string[] Photoshop { get; } = new string[] {
+            ".psd", ".psb"
+        };
+
+        internal static string[] Vector { get; } = new string[] {
+            ".svg", ".svgz"
+        };
+
+        internal static string[] Camera { get; } = new string[] {
+            ".3fr", ".arw", ".cr2", ".cr3", ".crw", ".dcr", ".dng", ".erf", ".kdc", ".mdc", ".mef", ".mos", ".mrw",
+            ".nef", ".nrw", ".orf", ".pef", ".raf", ".raw", ".rw2", ".srf", ".x3f",
+        };
+
+        internal static string[] Others { get; } = new string[] {
+            ".jpe", ".bmp", ".jfif", ".webp", ".wbmp",
+            ".tif", ".tiff", ".dds", ".tga", ".heic", ".heif", ".hdr", ".xcf", ".jxl", ".jp2",
+            ".b64",
+            ".pgm", ".ppm", ".cut", ".exr", ".dib", ".emf", ".wmf", ".wpg", ".pcx", ".xbm", ".xpm",
+        };
+
+        internal static string[] All { get; } = (new List<IEnumerable<string>> { JPEG, PortableNetworkGraphic, GraphicsInterchangeFormat, Icon, Photoshop, Vector, Camera, Others }).Aggregate((x, y) => x.Concat(y)).ToArray();
+
+        internal static string ToFilter(this IEnumerable<string> strings)
+        {
+            return String.Join(";", strings.Select(t => $"*{t}"));
+        }
 
         internal static string Filter { get; } =
-            $@"All Supported ({AllSupported})|{AllSupported}|
-JPEG (*.jpg;*.jpeg)|*.jpg;*.jpeg|
-Portable Network Graphic (*.png)|*.png|
-Graphics Interchange Format (*.gif)|*.gif|
-Icon (*.ico)|*.ico|
-Photoshop (*.psd;*.psb)|*.psd;*.psb|
-Pfim (*.tga;*.dds)|*.tga;*.dds|
-Vector (*.svg;*.xcf)|*.svg;*.xcf|
-Camera (*.3fr;*.arw;*.cr2;*.crw;*.dcr;*.dng;*.erf;*.kdc;*.mdc;*.mef;*.mos;*.mrw;*.nef;*.nrw;*.orf;*.pef;*.raf;*.raw;*.rw2;*.srf;*.x3f)|*.3fr;*.arw;*.cr2;*.crw;*.dcr;*.dng;*.erf;*.kdc;*.mdc;*.mef;*.mos;*.mrw;*.nef;*.nrw;*.orf;*.pef;*.raf;*.raw;*.rw2;*.srf;*.x3f|
-Other (*.jpe;*.tif;*.jfif;*.webp;*.wbmp;*.tiff;*.wmf;*.pgm;*.hdr;*.cut;*.exr;*.dib;*.heic;*.emf;*.wpg;*.pcx;*.xbm;*.xpm)|*.jpe;*.tif;*.jfif;*.webp;*.wbmp;*.tiff;*.wmf;*.pgm;*.hdr;*.cut;*.exr;*.dib;*.heic;*.emf;*.wpg;*.pcx;*.xbm;*.xpm|
+            $@"All Supported ({All.ToFilter()})|{All.ToFilter()}|
+JPEG ({GraphicsInterchangeFormat.ToFilter()})|{Icon.ToFilter()}|
+Portable Network Graphic ({PortableNetworkGraphic.ToFilter()})|{PortableNetworkGraphic.ToFilter()}|
+Graphics Interchange Format ({GraphicsInterchangeFormat.ToFilter()})|{GraphicsInterchangeFormat.ToFilter()}|
+Icon ({Icon.ToFilter()})|{Icon.ToFilter()}|
+Photoshop ({Photoshop.ToFilter()})|{Photoshop.ToFilter()}|
+Vector ({Vector.ToFilter()})|{Vector.ToFilter()}|
+Camera ({Camera.ToFilter()})|{Camera.ToFilter()}|
+Others ({Others.ToFilter()})|{Others.ToFilter()}|
 All Files (*.*)|*.*";
 
         internal static bool IsSupported(string filename) => All.Contains(Path.GetExtension(filename).ToLower());

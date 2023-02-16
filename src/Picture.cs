@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SkiaSharp;
+using System;
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows.Media;
@@ -64,6 +65,27 @@ namespace Zhai.PictureView
             set => Set(() => PictureExif, ref pictureExif, value);
         }
 
+        public Stream PictureStream
+        {
+            get
+            {
+                if (PictureSource == null) return null;
+
+                var ms = new MemoryStream();
+
+                BitmapEncoder encoder = new BmpBitmapEncoder();
+                encoder.Frames.Add(BitmapFrame.Create(PictureSource));
+                encoder.Save(ms);
+
+                if (ms.CanSeek)
+                {
+                    ms.Seek(0, SeekOrigin.Begin);
+                }
+
+                return ms;
+            }
+        }
+
         public bool IsAnimation
         {
             get
@@ -81,6 +103,14 @@ namespace Zhai.PictureView
                 if (PictureSource == null) return false;
 
                 return PictureState == PictureState.Loaded;
+            }
+        }
+
+        public string Extension
+        {
+            get
+            {
+                return Path.GetExtension(PicturePath);
             }
         }
 
@@ -183,6 +213,18 @@ namespace Zhai.PictureView
             return PictureExif;
         }
 
+        public async Task<bool> SaveAsync(string? targetPath)
+        {
+            if (IsLoaded)
+            {
+                targetPath ??= PicturePath;
+
+                return await ImageDecoder.SaveImageAsync(PictureStream, targetPath);
+            }
+
+            return false;
+        }
+
         public bool Delete()
         {
             try
@@ -195,19 +237,6 @@ namespace Zhai.PictureView
             {
                 return false;
             }
-        }
-
-        public Stream ToStream()
-        {
-            if (PictureSource == null) return null;
-
-            var ms = new MemoryStream();
-
-            BitmapEncoder encoder = new BmpBitmapEncoder();
-            encoder.Frames.Add(BitmapFrame.Create(PictureSource));
-            encoder.Save(ms);
-
-            return ms;
         }
 
         public override void Cleanup()

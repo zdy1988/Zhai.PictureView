@@ -40,7 +40,7 @@
                     </StackPanel.Resources>
                     <StackPanel Orientation="Horizontal" Margin="0 0 0 12">
                         <Image Source="favicon.ico" Width="24" Height="24" Margin="0 0 4 0"/>
-                        <TextBlock Text="{Binding Path=AppName2, Source={x:Static Properties:Settings.Default}}" FontSize="24" Margin="0" VerticalAlignment="Center"/>
+                        <TextBlock x:Name="TextBlock_AppName" Text="ZDY" FontSize="24" Margin="0" VerticalAlignment="Center"/>
                     </StackPanel>
 
                     <TextBlock Margin="0 0 0 7" FontSize="11" VerticalAlignment="Bottom">

@@ -18,6 +18,7 @@ namespace Zhai.PictureView
             Assembly assembly = Assembly.GetExecutingAssembly();
 
             this.TextBlock_ApplicationIntPtrSize.Text = Application.Current.GetIntPtrSize().ToString();
+            this.TextBlock_AppName.Text = Properties.Settings.Default.AppName.Substring(1);
             this.TextBlock_Name.Text = assembly.GetProduct();
             this.TextBlock_Copyright.Text = $"2022 - {DateTime.Now.Year}";
             this.TextBlock_Version.Text = assembly.GetFileVersion();
