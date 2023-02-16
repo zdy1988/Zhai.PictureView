@@ -1,17 +1,14 @@
 ﻿using ImageMagick;
-using Pfim;
+using SkiaSharp;
+using SkiaSharp.Views.WPF;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
-using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Interop;
-using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
 namespace Zhai.PictureView
@@ -43,6 +40,8 @@ namespace Zhai.PictureView
 
             return bitmapSource;
         }
+
+
 
         internal static BitmapSource GetThumb(string filename)
         {
@@ -105,87 +104,41 @@ namespace Zhai.PictureView
             }
         }
 
-        internal static async Task<Tuple<BitmapSource, PictureExif>> GetBitmapSource(string filename)
+
+
+        internal static async Task<BitmapSource> GetBitmapSourceAsync(string filename)
         {
             try
             {
-                FileStream filestream;
-                PictureExif exif;
+                FileInfo fileInfo = new FileInfo(filename);
 
-                switch (Path.GetExtension(filename).ToUpperInvariant())
+                var extension = fileInfo.Extension.ToLowerInvariant();
+
+                switch (extension)
                 {
-                    //SkiaSharp BUG https://github.com/mono/SkiaSharp/issues/1551
-                    //case ".JPG":
-                    //case ".JPEG":
-                    //case ".JPE":
-                    //case ".PNG":
-                    //case ".BMP":
-                    //case ".TIF":
-                    //case ".TIFF":
-                    //case ".GIF":
-                    //case ".ICO":
-                    //case ".JFIF":
-                    //case ".WEBP":
-                    //case ".WBMP":
-                    //    filestream = new FileStream(filename, FileMode.Open, FileAccess.Read, FileShare.ReadWrite, 4096, FileOptions.SequentialScan);
-                    //    var sKBitmap = SKBitmap.Decode(filestream);
-                    //    await filestream.DisposeAsync().ConfigureAwait(false);
+                    case ".jpg":
+                    case ".jpeg":
+                    case ".jpe":
+                    case ".png":
+                    case ".bmp":
+                    case ".gif":
+                    case ".jfif":
+                    case ".ico":
+                    case ".webp":
+                    case ".wbmp":
+                        return await GetWriteableBitmapAsync(fileInfo).ConfigureAwait(false);
 
-                    //    if (sKBitmap == null) { return null; }
+                    case ".tga":
+                        return await Task.FromResult(GetDefaultBitmapSource(fileInfo, true)).ConfigureAwait(false);
 
-                    //    var skPic = sKBitmap.ToWriteableBitmap();
-                    //    skPic.Freeze();
-                    //    sKBitmap.Dispose();
-                    //    return skPic;
+                    case ".svg":
+                        return await GetTransparentBitmapSourceAsync(fileInfo, MagickFormat.Svg).ConfigureAwait(false);
 
-                    case ".DDS":
-                    case "TGA": // TODO some tga files are created upside down https://github.com/Ruben2776/PicView/issues/22
-                        filestream = new FileStream(filename, FileMode.Open, FileAccess.Read, FileShare.ReadWrite, 4096, FileOptions.SequentialScan);
-                        var image = Pfimage.FromStream(filestream);
-                        await filestream.DisposeAsync().ConfigureAwait(false);
-                        var pinnedArray = GCHandle.Alloc(image.Data, GCHandleType.Pinned);
-                        var addr = pinnedArray.AddrOfPinnedObject();
-                        var pfimPic = BitmapSource.Create(image.Width, image.Height, 96.0, 96.0,
-                            PixelFormat(image), null, addr, image.DataLen, image.Stride);
-                        image.Dispose();
-                        pfimPic.Freeze();
-                        exif = GetExif(filename, pfimPic);
-                        return new Tuple<BitmapSource, PictureExif>(pfimPic, exif);
+                    case ".b64":
+                        return await Base64StringToBitmap(fileInfo).ConfigureAwait(false);
 
-                    case ".PSD":
-                    case ".PSB":
-                    case ".SVG":
-                    case ".XCF":
-                        filestream = new FileStream(filename, FileMode.Open, FileAccess.Read, FileShare.ReadWrite, 4096, FileOptions.SequentialScan);
-                        var transMagick = new MagickImage();
-                        transMagick.Read(filestream);
-                        await filestream.DisposeAsync().ConfigureAwait(false);
-
-                        transMagick.Quality = 100;
-                        transMagick.ColorSpace = ColorSpace.Transparent;
-
-                        exif = GetMagickImageExif(transMagick);
-
-                        var psd = transMagick.ToBitmapSource();
-                        transMagick.Dispose();
-                        psd.Freeze();
-
-                        return new Tuple<BitmapSource, PictureExif>(psd, exif);
-
-                    default: // some formats cause exceptions when using filestream, so defaulting to reading from file
-                        var magick = new MagickImage();
-                        magick.Read(filename);
-
-                        // Set values for maximum quality
-                        magick.Quality = 100;
-
-                        exif = GetMagickImageExif(magick);
-
-                        var pic = magick.ToBitmapSource();
-                        magick.Dispose();
-                        pic.Freeze();
-
-                        return new Tuple<BitmapSource, PictureExif>(pic, exif);
+                    default:
+                        return await Task.FromResult(GetDefaultBitmapSource(fileInfo)).ConfigureAwait(false);
                 }
             }
             catch (Exception e)
@@ -197,51 +150,196 @@ namespace Zhai.PictureView
             }
         }
 
-        private static PixelFormat PixelFormat(IImage image) => image.Format switch
+        /// <summary>
+        /// Create MagickImage and make sure its transparent, return it as BitmapSource
+        /// </summary>
+        /// <param name="fileInfo"></param>
+        /// <param name="magickFormat"></param>
+        /// <returns></returns>
+        private static async Task<BitmapSource> GetTransparentBitmapSourceAsync(FileInfo fileInfo, MagickFormat magickFormat)
         {
-            ImageFormat.Rgb24 => PixelFormats.Bgr24,
-            ImageFormat.Rgba32 => PixelFormats.Bgr32,
-            ImageFormat.Rgb8 => PixelFormats.Gray8,
-            ImageFormat.R5g5b5a1 or ImageFormat.R5g5b5 => PixelFormats.Bgr555,
-            ImageFormat.R5g6b5 => PixelFormats.Bgr565,
-            _ => throw new Exception($"Unable to convert {image.Format} to WPF PixelFormat"),
-        };
+            FileStream? filestream = null;
+            MagickImage magickImage = new()
+            {
+                Quality = 100,
+                ColorSpace = ColorSpace.Transparent,
+                BackgroundColor = MagickColors.Transparent,
+                Format = magickFormat,
+            };
+            try
+            {
+                filestream = new FileStream(fileInfo.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite, 4096, true);
+                byte[] data = new byte[filestream.Length];
+                await filestream.ReadAsync(data.AsMemory(0, (int)filestream.Length)).ConfigureAwait(false);
 
-        internal static PictureExif GetExif(string filename, BitmapSource bitmap)
+                magickImage.Read(data);
+                magickImage.Settings.Format = magickFormat;
+                magickImage.Settings.BackgroundColor = MagickColors.Transparent;
+                magickImage.Settings.FillColor = MagickColors.Transparent;
+            }
+            catch (Exception e)
+            {
+                filestream?.Dispose();
+                magickImage?.Dispose();
+#if DEBUG
+                Trace.WriteLine($"{nameof(GetTransparentBitmapSourceAsync)} {fileInfo.Name} exception, \n {e.Message}");
+#endif
+                return null;
+            }
+
+            await filestream.DisposeAsync().ConfigureAwait(false);
+
+            var bitmap = magickImage.ToBitmapSource();
+            magickImage.Dispose();
+            bitmap.Freeze();
+            return bitmap;
+        }
+
+        private static async Task<WriteableBitmap> GetWriteableBitmapAsync(FileInfo fileInfo)
+        {
+            try
+            {
+                using (var stream = File.OpenRead(fileInfo.FullName))
+                {
+                    var data = new byte[stream.Length];
+                    await stream.ReadAsync(data.AsMemory(0, (int)stream.Length)).ConfigureAwait(false);
+                    var sKBitmap = SKBitmap.Decode(data);
+                    if (sKBitmap is null)
+                    {
+                        return null;
+                    }
+
+                    var skPic = sKBitmap.ToWriteableBitmap();
+                    skPic.Freeze();
+                    sKBitmap.Dispose();
+                    return skPic;
+                }
+            }
+            catch (Exception e)
+            {
+#if DEBUG
+                Trace.WriteLine($"{nameof(GetWriteableBitmapAsync)} {fileInfo.Name} exception, \n {e.Message}");
+#endif
+                return null;
+            }
+        }
+
+        private static BitmapSource GetDefaultBitmapSource(FileInfo fileInfo, bool autoOrient = false)
+        {
+            var magick = new MagickImage();
+            try
+            {
+                magick.Read(fileInfo);
+                if (autoOrient)
+                {
+                    magick.AutoOrient();
+                }
+            }
+            catch (Exception e)
+            {
+#if DEBUG
+                Trace.WriteLine($"{nameof(GetDefaultBitmapSource)} {fileInfo.Name} exception, \n {e.Message}");
+#endif
+                return null;
+            }
+
+            magick.Quality = 100;
+
+            var pic = magick.ToBitmapSource();
+            magick.Dispose();
+            pic.Freeze();
+
+            return pic;
+        }
+
+
+        #region Base64
+
+        /// <summary>
+        /// Converts string from base64 value to BitmapSource
+        /// </summary>
+        /// <param name="base64String"></param>
+        /// <returns></returns>
+        internal static Task<BitmapSource> Base64StringToBitmap(string base64String) => Task.Run(async () =>
+        {
+            byte[] binaryData = Convert.FromBase64String(base64String);
+            return await Task.FromResult(Base64FromBytes(binaryData)).ConfigureAwait(false);
+        });
+
+        internal static Task<BitmapSource> Base64StringToBitmap(FileInfo fileInfo) => Task.Run(async () =>
+        {
+            var text = await File.ReadAllTextAsync(fileInfo.FullName).ConfigureAwait(false);
+            byte[] binaryData = Convert.FromBase64String(text);
+            return await Task.FromResult(Base64FromBytes(binaryData)).ConfigureAwait(false);
+        });
+
+        private static BitmapSource Base64FromBytes(byte[] binaryData)
+        {
+            using MagickImage magick = new MagickImage();
+            var mrs = new MagickReadSettings
+            {
+                Density = new Density(300, 300),
+                BackgroundColor = MagickColors.Transparent,
+            };
+
+            try
+            {
+                magick.Read(new MemoryStream(binaryData), mrs);
+            }
+            catch (MagickException)
+            {
+                return null;
+            }
+            // Set values for maximum quality
+            magick.Quality = 100;
+            magick.ColorSpace = ColorSpace.Transparent;
+
+            var pic = magick.ToBitmapSource();
+            pic.Freeze();
+            return pic;
+        }
+
+        internal static bool IsBase64String(string base64)
+        {
+            Span<byte> buffer = new Span<byte>(new byte[base64.Length]);
+            return Convert.TryFromBase64String(base64, buffer, out _);
+        }
+
+        #endregion
+
+
+        #region EXIF
+
+        internal static async Task<PictureExif> GetExifAsync(string filename)
         {
             var exif = new PictureExif
             {
                 { "图片名称", Path.GetFileName(filename) },
-                { "图片路径", filename },
-                { "图片宽度", bitmap.PixelWidth.ToString() },
-                { "图片高度", bitmap.PixelHeight.ToString() },
+                { "图片路径", filename }
             };
 
-            return exif;
-        }
-
-        internal static PictureExif GetMagickImageExif(MagickImage image)
-        {
-            var exif = new PictureExif
+            if (File.Exists(filename))
             {
-                { "图片名称", Path.GetFileName(image.FileName) },
-                { "图片路径", image.FileName }
-            };
-
-            var profile = image.GetExifProfile();
-
-            if (profile != null)
-            {
-                exif.Add("图片宽度", image.Width.ToString());
-                exif.Add("图片高度", image.Height.ToString());
-
-                foreach (var value in profile.Values)
+                using (var magickImage = new MagickImage())
                 {
-                    if (TryGetExifValue(value, out string name, out string description))
+                    await magickImage.ReadAsync(filename);
+
+                    var profile = magickImage.GetExifProfile();
+
+                    if (profile != null)
                     {
-                        if (!exif.ContainsKey(name))
+                        exif.Add("图片宽度", magickImage.Width.ToString());
+                        exif.Add("图片高度", magickImage.Height.ToString());
+
+                        foreach (var value in profile.Values)
                         {
-                            exif.Add(name, description);
+                            if (TryGetExifValue(value, out string name, out string description))
+                            {
+                                if (!exif.ContainsKey(name))
+                                {
+                                    exif.Add(name, description);
+                                }
+                            }
                         }
                     }
                 }
@@ -329,5 +427,7 @@ namespace Zhai.PictureView
 
             return name != String.Empty;
         }
+
+        #endregion
     }
 }

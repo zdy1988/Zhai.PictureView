@@ -234,6 +234,8 @@
                                     <Separator/>
                                     <MenuItem Icon="{ZDY:Icon Kind=GalleryEdit}" Header="打开效果面板" Command="{Binding ExecuteTogglePictureEffectsViewCommand}" Visibility="{Binding IsShowPictureEffectsView, Converter={ZDY:BoolToInverseVisibilityConverter}}"/>
                                     <MenuItem Icon="{ZDY:Icon Kind=GalleryEdit}" Header="关闭效果面板" Command="{Binding ExecuteTogglePictureEffectsViewCommand}" Visibility="{Binding IsShowPictureEffectsView, Converter={ZDY:BoolToVisibilityConverter}}"/>
+                                    <Separator/>
+                                    <MenuItem Icon="{ZDY:Icon Kind=Info}" Header="图片信息" Click="InfoButton_Click"/>
                                 </ZDY:ContextMenu>
                             </Image.ContextMenu>
                         </Image>

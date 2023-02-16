@@ -23,6 +23,13 @@ namespace Zhai.PictureView
         public ExifWindow()
         {
             InitializeComponent();
+
+            this.Loaded += ExifWindow_Loaded;
+        }
+
+        private async void ExifWindow_Loaded(object sender, RoutedEventArgs e)
+        {
+            await (this.DataContext as Picture).LoadExif();
         }
     }
 }

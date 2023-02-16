@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Threading.Tasks;
+using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Zhai.Famil.Common.Mvvm;
 
@@ -56,7 +57,12 @@ namespace Zhai.PictureView
             set => Set(() => PictureState, ref pictureState, value);
         }
 
-        public PictureExif PictureExif { get; private set; }
+        private PictureExif pictureExif;
+        public PictureExif PictureExif
+        {
+            get => pictureExif;
+            set => Set(() => PictureExif, ref pictureExif, value);
+        }
 
         public bool IsAnimation
         {
@@ -132,12 +138,11 @@ namespace Zhai.PictureView
                 {
                     PictureState = PictureState.Loading;
 
-                    var imageSource = await Task.Run(async () => await ImageDecoder.GetBitmapSource(PicturePath));
+                    var imageSource = await Task.Run(async () => await ImageDecoder.GetBitmapSourceAsync(PicturePath));
 
-                    if (imageSource != null&&imageSource.Item1!=null)
+                    if (imageSource != null)
                     {
-                        PictureSource = imageSource.Item1;
-                        PictureExif = imageSource.Item2;
+                        PictureSource = imageSource;
                         PictureState = PictureState.Loaded;
                     }
                     else
@@ -162,6 +167,20 @@ namespace Zhai.PictureView
             PixelHeight = PictureSource.PixelHeight;
 
             return PictureSource;
+        }
+
+        public async Task<PictureExif> LoadExif()
+        {
+            if (IsLoaded && PictureExif == null)
+            {
+                try
+                {
+                    PictureExif = await Task.Run(async () => await ImageDecoder.GetExifAsync(PicturePath));
+                }
+                catch { }
+            }
+
+            return PictureExif;
         }
 
         public bool Delete()

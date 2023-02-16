@@ -81,7 +81,8 @@
 		<PackageReference Include="Magick.NET.SystemDrawing" Version="6.1.4" />
 		<PackageReference Include="Magick.NET.SystemWindowsMedia" Version="6.1.4" />
 		<PackageReference Include="Microsoft-WindowsAPICodePack-Shell" Version="1.1.4" />
-		<PackageReference Include="Pfim" Version="0.11.2" />
+		<PackageReference Include="SkiaSharp" Version="2.88.3" />
+		<PackageReference Include="SkiaSharp.Views.WPF" Version="2.88.3" />
 		<PackageReference Include="System.Drawing.Common" Version="7.0.0" />
 		<PackageReference Include="VirtualizingWrapPanel" Version="1.5.7" />
 		<PackageReference Include="XamlAnimatedGif" Version="2.1.1" />
