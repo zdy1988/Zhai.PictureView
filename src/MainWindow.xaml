@@ -95,7 +95,7 @@
                             <ZDY:ListBox x:Name="PictureList" Margin="8 8 8 -6"
                                          ItemsSource="{Binding Folder}"
                                          VirtualizingPanel.ScrollUnit="Pixel"
-                                         VirtualizingPanel.VirtualizationMode="Recycling"
+                                         VirtualizingPanel.VirtualizationMode="Standard"
                                          VirtualizingPanel.IsVirtualizing="True"
                                          VirtualizingPanel.IsContainerVirtualizable="True"
                                          VirtualizingPanel.CacheLengthUnit="Item"
