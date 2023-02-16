@@ -18,7 +18,7 @@ namespace Zhai.PictureView
     /// <summary>
     /// ExifWindow.xaml 的交互逻辑
     /// </summary>
-    public partial class ExifWindow : TransparentWindow
+    public partial class ExifWindow : FamilWindow
     {
         public ExifWindow()
         {

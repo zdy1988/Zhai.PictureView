@@ -30,6 +30,34 @@
         <Style TargetType="{x:Type ZDY:IconToggleButton}">
             <Setter Property="Margin" Value="3"/>
         </Style>
+        <Style TargetType="{x:Type Border}" x:Key="HorizontalLinearGradientBorder">
+            <Style.Setters>
+                <Setter Property="Height" Value="1"/>
+                <Setter Property="Background">
+                    <Setter.Value>
+                        <LinearGradientBrush>
+                            <GradientStop Color="#00666666" Offset="0"/>
+                            <GradientStop Color="#E6666666" Offset="0.5"/>
+                            <GradientStop Color="#00666666" Offset="1"/>
+                        </LinearGradientBrush>
+                    </Setter.Value>
+                </Setter>
+            </Style.Setters>
+        </Style>
+        <Style TargetType="{x:Type Border}" x:Key="VerticalLinearGradientBorder">
+            <Style.Setters>
+                <Setter Property="Width" Value="1"/>
+                <Setter Property="Background">
+                    <Setter.Value>
+                        <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                            <GradientStop Color="#00666666" Offset="0"/>
+                            <GradientStop Color="#E6666666" Offset="0.5"/>
+                            <GradientStop Color="#00666666" Offset="1"/>
+                        </LinearGradientBrush>
+                    </Setter.Value>
+                </Setter>
+            </Style.Setters>
+        </Style>
     </ZDY:GlassesWindow.Resources>
     <ZDY:GlassesWindow.TitleBarContent>
         <DockPanel>
@@ -56,116 +84,118 @@
         </DockPanel>
     </ZDY:GlassesWindow.TitleBarContent>
     <Grid>
-        <ZDY:Drawer IsOverlayed="False" IsLeftDrawerOpen="{Binding IsShowPictureListView}" IsRightDrawerOpen="{Binding IsShowPictureEditView}">
-            <ZDY:Drawer.LeftDrawerContent>
-                <Border Width="110" Visibility="{Binding CurrentPicture, Converter={ZDY:NullableToVisibilityConverter}}">
-                    <ZDY:ListBox x:Name="PictureList"
-                         ItemsSource="{Binding Folder}"
-                         VirtualizingPanel.ScrollUnit="Pixel"
-                         VirtualizingPanel.VirtualizationMode="Standard"
-                         VirtualizingPanel.IsVirtualizing="True"
-                         VirtualizingPanel.IsContainerVirtualizable="True"
-                         VirtualizingPanel.CacheLengthUnit="Item"
-                         ScrollViewer.CanContentScroll="True"
-                         ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                         SelectedItem="{Binding CurrentPicture}"
-                         SelectedIndex="{Binding CurrentPictureIndex}">
-                        <ZDY:ListBox.Style>
-                            <Style TargetType="{x:Type ZDY:ListBox}">
-                                <Setter Property="Margin" Value="8 6 8 6"/>
-                                <Style.Triggers>
-                                    <Trigger Property="ZDY:ScrollViewerExtension.IsVerticalScrollBarVisibled" Value="True">
-                                        <Setter Property="Margin" Value="8 6 0 6"/>
-                                    </Trigger>
-                                </Style.Triggers>
-                            </Style>
-                        </ZDY:ListBox.Style>
-                        <ZDY:ListBox.ItemsPanel>
-                            <ItemsPanelTemplate>
-                                <VirtualizingStackPanel IsItemsHost="True"/>
-                            </ItemsPanelTemplate>
-                        </ZDY:ListBox.ItemsPanel>
-                        <ZDY:ListBox.ItemContainerStyle>
-                            <Style TargetType="{x:Type ListBoxItem}">
-                                <Setter Property="Margin" Value="0 2"/>
-                                <Setter Property="Padding" Value="0"/>
-                                <Setter Property="BorderThickness" Value="2"/>
-                                <Setter Property="BorderBrush" Value="Transparent"/>
-                                <Setter Property="Template">
-                                    <Setter.Value>
-                                        <ControlTemplate TargetType="{x:Type ListBoxItem}">
-                                            <Border CornerRadius="2" BorderBrush="{TemplateBinding BorderBrush}" HorizontalAlignment="Left" 
-                                                    Width="{Binding RelativeSource={RelativeSource AncestorType=VirtualizingStackPanel}, Path=ActualWidth}"
-                                                    BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" 
-                                                    Padding="{TemplateBinding Padding}" SnapsToDevicePixels="true">
-                                                <Image Stretch="UniformToFill" Source="{Binding ThumbSource}" ToolTip="{Binding Name}"
-                                                       XamlServices:PictureService.Picture="{Binding}"/>
-                                            </Border>
-                                            <ControlTemplate.Triggers>
-                                                <Trigger Property="IsMouseOver" Value="True">
-                                                    <Setter Property="BorderBrush" Value="DeepSkyBlue"/>
-                                                </Trigger>
-                                                <Trigger Property="IsSelected" Value="True">
-                                                    <Setter Property="BorderBrush" Value="DeepSkyBlue"/>
-                                                </Trigger>
-                                            </ControlTemplate.Triggers>
-                                        </ControlTemplate>
-                                    </Setter.Value>
-                                </Setter>
-                            </Style>
-                        </ZDY:ListBox.ItemContainerStyle>
-                    </ZDY:ListBox>
+        <ZDY:Drawer IsOverlayed="False" IsBottomDrawerOpen="{Binding IsShowPictureListView}" IsTopDrawerOpen="{Binding IsShowPictureEffectsView}">
+            <ZDY:Drawer.BottomDrawerContent>
+                <Border Visibility="{Binding CurrentPicture, Converter={ZDY:NullableToVisibilityConverter}}">
+                    <Grid>
+                        <Border VerticalAlignment="Top" MaxWidth="360" Style="{StaticResource HorizontalLinearGradientBorder}"/>
+                        <DockPanel HorizontalAlignment="Center" MaxWidth="888">
+                            <ZDY:Button x:Name="GalleryButton" DockPanel.Dock="Right" Content="全部图片" VerticalContentAlignment="Center" Background="Transparent" Click="GalleryButton_Click"/>
+                            <Border DockPanel.Dock="Right" Margin="3 12 0 12" Style="{StaticResource VerticalLinearGradientBorder}"/>
+                            <ZDY:ListBox x:Name="PictureList" Margin="8 8 8 -6"
+                                         ItemsSource="{Binding Folder}"
+                                         VirtualizingPanel.ScrollUnit="Pixel"
+                                         VirtualizingPanel.VirtualizationMode="Recycling"
+                                         VirtualizingPanel.IsVirtualizing="True"
+                                         VirtualizingPanel.IsContainerVirtualizable="True"
+                                         VirtualizingPanel.CacheLengthUnit="Item"
+                                         ScrollViewer.CanContentScroll="True"
+                                         ScrollViewer.VerticalScrollBarVisibility="Disabled"
+                                         ScrollViewer.HorizontalScrollBarVisibility="Visible"
+                                         ZDY:ScrollViewerExtension.MouseWheelOrientation="Horizontal"
+                                         ZDY:ScrollViewerExtension.IsPenetrating="True"
+                                         SelectedItem="{Binding CurrentPicture}"
+                                         SelectedIndex="{Binding CurrentPictureIndex}">
+                                <ZDY:ListBox.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <VirtualizingStackPanel IsItemsHost="True" Orientation="Horizontal"/>
+                                    </ItemsPanelTemplate>
+                                </ZDY:ListBox.ItemsPanel>
+                                <ZDY:ListBox.ItemContainerStyle>
+                                    <Style TargetType="{x:Type ListBoxItem}">
+                                        <Setter Property="BorderThickness" Value="2"/>
+                                        <Setter Property="BorderBrush" Value="Transparent"/>
+                                        <Setter Property="Template">
+                                            <Setter.Value>
+                                                <ControlTemplate TargetType="{x:Type ListBoxItem}">
+                                                    <Border CornerRadius="4" BorderBrush="{TemplateBinding BorderBrush}" HorizontalAlignment="Left" 
+                                                            Width="50" Height="50" Margin="1" Padding="1"
+                                                            BorderThickness="{TemplateBinding BorderThickness}" Background="DarkGray" 
+                                                            SnapsToDevicePixels="true">
+                                                        <Image Stretch="Uniform" Source="{Binding ThumbSource}" ToolTip="{Binding Name}"
+                                                               XamlServices:PictureService.Picture="{Binding}"/>
+                                                    </Border>
+                                                    <ControlTemplate.Triggers>
+                                                        <Trigger Property="IsMouseOver" Value="True">
+                                                            <Setter Property="BorderBrush" Value="{x:Static SystemColors.HighlightBrush}"/>
+                                                        </Trigger>
+                                                        <Trigger Property="IsSelected" Value="True">
+                                                            <Setter Property="BorderBrush" Value="{x:Static SystemColors.HighlightBrush}"/>
+                                                        </Trigger>
+                                                    </ControlTemplate.Triggers>
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </ZDY:ListBox.ItemContainerStyle>
+                            </ZDY:ListBox>
+                        </DockPanel>
+                    </Grid>
                 </Border>
-            </ZDY:Drawer.LeftDrawerContent>
-            <ZDY:Drawer.RightDrawerContent>
-                <Border Width="150" Visibility="{Binding CurrentPicture, Converter={ZDY:NullableToVisibilityConverter}}">
-                    <ZDY:ListBox x:Name="EffectList" Margin="8 6 0 6"
-                             ItemsSource="{Binding Effects}"
-                             SelectedItem="{Binding CurrentPictureEffect}"
-                             Background="Transparent" BorderThickness="0"
-                             ScrollViewer.HorizontalScrollBarVisibility="Disabled">
-                        <ListBox.ItemsPanel>
-                            <ItemsPanelTemplate>
-                                <WrapPanel IsItemsHost="True" Margin="0 0 -4 0"/>
-                            </ItemsPanelTemplate>
-                        </ListBox.ItemsPanel>
-                        <ListBox.ItemContainerStyle>
-                            <Style TargetType="{x:Type ListBoxItem}">
-                                <Setter Property="Margin" Value="2"/>
-                                <Setter Property="Padding" Value="0"/>
-                                <Setter Property="BorderThickness" Value="2"/>
-                                <Setter Property="BorderBrush" Value="Transparent"/>
-                                <Setter Property="Template">
-                                    <Setter.Value>
-                                        <ControlTemplate TargetType="{x:Type ListBoxItem}">
-                                            <StackPanel>
-                                                <Border CornerRadius="2" Width="60" Height="60"
-                                                        BorderThickness="{TemplateBinding BorderThickness}" BorderBrush="{TemplateBinding BorderBrush}"
-                                                        SnapsToDevicePixels="true">
-                                                    <Image Stretch="UniformToFill" HorizontalAlignment="Center"
-                                                           Source="{Binding DataContext.CurrentPicture.ThumbSource, RelativeSource={RelativeSource AncestorType=ListBox}}" 
-                                                           Effect="{Binding Effect}"
-                                                           ToolTip="{Binding Name}"/>
-                                                </Border>
-                                            </StackPanel>
-                                            <ControlTemplate.Triggers>
-                                                <Trigger Property="IsMouseOver" Value="True">
-                                                    <Setter Property="BorderBrush" Value="DeepSkyBlue"/>
-                                                </Trigger>
-                                                <Trigger Property="IsSelected" Value="True">
-                                                    <Setter Property="BorderBrush" Value="DeepSkyBlue"/>
-                                                    <Setter Property="BorderThickness" Value="2"/>
-                                                    <Setter Property="Margin" Value="2"/>
-                                                </Trigger>
-                                            </ControlTemplate.Triggers>
-                                        </ControlTemplate>
-                                    </Setter.Value>
-                                </Setter>
-                            </Style>
-                        </ListBox.ItemContainerStyle>
-                    </ZDY:ListBox>
+            </ZDY:Drawer.BottomDrawerContent>
+            <ZDY:Drawer.TopDrawerContent>
+                <Border Visibility="{Binding CurrentPicture, Converter={ZDY:NullableToVisibilityConverter}}">
+                    <Grid>
+                        <Border VerticalAlignment="Bottom" MaxWidth="360" Style="{StaticResource HorizontalLinearGradientBorder}"/>
+                        <DockPanel HorizontalAlignment="Center" MaxWidth="888">
+                            <ZDY:Button x:Name="CloseEffectsButton" DockPanel.Dock="Right" Content="关闭窗口" VerticalContentAlignment="Center" Background="Transparent" Click="CloseEffectsButton_Click"/>
+                            <Border DockPanel.Dock="Right" Margin="3 12 0 12" Style="{StaticResource VerticalLinearGradientBorder}"/>
+                            <ZDY:ListBox x:Name="EffectList" Margin="8 8 8 8"
+                                         ItemsSource="{Binding Effects}"
+                                         SelectedItem="{Binding CurrentPictureEffect}"
+                                         ScrollViewer.VerticalScrollBarVisibility="Disabled"
+                                         ScrollViewer.HorizontalScrollBarVisibility="Hidden"
+                                         ZDY:ScrollViewerExtension.MouseWheelOrientation="Horizontal"
+                                         ZDY:ScrollViewerExtension.IsPenetrating="True">
+                                <ListBox.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <StackPanel Orientation="Horizontal" IsItemsHost="True"/>
+                                    </ItemsPanelTemplate>
+                                </ListBox.ItemsPanel>
+                                <ListBox.ItemContainerStyle>
+                                    <Style TargetType="{x:Type ListBoxItem}">
+                                        <Setter Property="BorderThickness" Value="2"/>
+                                        <Setter Property="BorderBrush" Value="Transparent"/>
+                                        <Setter Property="Template">
+                                            <Setter.Value>
+                                                <ControlTemplate TargetType="{x:Type ListBoxItem}">
+                                                    <StackPanel>
+                                                        <Border CornerRadius="4" BorderBrush="{TemplateBinding BorderBrush}" HorizontalAlignment="Left" 
+                                                                Width="50" Height="50" Margin="1" Padding="1"
+                                                                BorderThickness="{TemplateBinding BorderThickness}" Background="DarkGray" 
+                                                                SnapsToDevicePixels="true">
+                                                            <Image Stretch="Uniform" Source="{Binding DataContext.CurrentPicture.ThumbSource, RelativeSource={RelativeSource AncestorType=ListBox}}" 
+                                                                   Effect="{Binding Effect}" ToolTip="{Binding Name}"/>
+                                                        </Border>
+                                                    </StackPanel>
+                                                    <ControlTemplate.Triggers>
+                                                        <Trigger Property="IsMouseOver" Value="True">
+                                                            <Setter Property="BorderBrush" Value="{x:Static SystemColors.HighlightBrush}"/>
+                                                        </Trigger>
+                                                        <Trigger Property="IsSelected" Value="True">
+                                                            <Setter Property="BorderBrush" Value="{x:Static SystemColors.HighlightBrush}"/>
+                                                        </Trigger>
+                                                    </ControlTemplate.Triggers>
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </ListBox.ItemContainerStyle>
+                            </ZDY:ListBox>
+                        </DockPanel>
+                    </Grid>
                 </Border>
-            </ZDY:Drawer.RightDrawerContent>
+            </ZDY:Drawer.TopDrawerContent>
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*"/>
@@ -193,6 +223,19 @@
                                     </Style.Triggers>
                                 </Style>
                             </Image.Style>
+                            <Image.ContextMenu>
+                                <ZDY:ContextMenu>
+                                    <MenuItem Icon="{ZDY:Icon Kind=VuesaxOutlineDocumentCopy}" Header="复制图片" Command="{Binding ExecuteCopyCurrentPictureSourceCommand}"/>
+                                    <MenuItem Icon="{ZDY:Icon Kind=Copy2}" Header="复制图片地址" Command="{Binding ExecuteCopyCurrentPicturePathCommand}"/>
+                                    <MenuItem Icon="{ZDY:Icon Kind=Save}" Header="保存"/>
+                                    <MenuItem Icon="{ZDY:Icon Kind=SaveAs}" Header="另存为..."/>
+                                    <MenuItem Icon="{ZDY:Icon Kind=MessageEdit}" Header="重命名"/>
+                                    <MenuItem Icon="{ZDY:Icon Kind=Delete}" Header="删除" Click="DeleteButton_Click"/>
+                                    <Separator/>
+                                    <MenuItem Icon="{ZDY:Icon Kind=GalleryEdit}" Header="打开效果面板" Command="{Binding ExecuteTogglePictureEffectsViewCommand}" Visibility="{Binding IsShowPictureEffectsView, Converter={ZDY:BoolToInverseVisibilityConverter}}"/>
+                                    <MenuItem Icon="{ZDY:Icon Kind=GalleryEdit}" Header="关闭效果面板" Command="{Binding ExecuteTogglePictureEffectsViewCommand}" Visibility="{Binding IsShowPictureEffectsView, Converter={ZDY:BoolToVisibilityConverter}}"/>
+                                </ZDY:ContextMenu>
+                            </Image.ContextMenu>
                         </Image>
                     </Canvas>
                     <!--小图-->
@@ -200,7 +243,7 @@
                           VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="2" 
                           Visibility="{Binding Scale, Converter={Converters:ThumbBoxVisibilityConverter}}"
                           IsHitTestVisible="{Binding IsPictureMoving, Converter={ZDY:BoolToInverseBoolConverter}}">
-                        <Border Width="168" Height="168" BorderThickness="4" Background="Black" BorderBrush="#CC000000" ClipToBounds="True">
+                        <Border Width="148" Height="148" BorderThickness="4" Background="Black" BorderBrush="#CC000000" ClipToBounds="True">
                             <Canvas x:Name="ThumbBox" MouseMove="MoveRect_MouseMove" RenderTransformOrigin="0.5,0.5" ClipToBounds="True">
                                 <Canvas.RenderTransform>
                                     <RotateTransform Angle="{Binding RotateAngle}" />
@@ -269,20 +312,15 @@
                         </Grid>
                     </Border>
                     <!--Loading-->
-                    <Border x:Name="Loading" 
+                    <Border x:Name="Loading"
                             Visibility="{Binding CurrentPicture, Converter={ZDY:NullableToVisibilityConverter}}"
                             Panel.ZIndex="100" IsHitTestVisible="False"
                             VerticalAlignment="Center" HorizontalAlignment="Center">
-                        <ZDY:Loading Theme="Circle" Width="48" Height="48" Visibility="{Binding CurrentPicture.PictureState, Converter={Converters:LoadingVisibilityConverter}}"/>
+                        <ZDY:Loading Theme="Circle" Foreground="{x:Static SystemColors.HighlightBrush}" Width="48" Height="48" 
+                                     Visibility="{Binding CurrentPicture.PictureState, Converter={Converters:LoadingVisibilityConverter}, Delay=1}"/>
                     </Border>
                 </Grid>
                 <Grid Grid.Row="1">
-                    <StackPanel HorizontalAlignment="Left" VerticalAlignment="Center" Orientation="Horizontal" Margin="8">
-                        <ZDY:IconToggleButton x:Name="PictureListViewToggleButton" Icon="ToggleRight" ToolTip="显示缩略图列表" CheckedIcon="ToggleLeft" CheckedToolTip="关闭缩略图列表" 
-                                              IsChecked="{Binding IsShowPictureListView}" IsEnabled="{Binding CurrentPicture, Converter={ZDY:NullableToBoolConverter}}"
-                                              Visibility="{Binding IsPictureCountMoreThanOne, Converter={ZDY:BoolToVisibilityConverter}}"/>
-                    </StackPanel>
-
                     <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Orientation="Horizontal" Margin="8">
                         <ZDY:IconButton x:Name="OpenButton" Icon="Open" ToolTip="打开" Click="OpenButton_Click"/>
 
@@ -331,7 +369,9 @@
                             <ZDY:IconButton x:Name="NextButton" Icon="ArrowRight" ToolTip="下一张" Click="NextButton_Click" Visibility="{Binding IsPictureCountMoreThanOne, Converter={ZDY:BoolToVisibilityConverter}}"/>
                             <ZDY:IconButton x:Name="DeleteButton" Icon="Delete" ToolTip="删除" Click="DeleteButton_Click"/>
                             <ZDY:IconButton x:Name="PrintButton" Icon="Print" ToolTip="打印" Click="PrintButton_Click"/>
-                            <ZDY:IconToggleButton x:Name="AdjustButton" Icon="Adjust" ToolTip="调整" IsChecked="{Binding IsShowPictureEditView}"/>
+                            <ZDY:IconToggleButton x:Name="PictureListViewToggleButton" Icon="Grid2" ToolTip="显示缩略图列表" CheckedIcon="Grid9" CheckedToolTip="关闭缩略图列表" 
+                                              IsChecked="{Binding IsShowPictureListView}" IsEnabled="{Binding CurrentPicture, Converter={ZDY:NullableToBoolConverter}}"
+                                              Visibility="{Binding IsPictureCountMoreThanOne, Converter={ZDY:BoolToVisibilityConverter}}"/>
                             <ZDY:IconButton x:Name="InfoButton" Icon="Info" ToolTip="图片信息" Click="InfoButton_Click"/>
                         </StackPanel>
                     </StackPanel>
@@ -339,11 +379,11 @@
             </Grid>
         </ZDY:Drawer>
         <Grid x:Name="GalleryView" 
-              Background="#1e1e1e"
+              Background="#1e1e1e" MouseRightButtonUp="GalleryView_MouseRightButtonUp"
               Visibility="{Binding IsShowGallery, Converter={ZDY:BoolToVisibilityConverter}}">
             <ZDY:ListBox ItemsSource="{Binding ElementName=PictureList, Path=Items}"
                           SelectedItem="{Binding CurrentPicture}"
-                          Margin="3 8 3 8" Background="Transparent" BorderThickness="0"
+                          Margin="8 8 8 8" Background="Transparent" BorderThickness="0"
                           VirtualizingPanel.CacheLengthUnit="Item"
                           VirtualizingPanel.ScrollUnit="Pixel"
                           VirtualizingPanel.VirtualizationMode="Standard">
@@ -358,29 +398,22 @@
                         <Setter Property="Padding" Value="0"/>
                         <Setter Property="BorderThickness" Value="2"/>
                         <Setter Property="BorderBrush" Value="Transparent"/>
-                        <Setter Property="RenderTransformOrigin" Value="0.5,0.5"/>
-                        <Setter Property="RenderTransform">
-                            <Setter.Value>
-                                <ScaleTransform CenterX="0.5" CenterY="0.5" ScaleX="0.95" ScaleY="0.95" />
-                            </Setter.Value>
-                        </Setter>
                         <Setter Property="Template">
                             <Setter.Value>
                                 <ControlTemplate TargetType="{x:Type ListBoxItem}">
-                                    <Border Width="120" Height="120" BorderBrush="{TemplateBinding BorderBrush}" HorizontalAlignment="Center" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" Padding="{TemplateBinding Padding}" SnapsToDevicePixels="true">
-                                        <Image Stretch="Uniform" Source="{Binding ThumbSource}" ToolTip="{Binding Name}"
+                                    <Grid Width="120" Height="120" ClipToBounds="True">
+                                        <Border CornerRadius="6" BorderBrush="{TemplateBinding BorderBrush}" HorizontalAlignment="Center" BorderThickness="{TemplateBinding BorderThickness}"
+                                            Padding="{TemplateBinding Padding}" SnapsToDevicePixels="True">
+                                            <Image Stretch="Uniform" Source="{Binding ThumbSource}" ToolTip="{Binding Name}"
                                                XamlServices:PictureService.Picture="{Binding}"/>
-                                    </Border>
+                                        </Border>
+                                    </Grid>
                                     <ControlTemplate.Triggers>
                                         <Trigger Property="IsMouseOver" Value="True">
-                                            <Setter Property="RenderTransform">
-                                                <Setter.Value>
-                                                    <ScaleTransform CenterX="0.5" CenterY="0.5" ScaleX="1" ScaleY="1" />
-                                                </Setter.Value>
-                                            </Setter>
+                                            <Setter Property="BorderBrush" Value="{x:Static SystemColors.HighlightBrush}"/>
                                         </Trigger>
                                         <Trigger Property="IsSelected" Value="True">
-                                            <Setter Property="BorderBrush" Value="DeepSkyBlue"/>
+                                            <Setter Property="BorderBrush" Value="{x:Static SystemColors.HighlightBrush}"/>
                                         </Trigger>
                                     </ControlTemplate.Triggers>
                                 </ControlTemplate>

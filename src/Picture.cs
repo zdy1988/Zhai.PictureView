@@ -68,6 +68,16 @@ namespace Zhai.PictureView
             }
         }
 
+        public bool IsLoaded
+        {
+            get
+            {
+                if (PictureSource == null) return false;
+
+                return PictureState == PictureState.Loaded;
+            }
+        }
+
         public Picture(string filename)
         {
             var file = new FileInfo(filename);
@@ -152,6 +162,20 @@ namespace Zhai.PictureView
             PixelHeight = PictureSource.PixelHeight;
 
             return PictureSource;
+        }
+
+        public bool Delete()
+        {
+            try
+            {
+                File.Delete(PicturePath);
+
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
         }
 
         public Stream ToStream()

@@ -16,7 +16,7 @@ using Zhai.Famil.Controls;
 
 namespace Zhai.PictureView
 {
-    public partial class NavWindow : TransparentWindow
+    public partial class NavWindow : FamilWindow
     {
         public NavWindow(string direction, DirectoryInfo dir)
         {

@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using System.Windows.Media.Effects;
 using System.Windows.Threading;
 using Zhai.Famil.Common.Mvvm;
+using Zhai.Famil.Common.Mvvm.Command;
 
 namespace Zhai.PictureView
 {
@@ -29,11 +30,11 @@ namespace Zhai.PictureView
             set => Set(() => IsShowPictureListView, ref isShowPictureListView, value);
         }
 
-        private bool isShowPictureEditView = false;
-        public bool IsShowPictureEditView
+        private bool isShowPictureEffectsView = false;
+        public bool IsShowPictureEffectsView
         {
-            get => isShowPictureEditView;
-            set => Set(() => IsShowPictureEditView, ref isShowPictureEditView, value);
+            get => isShowPictureEffectsView;
+            set => Set(() => IsShowPictureEffectsView, ref isShowPictureEffectsView, value);
         }
 
         private Picture currentPicture;
@@ -155,6 +156,28 @@ namespace Zhai.PictureView
 
             Effects.Insert(0, new PictureEffect("Original", null));
         }
+
+        #region Commands
+
+        public RelayCommand ExecuteTogglePictureEffectsViewCommand => new Lazy<RelayCommand>(() => new RelayCommand(() =>
+        {
+            IsShowPictureEffectsView = !IsShowPictureEffectsView;
+
+        }, () => CurrentPicture != null && CurrentPicture.IsLoaded)).Value;
+
+        public RelayCommand ExecuteCopyCurrentPictureSourceCommand => new Lazy<RelayCommand>(() => new RelayCommand(() =>
+        {
+            System.Windows.Clipboard.SetImage(CurrentPicture.PictureSource);
+
+        }, () => CurrentPicture != null && CurrentPicture.IsLoaded)).Value;
+
+        public RelayCommand ExecuteCopyCurrentPicturePathCommand => new Lazy<RelayCommand>(() => new RelayCommand(() =>
+        {
+            System.Windows.Clipboard.SetText(CurrentPicture.PicturePath);
+
+        })).Value;
+
+        #endregion
 
 
 

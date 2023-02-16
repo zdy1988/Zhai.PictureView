@@ -79,7 +79,8 @@ namespace Zhai.PictureView
             }
             else
             {
-                MessageBox.Show($"软件对路径：“{dir.FullName}”没有访问权限！");
+                var box = new Zhai.Famil.Dialogs.MessageBox(this, ($"软件对路径：“{dir.FullName}”没有访问权限！"));
+                box.Show();
             }
         }
 
@@ -129,12 +130,12 @@ namespace Zhai.PictureView
 
             if (picture.PixelWidth >= picture.PixelHeight)
             {
-                ThumbBox.Width = 160;
+                ThumbBox.Width = 140;
                 ThumbBox.Height = ThumbBox.Width / picture.PixelWidth * picture.PixelHeight;
             }
             else
             {
-                ThumbBox.Height = 160;
+                ThumbBox.Height = 140;
                 ThumbBox.Width = ThumbBox.Height / picture.PixelHeight * picture.PixelWidth;
             }
 
@@ -608,11 +609,11 @@ namespace Zhai.PictureView
         {
             if (ViewModel.CurrentPicture == null) return;
 
-            if (MessageBox.Show("确定删除此图片？", "删除", MessageBoxButton.OKCancel) == MessageBoxResult.OK)
+            var box = new Zhai.Famil.Dialogs.ConfirmBox(this, "确定删除此图片？");
+
+            if (box.Show() == true)
             {
                 var deletePicture = ViewModel.CurrentPicture;
-
-                var deletePath = deletePicture.PicturePath;
 
                 var index = ViewModel.CurrentPictureIndex + 1;
 
@@ -634,11 +635,7 @@ namespace Zhai.PictureView
 
                 deletePicture.Cleanup();
 
-                try
-                {
-                    File.Delete(deletePath);
-                }
-                catch { }
+                deletePicture.Delete();
             }
         }
 
@@ -676,6 +673,21 @@ namespace Zhai.PictureView
             };
 
             window.ShowDialog();
+        }
+
+        private void GalleryButton_Click(object sender, RoutedEventArgs e)
+        {
+            ViewModel.IsShowGallery = true;
+        }
+
+        private void GalleryView_MouseRightButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            ViewModel.IsShowGallery = false;
+        }
+
+        private void CloseEffectsButton_Click(object sender, RoutedEventArgs e)
+        {
+            ViewModel.IsShowPictureEffectsView = false;
         }
 
         #endregion
