@@ -371,7 +371,7 @@
                             <ZDY:IconButton x:Name="NextButton" Icon="ArrowRight" ToolTip="下一张" Click="NextButton_Click" Visibility="{Binding IsPictureCountMoreThanOne, Converter={ZDY:BoolToVisibilityConverter}}"/>
                             <ZDY:IconButton x:Name="DeleteButton" Icon="Delete" ToolTip="删除" Click="DeleteButton_Click"/>
                             <ZDY:IconButton x:Name="PrintButton" Icon="Print" ToolTip="打印" Click="PrintButton_Click"/>
-                            <ZDY:IconToggleButton x:Name="PictureListViewToggleButton" Icon="Grid2" ToolTip="显示缩略图列表" CheckedIcon="Grid9" CheckedToolTip="关闭缩略图列表" 
+                            <ZDY:IconToggleButton x:Name="PictureListViewToggleButton" Icon="SidebarTop" ToolTip="显示缩略图列表" CheckedIcon="SidebarBottom" CheckedToolTip="关闭缩略图列表" 
                                               IsChecked="{Binding IsShowPictureListView}" IsEnabled="{Binding CurrentPicture, Converter={ZDY:NullableToBoolConverter}}"
                                               Visibility="{Binding IsPictureCountMoreThanOne, Converter={ZDY:BoolToVisibilityConverter}}"/>
                             <ZDY:IconButton x:Name="InfoButton" Icon="Info" ToolTip="图片信息" Click="InfoButton_Click"/>
