@@ -175,8 +175,8 @@
             </ZDY:Drawer.RightDrawerContent>
             <ZDY:Drawer IsOverlayed="False" IsBottomDrawerOpen="{Binding IsShowPictureListView}" IsTopDrawerOpen="{Binding IsShowPictureEffectsView}">
                 <ZDY:Drawer.BottomDrawerContent>
-                    <Border Visibility="{Binding CurrentPicture, Converter={ZDY:NullableToVisibilityConverter}}">
-                        <Grid>
+                    <Border Height="72">
+                        <Grid Visibility="{Binding CurrentPicture, Converter={ZDY:NullableToVisibilityConverter}}">
                             <Border VerticalAlignment="Top" MaxWidth="360" Style="{StaticResource HorizontalLinearGradientBorder}"/>
                             <DockPanel HorizontalAlignment="Center" MaxWidth="888">
                                 <ZDY:Button x:Name="GalleryButton" DockPanel.Dock="Right" Content="全部图片" VerticalContentAlignment="Center" Background="Transparent" Click="GalleryButton_Click"/>
@@ -233,8 +233,8 @@
                     </Border>
                 </ZDY:Drawer.BottomDrawerContent>
                 <ZDY:Drawer.TopDrawerContent>
-                    <Border Visibility="{Binding CurrentPicture, Converter={ZDY:NullableToVisibilityConverter}}">
-                        <Grid>
+                    <Border Height="68">
+                        <Grid Visibility="{Binding CurrentPicture, Converter={ZDY:NullableToVisibilityConverter}}">
                             <Border VerticalAlignment="Bottom" MaxWidth="360" Style="{StaticResource HorizontalLinearGradientBorder}"/>
                             <DockPanel HorizontalAlignment="Center" MaxWidth="888">
                                 <ZDY:Button x:Name="CloseEffectsButton" DockPanel.Dock="Right" Content="关闭窗口" VerticalContentAlignment="Center" Background="Transparent" Click="CloseEffectsButton_Click"/>
