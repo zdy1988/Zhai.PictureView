@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
@@ -35,11 +36,9 @@ namespace Zhai.PictureView
         }
 
 
-        readonly Func<FileInfo, bool> PictureSupportExpression = file => (file.Attributes & (FileAttributes.Hidden | FileAttributes.System | FileAttributes.Temporary)) == 0 && PictureSupport.IsSupported(file.FullName);
-
         public async Task LoadAsync()
         {
-            var files = Current.EnumerateFiles().Where(PictureSupportExpression);
+            var files = Current.EnumerateFiles().Where(PictureSupport.PictureSupportExpression);
 
             if (files.Any())
             {
@@ -71,12 +70,14 @@ namespace Zhai.PictureView
 
                         if (isSecurity)
                         {
-                            return dir.EnumerateFiles().Where(PictureSupportExpression).Any();
+                            return dir.EnumerateFiles().Where(PictureSupport.PictureSupportExpression).Any();
                         }
 
                         return false;
 
                     }).ToList();
+
+                    base.OnPropertyChanged(new PropertyChangedEventArgs("Borthers"));
                 }
             });
         }

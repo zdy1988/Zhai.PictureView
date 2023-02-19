@@ -66,5 +66,6 @@ All Files (*.*)|*.*";
 
         internal static bool IsSupported(string filename) => All.Contains(Path.GetExtension(filename).ToLower());
 
+        internal static readonly Func<FileInfo, bool> PictureSupportExpression = file => (file.Attributes & (FileAttributes.Hidden | FileAttributes.System | FileAttributes.Temporary)) == 0 && PictureSupport.IsSupported(file.FullName);
     }
 }

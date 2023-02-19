@@ -5,10 +5,11 @@ using System.Threading.Tasks;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Zhai.Famil.Common.Mvvm;
+using Zhai.VideoView;
 
 namespace Zhai.PictureView
 {
-    internal class Picture : ViewModelBase
+    internal class Picture : PictureThumbBase
     {
         public string Name { get; }
 
@@ -30,29 +31,15 @@ namespace Zhai.PictureView
             set => Set(() => PixelHeight, ref pixelHeight, value);
         }
 
-        private BitmapSource thumbSource = PictureStateResources.ImageLoading;
-        public BitmapSource ThumbSource
-        {
-            get => thumbSource;
-            set => Set(() => ThumbSource, ref thumbSource, value);
-        }
-
-        private PictureState thumbState = PictureState.Failed;
-        public PictureState ThumbState
-        {
-            get => thumbState;
-            set => Set(() => ThumbState, ref thumbState, value);
-        }
-
-        private BitmapSource pictureSource = PictureStateResources.ImageLoading;
+        private BitmapSource pictureSource = PictureThumbStateResources.ImageLoading;
         public BitmapSource PictureSource
         {
             get => pictureSource;
             set => Set(() => PictureSource, ref pictureSource, value);
         }
 
-        private PictureState pictureState = PictureState.Failed;
-        public PictureState PictureState
+        private PictureThumbState pictureState = PictureThumbState.Failed;
+        public PictureThumbState PictureState
         {
             get => pictureState;
             set => Set(() => PictureState, ref pictureState, value);
@@ -102,7 +89,7 @@ namespace Zhai.PictureView
             {
                 if (PictureSource == null) return false;
 
-                return PictureState == PictureState.Loaded;
+                return PictureState == PictureThumbState.Loaded;
             }
         }
 
@@ -115,6 +102,7 @@ namespace Zhai.PictureView
         }
 
         public Picture(string filename)
+            : base(filename)
         {
             var file = new FileInfo(filename);
 
@@ -125,71 +113,36 @@ namespace Zhai.PictureView
             PicturePath = filename;
         }
 
-
-
-        public void DrawThumb()
-        {
-            if (ThumbState != PictureState.Failed) 
-                return;
-
-            ThumbState = PictureState.Loading;
-            ThumbSource = PictureStateResources.ImageLoading;
-
-            if (!string.IsNullOrWhiteSpace(PicturePath))
-            {
-                try
-                {
-                    var thumbSource = ImageDecoder.GetThumb(PicturePath);
-
-                    if (thumbSource != null)
-                    {
-                        ThumbSource = thumbSource;
-                        ThumbState = PictureState.Loaded;
-                    }
-                    else
-                    {
-                        ThumbSource = PictureStateResources.ImageFailed;
-                        ThumbState = PictureState.Failed;
-                    }
-                }
-                catch
-                {
-                    ThumbSource = PictureStateResources.ImageFailed;
-                    ThumbState = PictureState.Failed;
-                }
-            }
-        }
-
         public async Task<BitmapSource> DrawAsync()
         {
             try
             {
-                if (PictureSource == null || PictureState == PictureState.Failed)
+                if (PictureSource == null || PictureState == PictureThumbState.Failed)
                 {
-                    PictureState = PictureState.Loading;
+                    PictureState = PictureThumbState.Loading;
 
                     var imageSource = await Task.Run(async () => await ImageDecoder.GetBitmapSourceAsync(PicturePath));
 
                     if (imageSource != null)
                     {
                         PictureSource = imageSource;
-                        PictureState = PictureState.Loaded;
+                        PictureState = PictureThumbState.Loaded;
                     }
                     else
                     {
-                        PictureSource = PictureStateResources.ImageFailed;
-                        PictureState = PictureState.Failed;
+                        PictureSource = PictureThumbStateResources.ImageFailed;
+                        PictureState = PictureThumbState.Failed;
                     }
                 }
                 else
                 {
-                    PictureState = PictureState.Loaded;
+                    PictureState = PictureThumbState.Loaded;
                 }
             }
             catch
             {
-                PictureSource = PictureStateResources.ImageFailed;
-                PictureState = PictureState.Failed;
+                PictureSource = PictureThumbStateResources.ImageFailed;
+                PictureState = PictureThumbState.Failed;
             }
 
             PixelWidth = PictureSource.PixelWidth;

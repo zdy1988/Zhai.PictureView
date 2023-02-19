@@ -7,14 +7,14 @@ using System.Windows.Media.Imaging;
 
 namespace Zhai.PictureView
 {
-    internal enum PictureState
+    internal enum PictureThumbState
     {
         Loading,
         Loaded,
         Failed
     }
 
-    internal static class PictureStateResources
+    internal static class PictureThumbStateResources
     {
         public static BitmapImage ImageLoading = new BitmapImage(new Uri("pack://application:,,,/Resources/image-loading.png"));
 

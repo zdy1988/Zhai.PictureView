@@ -1,5 +1,7 @@
 ﻿using Microsoft.Win32;
 using System;
+using System.Collections;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -56,36 +58,9 @@ namespace Zhai.PictureView
 
             if (arg != null)
             {
-                await OpenPicture(arg.ToString());
+                await ViewModel.OpenPicture(arg.ToString());
             }
         }
-
-        public async Task OpenPicture(DirectoryInfo dir, string filename = null, List<DirectoryInfo> borthers = null)
-        {
-            var newFolder = new Folder(dir, borthers);
-
-            if (newFolder.IsAccessed)
-            {
-                var oldFolder = ViewModel.Folder;
-
-                ViewModel.Folder = newFolder;
-                await ViewModel.Folder.LoadAsync();
-                ViewModel.IsPictureCountMoreThanOne = ViewModel.Folder?.Count > 1;
-                ViewModel.CurrentPicture = (filename == null ? ViewModel.Folder : ViewModel.Folder.Where(t => t.PicturePath == filename)).FirstOrDefault();
-
-                ThreadPool.QueueUserWorkItem(_ => this.Dispatcher.Invoke(() => oldFolder?.Cleanup()));
-
-                ViewModel.IsShowPictureListView = ViewModel.Folder != null && ViewModel.Folder.Count > 1;
-            }
-            else
-            {
-                var box = new Zhai.Famil.Dialogs.MessageBox(this, ($"软件对路径：“{dir.FullName}”没有访问权限！"));
-                box.Show();
-            }
-        }
-
-        public Task OpenPicture(string filename)
-            => OpenPicture(Directory.GetParent(filename), filename);
 
         private async void ViewModel_CurrentPictureChanged(object sender, Picture picture)
         {
@@ -116,6 +91,35 @@ namespace Zhai.PictureView
         private double ViewingAreaRatio => this.PictureBox.Width / this.MoveRect.RenderSize.Width;     //获取右侧大图框与透明矩形框的尺寸比率
         private double AdjustScale => Picture.Width / ViewModel.CurrentPicture.PixelWidth;
 
+
+        private List<Picture> activedPictures = new();
+
+        private void ManagePictureCache(Picture current)
+        {
+            ThreadPool.QueueUserWorkItem(_ =>
+            {
+                var item = activedPictures.Where(t => t == current).FirstOrDefault();
+
+                if (item != null)
+                {
+                    activedPictures.Remove(item);
+                }
+
+                activedPictures.Insert(0, current);
+
+                if (activedPictures.Count > Properties.Settings.Default.ActivedPicturesCount)
+                {
+                    foreach (var p in activedPictures.Skip(Properties.Settings.Default.ActivedPicturesCount))
+                    {
+                        p.PictureSource = null;
+                    }
+
+                    GC.Collect();
+                    GC.WaitForPendingFinalizers();
+                }
+            });
+        }
+
         private async Task InitPicture(Picture picture)
         {
             var renderedPicture = await picture.DrawAsync();
@@ -140,11 +144,9 @@ namespace Zhai.PictureView
             }
 
             ResetPicture();
+
+            ManagePictureCache(picture);
         }
-
-
-        readonly double minScale = 0.1;
-        readonly double maxScale = 32;
 
         private void ResetPicture()
         {
@@ -187,6 +189,9 @@ namespace Zhai.PictureView
             ViewModel.Scale = AdjustScale;
         }
 
+
+        readonly double minScale = 0.1;
+        readonly double maxScale = 32;
 
         private void ZoomPicture(double ratio, Point mousePoint = default)
         {
@@ -488,7 +493,7 @@ namespace Zhai.PictureView
             };
 
             if (dialog.ShowDialog() is true)
-                await OpenPicture(dialog.FileName);
+                await ViewModel.OpenPicture(dialog.FileName);
         }
 
         private void ZoomInButton_Click(object sender, RoutedEventArgs e)
@@ -561,7 +566,7 @@ namespace Zhai.PictureView
 
                     if (navWindow.ShowDialog() == true)
                     {
-                        await OpenPicture(next, null, ViewModel.Folder.Borthers);
+                        await ViewModel.OpenPicture(next, null, ViewModel.Folder.Borthers);
 
                         return;
                     }
@@ -595,7 +600,7 @@ namespace Zhai.PictureView
 
                     if (navWindow.ShowDialog() == true)
                     {
-                        await OpenPicture(prev, null, ViewModel.Folder.Borthers);
+                        await ViewModel.OpenPicture(prev, null, ViewModel.Folder.Borthers);
 
                         return;
                     }
@@ -768,7 +773,7 @@ namespace Zhai.PictureView
 
             if (File.Exists(filename) && PictureSupport.IsSupported(filename))
             {
-                await OpenPicture(filename);
+                await ViewModel.OpenPicture(filename);
             }
         }
     }

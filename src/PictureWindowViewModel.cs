@@ -12,6 +12,7 @@ using System.Windows.Media.Effects;
 using System.Windows.Threading;
 using Zhai.Famil.Common.Mvvm;
 using Zhai.Famil.Common.Mvvm.Command;
+using Zhai.Famil.Common.Threads;
 using Zhai.Famil.Controls;
 
 namespace Zhai.PictureView
@@ -137,6 +138,34 @@ namespace Zhai.PictureView
             set => Set(() => IsShowGallery, ref isShowGallery, value);
         }
 
+        private bool isShowFolderBorthersView = false;
+        public bool IsShowFolderBorthersView
+        {
+            get => isShowFolderBorthersView;
+            set => Set(() => IsShowFolderBorthersView, ref isShowFolderBorthersView, value);
+        }
+
+        private DirectoryInfo currentFolder;
+        public DirectoryInfo CurrentFolder
+        {
+            get => currentFolder;
+            set
+            {
+                if (Set(() => CurrentFolder, ref currentFolder, value))
+                {
+                    if (value != null)
+                    {
+                        var file = value.EnumerateFiles().Where(PictureSupport.PictureSupportExpression).FirstOrDefault();
+
+                        if (file != null)
+                        {
+                            OpenPicture(value, file.FullName, folder.Borthers).ConfigureAwait(false);
+                        }
+                    }
+                }
+            }
+        }
+
         private PictureEffect currentPictureEffect;
         public PictureEffect CurrentPictureEffect
         {
@@ -158,6 +187,38 @@ namespace Zhai.PictureView
 
             Effects.Insert(0, new PictureEffect("Original", null));
         }
+
+
+        #region Methods
+
+        public async Task OpenPicture(DirectoryInfo dir, string filename = null, List<DirectoryInfo> borthers = null)
+        {
+            var newFolder = new Folder(dir, borthers);
+
+            if (newFolder.IsAccessed)
+            {
+                var oldFolder = Folder;
+
+                Folder = newFolder;
+                await Folder.LoadAsync();
+                IsPictureCountMoreThanOne = Folder?.Count > 1;
+                CurrentPicture = (filename == null ? Folder : Folder.Where(t => t.PicturePath == filename)).FirstOrDefault();
+
+                ThreadPool.QueueUserWorkItem(_ => ApplicationDispatcher.InvokeOnUIThread(() => oldFolder?.Cleanup()));
+
+                IsShowPictureListView = Folder != null && Folder.Count > 1;
+            }
+            else
+            {
+                var box = new Zhai.Famil.Dialogs.MessageBox(App.Current.MainWindow as WindowBase, ($"软件对路径：“{dir.FullName}”没有访问权限！"));
+                box.Show();
+            }
+        }
+
+        public Task OpenPicture(string filename)
+            => OpenPicture(Directory.GetParent(filename), filename);
+
+        #endregion
 
         #region Commands
 
@@ -214,8 +275,6 @@ namespace Zhai.PictureView
         }, () => CurrentPicture != null)).Value;
 
         #endregion
-
-
 
         public event EventHandler<Picture> CurrentPictureChanged;
 

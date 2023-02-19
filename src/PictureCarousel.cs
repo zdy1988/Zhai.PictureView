@@ -22,14 +22,14 @@ namespace Zhai.PictureView
 
         private void Timer_Tick(object sender, EventArgs e)
         {
-            var newIndex = App.PictureWindowViewModel.CurrentPictureIndex + 1;
+            var newIndex = App.ViewModelLocator.PictureWindow.CurrentPictureIndex + 1;
 
-            if (newIndex > App.PictureWindowViewModel.Folder.Count - 1)
+            if (newIndex > App.ViewModelLocator.PictureWindow.Folder.Count - 1)
             {
                 newIndex = 0;
             }
 
-            App.PictureWindowViewModel.CurrentPictureIndex = newIndex;
+            App.ViewModelLocator.PictureWindow.CurrentPictureIndex = newIndex;
         }
 
         public void Play(double interval = 2000)

@@ -84,15 +84,104 @@
         </DockPanel>
     </ZDY:GlassesWindow.TitleBarContent>
     <Grid>
-        <ZDY:Drawer IsOverlayed="False" IsBottomDrawerOpen="{Binding IsShowPictureListView}" IsTopDrawerOpen="{Binding IsShowPictureEffectsView}">
-            <ZDY:Drawer.BottomDrawerContent>
-                <Border Visibility="{Binding CurrentPicture, Converter={ZDY:NullableToVisibilityConverter}}">
+        <ZDY:Drawer IsOverlayed="False" IsRightDrawerOpen="{Binding IsShowFolderBorthersView}">
+            <ZDY:Drawer.RightDrawerContent>
+                <Border Width="220" Margin="24 24 8 24" Cursor="Arrow">
                     <Grid>
-                        <Border VerticalAlignment="Top" MaxWidth="360" Style="{StaticResource HorizontalLinearGradientBorder}"/>
-                        <DockPanel HorizontalAlignment="Center" MaxWidth="888">
-                            <ZDY:Button x:Name="GalleryButton" DockPanel.Dock="Right" Content="全部图片" VerticalContentAlignment="Center" Background="Transparent" Click="GalleryButton_Click"/>
-                            <Border DockPanel.Dock="Right" Margin="3 12 0 12" Style="{StaticResource VerticalLinearGradientBorder}"/>
-                            <ZDY:ListBox x:Name="PictureList" Margin="8 8 8 -6"
+                        <Border HorizontalAlignment="Left" Margin="-11.5 0 0 0" Style="{StaticResource VerticalLinearGradientBorder}"/>
+                        <Border VerticalAlignment="Bottom" Margin="0 -1 0 0" Style="{StaticResource HorizontalLinearGradientBorder}"/>
+                        <DockPanel>
+                            <ZDY:TextBox x:Name="FolderListSearcher" DockPanel.Dock="Top" Margin="3 0 3 14"
+                                         ZDY:TextBoxExtension.Placeholder="查找..."
+                                         ZDY:TextBoxExtension.Icon="Search" BorderThickness="1"
+                                         ZDY:TextBoxExtension.IsClearButtonEnabled="True"/>
+                            <ZDY:ListBox x:Name="FolderList"
+                                     ItemsSource="{Binding Folder.Borthers}"
+                                     VirtualizingPanel.ScrollUnit="Pixel"
+                                     VirtualizingPanel.VirtualizationMode="Standard"
+                                     VirtualizingPanel.IsVirtualizing="True"
+                                     VirtualizingPanel.IsContainerVirtualizable="True"
+                                     VirtualizingPanel.CacheLengthUnit="Item"
+                                     ScrollViewer.CanContentScroll="True"
+                                     ScrollViewer.VerticalScrollBarVisibility="Visible"
+                                     ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                                     ZDY:ScrollViewerExtension.MouseWheelOrientation="Vertical"
+                                     ZDY:ScrollViewerExtension.IsPenetrating="True"
+                                     SelectedItem="{Binding CurrentFolder}">
+                                <ZDY:ListBox.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <VirtualizingStackPanel IsItemsHost="True"/>
+                                    </ItemsPanelTemplate>
+                                </ZDY:ListBox.ItemsPanel>
+                                <ZDY:ListBox.ItemContainerStyle>
+                                    <Style TargetType="{x:Type ListBoxItem}">
+                                        <Setter Property="Visibility">
+                                            <Setter.Value>
+                                                <MultiBinding Converter="{Converters:KeywordToListItemVisibilityConverter}">
+                                                    <MultiBinding.Bindings>
+                                                        <Binding ElementName="FolderListSearcher" Path="Text"/>
+                                                        <Binding Path="Name"/>
+                                                    </MultiBinding.Bindings>
+                                                </MultiBinding>
+                                            </Setter.Value>
+                                        </Setter>
+                                        <Setter Property="BorderThickness" Value="2"/>
+                                        <Setter Property="BorderBrush" Value="Transparent"/>
+                                        <Setter Property="Background" Value="Transparent"/>
+                                        <Setter Property="Template">
+                                            <Setter.Value>
+                                                <ControlTemplate TargetType="{x:Type ListBoxItem}">
+                                                    <DockPanel Background="{TemplateBinding Background}">
+                                                        <Border DockPanel.Dock="Left" BorderBrush="{TemplateBinding BorderBrush}" HorizontalAlignment="Left" 
+                                                                Width="84" Height="56" Margin="1" Padding="1" CornerRadius="4"
+                                                                BorderThickness="{TemplateBinding BorderThickness}" Background="DarkGray" 
+                                                                SnapsToDevicePixels="true">
+                                                            <Grid>
+                                                                <Image Stretch="UniformToFill" ToolTip="{Binding Name}" VerticalAlignment="Center"
+                                                                       XamlServices:PictureThumbService.PictureDirectory="{Binding}"/>
+                                                                <Border x:Name="RightMask" Width="28" HorizontalAlignment="Right" VerticalAlignment="Stretch" Background="#cc595959">
+                                                                    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                                                                        <TextBlock x:Name="VideoCountTextBlock" Text="{Binding Converter={Converters:FolderChildNumberConverter}}" HorizontalAlignment="Center" Margin="0 0 0 2"/>
+                                                                        <ZDY:Icon Kind="Gallery" HorizontalAlignment="Center" Width="12"/>
+                                                                    </StackPanel>
+                                                                </Border>
+                                                            </Grid>
+                                                        </Border>
+                                                        <StackPanel DockPanel.Dock="Right">
+                                                            <TextBlock Text="{Binding Name}" Margin="4 2 0 0" MaxHeight="32" TextWrapping="Wrap" TextTrimming="CharacterEllipsis"/>
+                                                            <Border Background="{StaticResource Zhai.Famil.SelectionBrush}" HorizontalAlignment="Left" Padding="3 1" CornerRadius="2" Margin="4 4 0 0">
+                                                                <TextBlock Text="{Binding ElementName=VideoCountTextBlock, Path=Text, StringFormat={}{0}张图片}" FontSize="11"/>
+                                                            </Border>
+                                                        </StackPanel>
+                                                    </DockPanel>
+                                                    <ControlTemplate.Triggers>
+                                                        <DataTrigger Binding="{Binding Converter={Converters:FolderChildNumberConverter}}" Value="1">
+                                                            <Setter TargetName="RightMask" Property="Visibility" Value="Collapsed"/>
+                                                        </DataTrigger>
+                                                        <Trigger Property="IsMouseOver" Value="True">
+                                                            <Setter Property="BorderBrush" Value="{x:Static SystemColors.HighlightBrush}"/>
+                                                            <Setter Property="Background" Value="{StaticResource Zhai.Famil.SelectionActivedBrush}"/>
+                                                        </Trigger>
+                                                    </ControlTemplate.Triggers>
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </ZDY:ListBox.ItemContainerStyle>
+                            </ZDY:ListBox>
+                        </DockPanel>
+                    </Grid>
+                </Border>
+            </ZDY:Drawer.RightDrawerContent>
+            <ZDY:Drawer IsOverlayed="False" IsBottomDrawerOpen="{Binding IsShowPictureListView}" IsTopDrawerOpen="{Binding IsShowPictureEffectsView}">
+                <ZDY:Drawer.BottomDrawerContent>
+                    <Border Visibility="{Binding CurrentPicture, Converter={ZDY:NullableToVisibilityConverter}}">
+                        <Grid>
+                            <Border VerticalAlignment="Top" MaxWidth="360" Style="{StaticResource HorizontalLinearGradientBorder}"/>
+                            <DockPanel HorizontalAlignment="Center" MaxWidth="888">
+                                <ZDY:Button x:Name="GalleryButton" DockPanel.Dock="Right" Content="全部图片" VerticalContentAlignment="Center" Background="Transparent" Click="GalleryButton_Click"/>
+                                <Border DockPanel.Dock="Right" Margin="3 12 0 12" Style="{StaticResource VerticalLinearGradientBorder}"/>
+                                <ZDY:ListBox x:Name="PictureList" Margin="8 8 8 -6"
                                          ItemsSource="{Binding Folder}"
                                          VirtualizingPanel.ScrollUnit="Pixel"
                                          VirtualizingPanel.VirtualizationMode="Standard"
@@ -106,279 +195,283 @@
                                          ZDY:ScrollViewerExtension.IsPenetrating="True"
                                          SelectedItem="{Binding CurrentPicture}"
                                          SelectedIndex="{Binding CurrentPictureIndex}">
-                                <ZDY:ListBox.ItemsPanel>
-                                    <ItemsPanelTemplate>
-                                        <VirtualizingStackPanel IsItemsHost="True" Orientation="Horizontal"/>
-                                    </ItemsPanelTemplate>
-                                </ZDY:ListBox.ItemsPanel>
-                                <ZDY:ListBox.ItemContainerStyle>
-                                    <Style TargetType="{x:Type ListBoxItem}">
-                                        <Setter Property="BorderThickness" Value="2"/>
-                                        <Setter Property="BorderBrush" Value="Transparent"/>
-                                        <Setter Property="Template">
-                                            <Setter.Value>
-                                                <ControlTemplate TargetType="{x:Type ListBoxItem}">
-                                                    <Border CornerRadius="4" BorderBrush="{TemplateBinding BorderBrush}" HorizontalAlignment="Left" 
+                                    <ZDY:ListBox.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <VirtualizingStackPanel IsItemsHost="True" Orientation="Horizontal"/>
+                                        </ItemsPanelTemplate>
+                                    </ZDY:ListBox.ItemsPanel>
+                                    <ZDY:ListBox.ItemContainerStyle>
+                                        <Style TargetType="{x:Type ListBoxItem}">
+                                            <Setter Property="BorderThickness" Value="2"/>
+                                            <Setter Property="BorderBrush" Value="Transparent"/>
+                                            <Setter Property="Template">
+                                                <Setter.Value>
+                                                    <ControlTemplate TargetType="{x:Type ListBoxItem}">
+                                                        <Border CornerRadius="4" BorderBrush="{TemplateBinding BorderBrush}" HorizontalAlignment="Left" 
                                                             Width="50" Height="50" Margin="1" Padding="1"
                                                             BorderThickness="{TemplateBinding BorderThickness}" Background="DarkGray" 
                                                             SnapsToDevicePixels="true">
-                                                        <Image Stretch="Uniform" Source="{Binding ThumbSource}" ToolTip="{Binding Name}"
-                                                               XamlServices:PictureService.Picture="{Binding}"/>
-                                                    </Border>
-                                                    <ControlTemplate.Triggers>
-                                                        <Trigger Property="IsMouseOver" Value="True">
-                                                            <Setter Property="BorderBrush" Value="{x:Static SystemColors.HighlightBrush}"/>
-                                                        </Trigger>
-                                                        <Trigger Property="IsSelected" Value="True">
-                                                            <Setter Property="BorderBrush" Value="{x:Static SystemColors.HighlightBrush}"/>
-                                                        </Trigger>
-                                                    </ControlTemplate.Triggers>
-                                                </ControlTemplate>
-                                            </Setter.Value>
-                                        </Setter>
-                                    </Style>
-                                </ZDY:ListBox.ItemContainerStyle>
-                            </ZDY:ListBox>
-                        </DockPanel>
-                    </Grid>
-                </Border>
-            </ZDY:Drawer.BottomDrawerContent>
-            <ZDY:Drawer.TopDrawerContent>
-                <Border Visibility="{Binding CurrentPicture, Converter={ZDY:NullableToVisibilityConverter}}">
-                    <Grid>
-                        <Border VerticalAlignment="Bottom" MaxWidth="360" Style="{StaticResource HorizontalLinearGradientBorder}"/>
-                        <DockPanel HorizontalAlignment="Center" MaxWidth="888">
-                            <ZDY:Button x:Name="CloseEffectsButton" DockPanel.Dock="Right" Content="关闭窗口" VerticalContentAlignment="Center" Background="Transparent" Click="CloseEffectsButton_Click"/>
-                            <Border DockPanel.Dock="Right" Margin="3 12 0 12" Style="{StaticResource VerticalLinearGradientBorder}"/>
-                            <ZDY:ListBox x:Name="EffectList" Margin="8 8 8 8"
+                                                            <Image Stretch="Uniform" ToolTip="{Binding Name}" VerticalAlignment="Center"
+                                                               XamlServices:PictureThumbService.Picture="{Binding}"/>
+                                                        </Border>
+                                                        <ControlTemplate.Triggers>
+                                                            <Trigger Property="IsMouseOver" Value="True">
+                                                                <Setter Property="BorderBrush" Value="{x:Static SystemColors.HighlightBrush}"/>
+                                                            </Trigger>
+                                                            <Trigger Property="IsSelected" Value="True">
+                                                                <Setter Property="BorderBrush" Value="{x:Static SystemColors.HighlightBrush}"/>
+                                                            </Trigger>
+                                                        </ControlTemplate.Triggers>
+                                                    </ControlTemplate>
+                                                </Setter.Value>
+                                            </Setter>
+                                        </Style>
+                                    </ZDY:ListBox.ItemContainerStyle>
+                                </ZDY:ListBox>
+                            </DockPanel>
+                        </Grid>
+                    </Border>
+                </ZDY:Drawer.BottomDrawerContent>
+                <ZDY:Drawer.TopDrawerContent>
+                    <Border Visibility="{Binding CurrentPicture, Converter={ZDY:NullableToVisibilityConverter}}">
+                        <Grid>
+                            <Border VerticalAlignment="Bottom" MaxWidth="360" Style="{StaticResource HorizontalLinearGradientBorder}"/>
+                            <DockPanel HorizontalAlignment="Center" MaxWidth="888">
+                                <ZDY:Button x:Name="CloseEffectsButton" DockPanel.Dock="Right" Content="关闭窗口" VerticalContentAlignment="Center" Background="Transparent" Click="CloseEffectsButton_Click"/>
+                                <Border DockPanel.Dock="Right" Margin="3 12 0 12" Style="{StaticResource VerticalLinearGradientBorder}"/>
+                                <ZDY:ListBox x:Name="EffectList" Margin="8 8 8 8"
                                          ItemsSource="{Binding Effects}"
                                          SelectedItem="{Binding CurrentPictureEffect}"
                                          ScrollViewer.VerticalScrollBarVisibility="Disabled"
                                          ScrollViewer.HorizontalScrollBarVisibility="Hidden"
                                          ZDY:ScrollViewerExtension.MouseWheelOrientation="Horizontal"
                                          ZDY:ScrollViewerExtension.IsPenetrating="True">
-                                <ListBox.ItemsPanel>
-                                    <ItemsPanelTemplate>
-                                        <StackPanel Orientation="Horizontal" IsItemsHost="True"/>
-                                    </ItemsPanelTemplate>
-                                </ListBox.ItemsPanel>
-                                <ListBox.ItemContainerStyle>
-                                    <Style TargetType="{x:Type ListBoxItem}">
-                                        <Setter Property="BorderThickness" Value="2"/>
-                                        <Setter Property="BorderBrush" Value="Transparent"/>
-                                        <Setter Property="Template">
-                                            <Setter.Value>
-                                                <ControlTemplate TargetType="{x:Type ListBoxItem}">
-                                                    <StackPanel>
-                                                        <Border CornerRadius="4" BorderBrush="{TemplateBinding BorderBrush}" HorizontalAlignment="Left" 
+                                    <ListBox.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <StackPanel Orientation="Horizontal" IsItemsHost="True"/>
+                                        </ItemsPanelTemplate>
+                                    </ListBox.ItemsPanel>
+                                    <ListBox.ItemContainerStyle>
+                                        <Style TargetType="{x:Type ListBoxItem}">
+                                            <Setter Property="BorderThickness" Value="2"/>
+                                            <Setter Property="BorderBrush" Value="Transparent"/>
+                                            <Setter Property="Template">
+                                                <Setter.Value>
+                                                    <ControlTemplate TargetType="{x:Type ListBoxItem}">
+                                                        <StackPanel>
+                                                            <Border CornerRadius="4" BorderBrush="{TemplateBinding BorderBrush}" HorizontalAlignment="Left" 
                                                                 Width="50" Height="50" Margin="1" Padding="1"
                                                                 BorderThickness="{TemplateBinding BorderThickness}" Background="DarkGray" 
                                                                 SnapsToDevicePixels="true">
-                                                            <Image Stretch="Uniform" Source="{Binding DataContext.CurrentPicture.ThumbSource, RelativeSource={RelativeSource AncestorType=ListBox}}" 
+                                                                <Image Stretch="Uniform" Source="{Binding DataContext.CurrentPicture.ThumbSource, RelativeSource={RelativeSource AncestorType=ListBox}}" 
                                                                    Effect="{Binding Effect}" ToolTip="{Binding Name}"/>
-                                                        </Border>
-                                                    </StackPanel>
-                                                    <ControlTemplate.Triggers>
-                                                        <Trigger Property="IsMouseOver" Value="True">
-                                                            <Setter Property="BorderBrush" Value="{x:Static SystemColors.HighlightBrush}"/>
-                                                        </Trigger>
-                                                        <Trigger Property="IsSelected" Value="True">
-                                                            <Setter Property="BorderBrush" Value="{x:Static SystemColors.HighlightBrush}"/>
-                                                        </Trigger>
-                                                    </ControlTemplate.Triggers>
-                                                </ControlTemplate>
-                                            </Setter.Value>
-                                        </Setter>
-                                    </Style>
-                                </ListBox.ItemContainerStyle>
-                            </ZDY:ListBox>
-                        </DockPanel>
-                    </Grid>
-                </Border>
-            </ZDY:Drawer.TopDrawerContent>
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="*"/>
-                    <RowDefinition Height="Auto"/>
-                </Grid.RowDefinitions>
-                <Grid Grid.Row="0">
-                    <!--大图-->
-                    <Canvas x:Name="PictureBox" 
+                                                            </Border>
+                                                        </StackPanel>
+                                                        <ControlTemplate.Triggers>
+                                                            <Trigger Property="IsMouseOver" Value="True">
+                                                                <Setter Property="BorderBrush" Value="{x:Static SystemColors.HighlightBrush}"/>
+                                                            </Trigger>
+                                                            <Trigger Property="IsSelected" Value="True">
+                                                                <Setter Property="BorderBrush" Value="{x:Static SystemColors.HighlightBrush}"/>
+                                                            </Trigger>
+                                                        </ControlTemplate.Triggers>
+                                                    </ControlTemplate>
+                                                </Setter.Value>
+                                            </Setter>
+                                        </Style>
+                                    </ListBox.ItemContainerStyle>
+                                </ZDY:ListBox>
+                            </DockPanel>
+                        </Grid>
+                    </Border>
+                </ZDY:Drawer.TopDrawerContent>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <Grid Grid.Row="0">
+                        <!--大图-->
+                        <Canvas x:Name="PictureBox" 
                             RenderTransformOrigin="0.5,0.5" ClipToBounds="True"
                             Width="{Binding ActualWidth, RelativeSource={RelativeSource AncestorType=Grid}}" 
                             Height="{Binding ActualHeight, RelativeSource={RelativeSource AncestorType=Grid}}"
                             Background="Transparent">
-                        <Canvas.RenderTransform>
-                            <RotateTransform Angle="{Binding RotateAngle}" />
-                        </Canvas.RenderTransform>
-                        <Image x:Name="Picture" Canvas.Top="0" Canvas.Left="0">
-                            <Image.Style>
-                                <Style TargetType="{x:Type Image}">
-                                    <Style.Triggers>
-                                        <DataTrigger Binding="{Binding CurrentPicture, Converter={ZDY:NullableToBoolConverter}}" Value="True">
-                                            <DataTrigger.Setters>
-                                                <Setter Property="Effect" Value="{Binding CurrentPictureEffect.Effect}"/>
-                                            </DataTrigger.Setters>
-                                        </DataTrigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </Image.Style>
-                            <Image.ContextMenu>
-                                <ZDY:ContextMenu>
-                                    <MenuItem Icon="{ZDY:Icon Kind=VuesaxOutlineDocumentCopy}" Header="复制图片" Command="{Binding ExecuteCopyCurrentPictureSourceCommand}"/>
-                                    <MenuItem Icon="{ZDY:Icon Kind=Copy2}" Header="复制图片地址" Command="{Binding ExecuteCopyCurrentPicturePathCommand}"/>
-                                    <MenuItem Icon="{ZDY:Icon Kind=Save}" Header="保存" Command="{Binding ExecuteSaveImageCommand}"/>
-                                    <MenuItem Icon="{ZDY:Icon Kind=SaveAs}" Header="另存为..." Command="{Binding ExecuteSaveAsImageCommand}"/>
-                                    <MenuItem Icon="{ZDY:Icon Kind=Delete}" Header="删除" Click="DeleteButton_Click"/>
-                                    <Separator/>
-                                    <MenuItem Icon="{ZDY:Icon Kind=GalleryEdit}" Header="打开效果面板" Command="{Binding ExecuteTogglePictureEffectsViewCommand}" Visibility="{Binding IsShowPictureEffectsView, Converter={ZDY:BoolToInverseVisibilityConverter}}"/>
-                                    <MenuItem Icon="{ZDY:Icon Kind=GalleryEdit}" Header="关闭效果面板" Command="{Binding ExecuteTogglePictureEffectsViewCommand}" Visibility="{Binding IsShowPictureEffectsView, Converter={ZDY:BoolToVisibilityConverter}}"/>
-                                    <Separator/>
-                                    <MenuItem Icon="{ZDY:Icon Kind=Info}" Header="图片信息" Click="InfoButton_Click"/>
-                                    <MenuItem Icon="{ZDY:Icon Kind=Folder2}" Header="打开所在的文件夹" Command="{Binding ExecuteOpenTheFolderCommand}"/>
-                                </ZDY:ContextMenu>
-                            </Image.ContextMenu>
-                        </Image>
-                    </Canvas>
-                    <!--小图-->
-                    <Grid x:Name="ThumbContainer" 
-                          VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="2" 
-                          Visibility="{Binding Scale, Converter={Converters:ThumbBoxVisibilityConverter}}"
-                          IsHitTestVisible="{Binding IsPictureMoving, Converter={ZDY:BoolToInverseBoolConverter}}">
-                        <Border Width="148" Height="148" BorderThickness="4" Background="Black" BorderBrush="#CC000000" ClipToBounds="True">
-                            <Canvas x:Name="ThumbBox" MouseMove="MoveRect_MouseMove" RenderTransformOrigin="0.5,0.5" ClipToBounds="True">
-                                <Canvas.RenderTransform>
-                                    <RotateTransform Angle="{Binding RotateAngle}" />
-                                </Canvas.RenderTransform>
-                                <Canvas.Background>
-                                    <ImageBrush ImageSource="{Binding ElementName=Picture, Path=Source}" Stretch="Uniform" TileMode="None"/>
-                                </Canvas.Background>
-                                <Rectangle x:Name="MoveRect" Stroke="White" Canvas.Top="0" Canvas.Left="0"/>
-                            </Canvas>
-                        </Border>
-                        <Grid x:Name="ThumbBoxMask" IsHitTestVisible="False"
-                              Width="{Binding ElementName=ThumbBox, Path=ActualWidth}" Height="{Binding ElementName=ThumbBox, Path=ActualHeight}"
-                              VerticalAlignment="Center" HorizontalAlignment="Center">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition/>
-                                <ColumnDefinition/>
-                                <ColumnDefinition Width="*"/>
-                            </Grid.ColumnDefinitions>
-                            <Grid.RowDefinitions>
-                                <RowDefinition/>
-                                <RowDefinition/>
-                                <RowDefinition Height="*"/>
-                            </Grid.RowDefinitions>
-                            <Grid.Resources>
-                                <Style TargetType="{x:Type Border}">
-                                    <Setter Property="Background" Value="#70000000"/>
-                                </Style>
-                            </Grid.Resources>
-                            <Border Grid.Row="0" Grid.Column="0"/>
-                            <Border Grid.Row="1" Grid.Column="0"/>
-                            <Border Grid.Row="2" Grid.Column="0"/>
-                            <Border Grid.Row="0" Grid.Column="1"/>
-                            <Border Grid.Row="1" Grid.Column="1" Background="Transparent"/>
-                            <Border Grid.Row="2" Grid.Column="1"/>
-                            <Border Grid.Row="0" Grid.Column="2"/>
-                            <Border Grid.Row="1" Grid.Column="2"/>
-                            <Border Grid.Row="2" Grid.Column="2"/>
-                        </Grid>
-                    </Grid>
-                    <!--图片比例提示-->
-                    <ZDY:Hint Text="{Binding Scale, Converter={Converters:ScaleTipsConverter}}" FontWeight="Normal" FontSize="16" CornerRadius="18"/>
-                    <!--打开图片按钮-->
-                    <Border x:Name="OpenButton2"
-                            Visibility="{Binding CurrentPicture, Converter={ZDY:NullableToInverseVisibilityConverter}}"
-                            VerticalAlignment="Center" HorizontalAlignment="Center">
-                        <StackPanel>
-                            <Button HorizontalAlignment="Center" Cursor="Hand" Margin="0 0 0 30" Click="OpenButton_Click"
-                                    Foreground="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=Foreground}">
-                                <Button.Template>
-                                    <ControlTemplate TargetType="{x:Type Button}">
-                                        <Border Width="100" Height="40">
-                                            <TextBlock Text="打开图片" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                        </Border>
-                                    </ControlTemplate>
-                                </Button.Template>
-                            </Button>
-                            <TextBlock Text="还没有图片被加载 , 请先选择一张图片" FontSize="12" HorizontalAlignment="Center" FontWeight="Light"/>
-                        </StackPanel>
-                    </Border>
-                    <!--左右翻页按钮-->
-                    <Border x:Name="PageButton"
-                            Visibility="{Binding CurrentPicture, Converter={ZDY:NullableToVisibilityConverter}}">
-                        <Grid Visibility="{Binding IsPictureCountMoreThanOne, Converter={ZDY:BoolToVisibilityConverter}}">
-                            <ZDY:IconButton Icon="ChevronLeftThin" Width="54" Height="54" IconSize="42" Margin="24" Click="PrevButton_Click" ToolTip="上一张" HorizontalAlignment="Left"/>
-                            <ZDY:IconButton Icon="ChevronRightThin" Width="54" Height="54" IconSize="42" Margin="24" Click="NextButton_Click" ToolTip="下一张" HorizontalAlignment="Right"/>
-                        </Grid>
-                    </Border>
-                    <!--Loading-->
-                    <Border x:Name="Loading"
-                            Visibility="{Binding CurrentPicture, Converter={ZDY:NullableToVisibilityConverter}}"
-                            Panel.ZIndex="100" IsHitTestVisible="False"
-                            VerticalAlignment="Center" HorizontalAlignment="Center">
-                        <ZDY:Loading Theme="Circle" Foreground="{x:Static SystemColors.HighlightBrush}" Width="48" Height="48" 
-                                     Visibility="{Binding CurrentPicture.PictureState, Converter={Converters:LoadingVisibilityConverter}, Delay=1}"/>
-                    </Border>
-                </Grid>
-                <Grid Grid.Row="1">
-                    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Orientation="Horizontal" Margin="8">
-                        <ZDY:IconButton x:Name="OpenButton" Icon="Open" ToolTip="打开" Click="OpenButton_Click"/>
-
-                        <StackPanel x:Name="ControlPanel" Orientation="Horizontal" IsEnabled="{Binding CurrentPicture, Converter={ZDY:NullableToBoolConverter}}">
-                            <ZDY:IconToggleButton x:Name="ZoomQuickButton" Icon="Origin" ToolTip="原图大小" CheckedIcon="Adapt" CheckedToolTip="适应屏幕" IsChecked="{Binding Scale, Converter={Converters:ScaleAdaptToBoolConverter}, Mode=OneWay}" Click="ZoomQuickButton_Click"/>
-                            <ZDY:IconButton x:Name="ZoomInButton" Icon="ZoomPlus" ToolTip="放大" Click="ZoomInButton_Click"/>
-                            <ZDY:IconButton x:Name="ZoomOutButton" Icon="ZoomMinus" ToolTip="缩小" Click="ZoomOutButton_Click"/>
-                            <ZDY:IconButton x:Name="RotateLeftButton" Icon="RotateLeft" ToolTip="左转90度" Click="RotateLeftButton_Click"/>
-                            <ZDY:IconButton x:Name="RotateRightButton" Icon="RotateRight" ToolTip="右转90度" Click="RotateRightButton_Click"/>
-
-                            <ZDY:IconButton x:Name="AutoPlayButton" Icon="Play2" ToolTip="自动播放" Click="AutoPlayButton_Click" Visibility="{Binding IsPictureCountMoreThanOne, Converter={ZDY:BoolToVisibilityConverter}}">
-                                <ZDY:IconButton.Style>
-                                    <Style TargetType="{x:Type ZDY:IconButton}">
-                                        <Setter Property="RenderTransformOrigin" Value="0.5,0.5"/>
-                                        <Setter Property="RenderTransform">
-                                            <Setter.Value>
-                                                <TransformGroup>
-                                                    <ScaleTransform ScaleX="1" ScaleY="1"/>
-                                                </TransformGroup>
-                                            </Setter.Value>
-                                        </Setter>
+                            <Canvas.RenderTransform>
+                                <RotateTransform Angle="{Binding RotateAngle}" />
+                            </Canvas.RenderTransform>
+                            <Image x:Name="Picture" Canvas.Top="0" Canvas.Left="0">
+                                <Image.Style>
+                                    <Style TargetType="{x:Type Image}">
                                         <Style.Triggers>
-                                            <DataTrigger Binding="{Binding IsPictureCarouselPlaing}" Value="True">
-                                                <DataTrigger.EnterActions>
-                                                    <BeginStoryboard x:Name="PictureCarouselPlaingAnimation">
-                                                        <Storyboard RepeatBehavior="Forever">
-                                                            <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)">
-                                                                <EasingDoubleKeyFrame Value="0.75" KeyTime="00:00:02"/>
-                                                            </DoubleAnimationUsingKeyFrames>
-                                                            <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)">
-                                                                <EasingDoubleKeyFrame Value="0.75" KeyTime="00:00:02"/>
-                                                            </DoubleAnimationUsingKeyFrames>
-                                                        </Storyboard>
-                                                    </BeginStoryboard>
-                                                </DataTrigger.EnterActions>
-                                                <DataTrigger.ExitActions>
-                                                    <StopStoryboard BeginStoryboardName="PictureCarouselPlaingAnimation"></StopStoryboard>
-                                                </DataTrigger.ExitActions>
+                                            <DataTrigger Binding="{Binding CurrentPicture, Converter={ZDY:NullableToBoolConverter}}" Value="True">
+                                                <DataTrigger.Setters>
+                                                    <Setter Property="Effect" Value="{Binding CurrentPictureEffect.Effect}"/>
+                                                </DataTrigger.Setters>
                                             </DataTrigger>
                                         </Style.Triggers>
                                     </Style>
-                                </ZDY:IconButton.Style>
-                            </ZDY:IconButton>
+                                </Image.Style>
+                                <Image.ContextMenu>
+                                    <ZDY:ContextMenu>
+                                        <MenuItem Icon="{ZDY:Icon Kind=VuesaxOutlineDocumentCopy}" Header="复制图片" Command="{Binding ExecuteCopyCurrentPictureSourceCommand}"/>
+                                        <MenuItem Icon="{ZDY:Icon Kind=Copy2}" Header="复制图片地址" Command="{Binding ExecuteCopyCurrentPicturePathCommand}"/>
+                                        <MenuItem Icon="{ZDY:Icon Kind=Save}" Header="保存" Command="{Binding ExecuteSaveImageCommand}"/>
+                                        <MenuItem Icon="{ZDY:Icon Kind=SaveAs}" Header="另存为..." Command="{Binding ExecuteSaveAsImageCommand}"/>
+                                        <MenuItem Icon="{ZDY:Icon Kind=Delete}" Header="删除" Click="DeleteButton_Click"/>
+                                        <Separator/>
+                                        <MenuItem Icon="{ZDY:Icon Kind=Magicpen}" Header="打开效果面板" Command="{Binding ExecuteTogglePictureEffectsViewCommand}" Visibility="{Binding IsShowPictureEffectsView, Converter={ZDY:BoolToInverseVisibilityConverter}}"/>
+                                        <MenuItem Icon="{ZDY:Icon Kind=Magicpen}" Header="关闭效果面板" Command="{Binding ExecuteTogglePictureEffectsViewCommand}" Visibility="{Binding IsShowPictureEffectsView, Converter={ZDY:BoolToVisibilityConverter}}"/>
+                                        <Separator/>
+                                        <MenuItem Icon="{ZDY:Icon Kind=Info}" Header="图片信息" Click="InfoButton_Click"/>
+                                        <MenuItem Icon="{ZDY:Icon Kind=Folder2}" Header="打开所在的文件夹" Command="{Binding ExecuteOpenTheFolderCommand}"/>
+                                    </ZDY:ContextMenu>
+                                </Image.ContextMenu>
+                            </Image>
+                        </Canvas>
+                        <!--小图-->
+                        <Grid x:Name="ThumbContainer" 
+                          VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="2" 
+                          Visibility="{Binding Scale, Converter={Converters:ThumbBoxVisibilityConverter}}"
+                          IsHitTestVisible="{Binding IsPictureMoving, Converter={ZDY:BoolToInverseBoolConverter}}">
+                            <Border Width="148" Height="148" BorderThickness="4" Background="Black" BorderBrush="#CC000000" ClipToBounds="True">
+                                <Canvas x:Name="ThumbBox" MouseMove="MoveRect_MouseMove" RenderTransformOrigin="0.5,0.5" ClipToBounds="True">
+                                    <Canvas.RenderTransform>
+                                        <RotateTransform Angle="{Binding RotateAngle}" />
+                                    </Canvas.RenderTransform>
+                                    <Canvas.Background>
+                                        <ImageBrush ImageSource="{Binding ElementName=Picture, Path=Source}" Stretch="Uniform" TileMode="None"/>
+                                    </Canvas.Background>
+                                    <Rectangle x:Name="MoveRect" Stroke="White" Canvas.Top="0" Canvas.Left="0"/>
+                                </Canvas>
+                            </Border>
+                            <Grid x:Name="ThumbBoxMask" IsHitTestVisible="False"
+                              Width="{Binding ElementName=ThumbBox, Path=ActualWidth}" Height="{Binding ElementName=ThumbBox, Path=ActualHeight}"
+                              VerticalAlignment="Center" HorizontalAlignment="Center">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition/>
+                                    <ColumnDefinition/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition/>
+                                    <RowDefinition/>
+                                    <RowDefinition Height="*"/>
+                                </Grid.RowDefinitions>
+                                <Grid.Resources>
+                                    <Style TargetType="{x:Type Border}">
+                                        <Setter Property="Background" Value="#70000000"/>
+                                    </Style>
+                                </Grid.Resources>
+                                <Border Grid.Row="0" Grid.Column="0"/>
+                                <Border Grid.Row="1" Grid.Column="0"/>
+                                <Border Grid.Row="2" Grid.Column="0"/>
+                                <Border Grid.Row="0" Grid.Column="1"/>
+                                <Border Grid.Row="1" Grid.Column="1" Background="Transparent"/>
+                                <Border Grid.Row="2" Grid.Column="1"/>
+                                <Border Grid.Row="0" Grid.Column="2"/>
+                                <Border Grid.Row="1" Grid.Column="2"/>
+                                <Border Grid.Row="2" Grid.Column="2"/>
+                            </Grid>
+                        </Grid>
+                        <!--图片比例提示-->
+                        <ZDY:Hint Text="{Binding Scale, Converter={Converters:ScaleTipsConverter}}" FontWeight="Normal" FontSize="16" CornerRadius="18"/>
+                        <!--打开图片按钮-->
+                        <Border x:Name="OpenButton2"
+                            Visibility="{Binding CurrentPicture, Converter={ZDY:NullableToInverseVisibilityConverter}}"
+                            VerticalAlignment="Center" HorizontalAlignment="Center">
+                            <StackPanel>
+                                <Button HorizontalAlignment="Center" Cursor="Hand" Margin="0 0 0 30" Click="OpenButton_Click"
+                                    Foreground="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=Foreground}">
+                                    <Button.Template>
+                                        <ControlTemplate TargetType="{x:Type Button}">
+                                            <Border Width="100" Height="40">
+                                                <TextBlock Text="打开图片" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                            </Border>
+                                        </ControlTemplate>
+                                    </Button.Template>
+                                </Button>
+                                <TextBlock Text="还没有图片被加载 , 请先选择一张图片" FontSize="12" HorizontalAlignment="Center" FontWeight="Light"/>
+                            </StackPanel>
+                        </Border>
+                        <!--左右翻页按钮-->
+                        <Border x:Name="PageButton"
+                            Visibility="{Binding CurrentPicture, Converter={ZDY:NullableToVisibilityConverter}}">
+                            <Grid Visibility="{Binding IsPictureCountMoreThanOne, Converter={ZDY:BoolToVisibilityConverter}}">
+                                <ZDY:IconButton Icon="ChevronLeftThin" Width="54" Height="54" IconSize="42" Margin="24" Click="PrevButton_Click" ToolTip="上一张" HorizontalAlignment="Left"/>
+                                <ZDY:IconButton Icon="ChevronRightThin" Width="54" Height="54" IconSize="42" Margin="24" Click="NextButton_Click" ToolTip="下一张" HorizontalAlignment="Right"/>
+                            </Grid>
+                        </Border>
+                        <!--Loading-->
+                        <Border x:Name="Loading"
+                            Visibility="{Binding CurrentPicture, Converter={ZDY:NullableToVisibilityConverter}}"
+                            Panel.ZIndex="100" IsHitTestVisible="False"
+                            VerticalAlignment="Center" HorizontalAlignment="Center">
+                            <ZDY:Loading Theme="Circle" Foreground="{x:Static SystemColors.HighlightBrush}" Width="48" Height="48" 
+                                     Visibility="{Binding CurrentPicture.PictureState, Converter={Converters:LoadingVisibilityConverter}, Delay=1}"/>
+                        </Border>
+                    </Grid>
+                    <Grid Grid.Row="1">
+                        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Orientation="Horizontal" Margin="8">
+                            <ZDY:IconButton x:Name="OpenButton" Icon="Open" ToolTip="打开" Click="OpenButton_Click"/>
 
-                            <ZDY:IconButton x:Name="PrevButton" Icon="ArrowLeft" ToolTip="上一张" Click="PrevButton_Click" Visibility="{Binding IsPictureCountMoreThanOne, Converter={ZDY:BoolToVisibilityConverter}}"/>
-                            <ZDY:IconButton x:Name="NextButton" Icon="ArrowRight" ToolTip="下一张" Click="NextButton_Click" Visibility="{Binding IsPictureCountMoreThanOne, Converter={ZDY:BoolToVisibilityConverter}}"/>
-                            <ZDY:IconButton x:Name="DeleteButton" Icon="Delete" ToolTip="删除" Click="DeleteButton_Click"/>
-                            <ZDY:IconButton x:Name="PrintButton" Icon="Print" ToolTip="打印" Click="PrintButton_Click"/>
-                            <ZDY:IconToggleButton x:Name="PictureListViewToggleButton" Icon="SidebarTop" ToolTip="显示缩略图列表" CheckedIcon="SidebarBottom" CheckedToolTip="关闭缩略图列表" 
+                            <StackPanel x:Name="ControlPanel" Orientation="Horizontal" IsEnabled="{Binding CurrentPicture, Converter={ZDY:NullableToBoolConverter}}">
+                                <ZDY:IconToggleButton x:Name="ZoomQuickButton" Icon="Origin" ToolTip="原图大小" CheckedIcon="Adapt" CheckedToolTip="适应屏幕" IsChecked="{Binding Scale, Converter={Converters:ScaleAdaptToBoolConverter}, Mode=OneWay}" Click="ZoomQuickButton_Click"/>
+                                <ZDY:IconButton x:Name="ZoomInButton" Icon="ZoomPlus" ToolTip="放大" Click="ZoomInButton_Click"/>
+                                <ZDY:IconButton x:Name="ZoomOutButton" Icon="ZoomMinus" ToolTip="缩小" Click="ZoomOutButton_Click"/>
+                                <ZDY:IconButton x:Name="RotateLeftButton" Icon="RotateLeft" ToolTip="左转90度" Click="RotateLeftButton_Click"/>
+                                <ZDY:IconButton x:Name="RotateRightButton" Icon="RotateRight" ToolTip="右转90度" Click="RotateRightButton_Click"/>
+
+                                <ZDY:IconButton x:Name="AutoPlayButton" Icon="Play2" ToolTip="自动播放" Click="AutoPlayButton_Click" Visibility="{Binding IsPictureCountMoreThanOne, Converter={ZDY:BoolToVisibilityConverter}}">
+                                    <ZDY:IconButton.Style>
+                                        <Style TargetType="{x:Type ZDY:IconButton}">
+                                            <Setter Property="RenderTransformOrigin" Value="0.5,0.5"/>
+                                            <Setter Property="RenderTransform">
+                                                <Setter.Value>
+                                                    <TransformGroup>
+                                                        <ScaleTransform ScaleX="1" ScaleY="1"/>
+                                                    </TransformGroup>
+                                                </Setter.Value>
+                                            </Setter>
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding IsPictureCarouselPlaing}" Value="True">
+                                                    <DataTrigger.EnterActions>
+                                                        <BeginStoryboard x:Name="PictureCarouselPlaingAnimation">
+                                                            <Storyboard RepeatBehavior="Forever">
+                                                                <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)">
+                                                                    <EasingDoubleKeyFrame Value="0.75" KeyTime="00:00:02"/>
+                                                                </DoubleAnimationUsingKeyFrames>
+                                                                <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)">
+                                                                    <EasingDoubleKeyFrame Value="0.75" KeyTime="00:00:02"/>
+                                                                </DoubleAnimationUsingKeyFrames>
+                                                            </Storyboard>
+                                                        </BeginStoryboard>
+                                                    </DataTrigger.EnterActions>
+                                                    <DataTrigger.ExitActions>
+                                                        <StopStoryboard BeginStoryboardName="PictureCarouselPlaingAnimation"></StopStoryboard>
+                                                    </DataTrigger.ExitActions>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </ZDY:IconButton.Style>
+                                </ZDY:IconButton>
+
+                                <ZDY:IconButton x:Name="PrevButton" Icon="ArrowLeft" ToolTip="上一张" Click="PrevButton_Click" Visibility="{Binding IsPictureCountMoreThanOne, Converter={ZDY:BoolToVisibilityConverter}}"/>
+                                <ZDY:IconButton x:Name="NextButton" Icon="ArrowRight" ToolTip="下一张" Click="NextButton_Click" Visibility="{Binding IsPictureCountMoreThanOne, Converter={ZDY:BoolToVisibilityConverter}}"/>
+                                <ZDY:IconButton x:Name="DeleteButton" Icon="Delete" ToolTip="删除" Click="DeleteButton_Click"/>
+                                <ZDY:IconButton x:Name="PrintButton" Icon="Print" ToolTip="打印" Click="PrintButton_Click"/>
+                                <ZDY:IconButton x:Name="InfoButton" Icon="Info" ToolTip="图片信息" Click="InfoButton_Click"/>
+
+                                <ZDY:IconToggleButton x:Name="PictureListViewToggleButton" Icon="SidebarTop" ToolTip="显示缩略图列表" CheckedIcon="SidebarBottom" CheckedToolTip="关闭缩略图列表" 
                                               IsChecked="{Binding IsShowPictureListView}" IsEnabled="{Binding CurrentPicture, Converter={ZDY:NullableToBoolConverter}}"
                                               Visibility="{Binding IsPictureCountMoreThanOne, Converter={ZDY:BoolToVisibilityConverter}}"/>
-                            <ZDY:IconButton x:Name="InfoButton" Icon="Info" ToolTip="图片信息" Click="InfoButton_Click"/>
+                                <ZDY:IconToggleButton x:Name="FolderBorthersViewToggleButton" Icon="SidebarLeft" ToolTip="查看更多" CheckedIcon="SidebarRight" CheckedToolTip="关闭侧栏"
+                                                      IsChecked="{Binding IsShowFolderBorthersView}"/>
+                            </StackPanel>
                         </StackPanel>
-                    </StackPanel>
+                    </Grid>
                 </Grid>
-            </Grid>
+            </ZDY:Drawer>
         </ZDY:Drawer>
         <Grid x:Name="GalleryView" 
               Background="#1e1e1e" MouseRightButtonUp="GalleryView_MouseRightButtonUp"
@@ -407,7 +500,7 @@
                                         <Border CornerRadius="6" BorderBrush="{TemplateBinding BorderBrush}" HorizontalAlignment="Center" BorderThickness="{TemplateBinding BorderThickness}"
                                             Padding="{TemplateBinding Padding}" SnapsToDevicePixels="True">
                                             <Image Stretch="Uniform" Source="{Binding ThumbSource}" ToolTip="{Binding Name}"
-                                               XamlServices:PictureService.Picture="{Binding}"/>
+                                               XamlServices:PictureThumbService.Picture="{Binding}"/>
                                         </Border>
                                     </Grid>
                                     <ControlTemplate.Triggers>

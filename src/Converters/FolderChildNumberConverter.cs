@@ -2,24 +2,25 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using System.Text;
+using System.IO;
 using System.Threading.Tasks;
-using System.Windows;
 using System.Windows.Data;
 using Zhai.Famil.Converters;
 
 namespace Zhai.PictureView.Converters
 {
-    internal class LoadingVisibilityConverter : ConverterMarkupExtensionBase<LoadingVisibilityConverter>, IValueConverter
+    internal class FolderChildNumberConverter : ConverterMarkupExtensionBase<FolderChildNumberConverter>, IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (value is PictureThumbState state && state == PictureThumbState.Loading)
+            if (value is DirectoryInfo dir && dir.Exists)
             {
-                return Visibility.Visible;
+                var files = dir.EnumerateFiles().Where(PictureSupport.PictureSupportExpression);
+
+                return files.Count();
             }
 
-            return Visibility.Collapsed;
+            return 0;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
