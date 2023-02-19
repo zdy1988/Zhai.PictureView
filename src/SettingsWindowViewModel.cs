@@ -95,7 +95,7 @@ namespace Zhai.PictureView
 
             if (isSet)
             {
-                FileAssociator.CreateInstance(ext).Create("ZDY.PICTURE", null, null, new ExecApplication(appPath), null);
+                FileAssociator.CreateInstance(ext).Create(Properties.Settings.Default.AppName, null, null, new ExecApplication(appPath), null);
             }
             else
             {
