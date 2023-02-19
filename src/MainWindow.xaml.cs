@@ -112,6 +112,7 @@ namespace Zhai.PictureView
                     foreach (var p in activedPictures.Skip(Properties.Settings.Default.ActivedPicturesCount))
                     {
                         p.PictureSource = null;
+                        activedPictures.Remove(p);
                     }
 
                     GC.Collect();

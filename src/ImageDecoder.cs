@@ -235,6 +235,14 @@ namespace Zhai.PictureView
                 {
                     magick.AutoOrient();
                 }
+
+                magick.Quality = 100;
+
+                var pic = magick.ToBitmapSource();
+                magick.Dispose();
+                pic.Freeze();
+
+                return pic;
             }
             catch (Exception e)
             {
@@ -243,14 +251,6 @@ namespace Zhai.PictureView
 #endif
                 return null;
             }
-
-            magick.Quality = 100;
-
-            var pic = magick.ToBitmapSource();
-            magick.Dispose();
-            pic.Freeze();
-
-            return pic;
         }
 
 
