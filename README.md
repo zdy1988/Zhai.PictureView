@@ -6,6 +6,8 @@ ZHAI PICTURE VIEW build for .Net 6
 
 ![Snapshot](/Snapshot.jpg)
 
+![Snapshot](/Snapshot1.jpg)
+
 ![Snapshot](/Snapshot2.jpg)
 
 ## Future
