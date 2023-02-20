@@ -20,6 +20,8 @@ namespace Zhai.PictureView
 
         public List<DirectoryInfo> Borthers { get; private set; }
 
+        public bool IsBorthersMoreThanOne => Borthers?.Count > 1;
+
         public bool IsAccessed => CanAccess(Current);
 
         public Folder(DirectoryInfo dir, List<DirectoryInfo> borthers = null)
@@ -29,7 +31,7 @@ namespace Zhai.PictureView
 
             Current = dir;
 
-            if (borthers != null)
+            if (borthers != null && Borthers != borthers)
             {
                 Borthers = borthers;
             }
@@ -38,7 +40,7 @@ namespace Zhai.PictureView
 
         public async Task LoadAsync()
         {
-            var files = Current.EnumerateFiles().Where(PictureSupport.PictureSupportExpression);
+            var files = Current.EnumerateFiles().Where(PictureSupport.PictureSupportExpression).OrderBy(t=>t.Name);
 
             if (files.Any())
             {
@@ -60,26 +62,25 @@ namespace Zhai.PictureView
 
         public void LoadBorthers()
         {
-            ThreadPool.QueueUserWorkItem(_ =>
+            if (Current.Parent != null && CanAccess(Current.Parent))
             {
-                if (Current.Parent != null && CanAccess(Current.Parent))
+                Borthers = Current.Parent.EnumerateDirectories().Where(dir =>
                 {
-                    Borthers = Current.Parent.EnumerateDirectories().Where(dir =>
+                    var isSecurity = CanAccess(dir);
+
+                    if (isSecurity)
                     {
-                        var isSecurity = CanAccess(dir);
+                        return dir.EnumerateFiles().Where(PictureSupport.PictureSupportExpression).Any();
+                    }
 
-                        if (isSecurity)
-                        {
-                            return dir.EnumerateFiles().Where(PictureSupport.PictureSupportExpression).Any();
-                        }
+                    return false;
 
-                        return false;
+                }).OrderBy(t => t.Name).ToList();
 
-                    }).ToList();
+                base.OnPropertyChanged(new PropertyChangedEventArgs("IsBorthersMoreThanOne"));
 
-                    base.OnPropertyChanged(new PropertyChangedEventArgs("Borthers"));
-                }
-            });
+                BorthersLoaded?.Invoke(this, Borthers);
+            }
         }
 
         private bool CanAccess(DirectoryInfo dir = null)
@@ -155,5 +156,12 @@ namespace Zhai.PictureView
                 this.Clear();
             }
         }
+
+        #region Events
+
+        public event EventHandler<List<DirectoryInfo>> BorthersLoaded;
+
+        #endregion
+
     }
 }

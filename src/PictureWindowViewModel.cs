@@ -23,7 +23,13 @@ namespace Zhai.PictureView
         public Folder Folder
         {
             get => folder;
-            set => Set(() => Folder, ref folder, value);
+            set
+            {
+                if (Set(() => Folder, ref folder, value))
+                {
+                    SetCurrentFolder();
+                }
+            }
         }
 
         private bool isShowPictureListView = false;
@@ -46,14 +52,17 @@ namespace Zhai.PictureView
             get => currentPicture;
             set
             {
-                if (Set(() => CurrentPicture, ref currentPicture, value))
+                if (value != null)
                 {
-                    CurrentPictureChanged?.Invoke(this, value);
+                    if (Set(() => CurrentPicture, ref currentPicture, value))
+                    {
+                        CurrentPictureChanged?.Invoke(this, value);
 
-                    //if (value != null && value.ThumbState == PictureState.Failed)
-                    //{
-                    //    ThreadPool.QueueUserWorkItem(_ => value.DrawThumb());
-                    //}
+                        //if (value != null && value.ThumbState == PictureState.Failed)
+                        //{
+                        //    ThreadPool.QueueUserWorkItem(_ => value.DrawThumb());
+                        //}
+                    }
                 }
             }
         }
@@ -145,6 +154,13 @@ namespace Zhai.PictureView
             set => Set(() => IsShowFolderBorthersView, ref isShowFolderBorthersView, value);
         }
 
+        private ConcurrentObservableCollection<DirectoryInfo> folderBorthers = new ConcurrentObservableCollection<DirectoryInfo>();
+        public ConcurrentObservableCollection<DirectoryInfo> FolderBorthers
+        {
+            get => folderBorthers;
+            set => Set(() => FolderBorthers, ref folderBorthers, value);
+        }
+
         private DirectoryInfo currentFolder;
         public DirectoryInfo CurrentFolder
         {
@@ -153,15 +169,7 @@ namespace Zhai.PictureView
             {
                 if (Set(() => CurrentFolder, ref currentFolder, value))
                 {
-                    if (value != null)
-                    {
-                        var file = value.EnumerateFiles().Where(PictureSupport.PictureSupportExpression).FirstOrDefault();
-
-                        if (file != null)
-                        {
-                            OpenPicture(value, file.FullName, folder.Borthers).ConfigureAwait(false);
-                        }
-                    }
+                    CurrentFolderChanged.Invoke(this, value);
                 }
             }
         }
@@ -191,7 +199,7 @@ namespace Zhai.PictureView
 
         #region Methods
 
-        public async Task OpenPicture(DirectoryInfo dir, string filename = null, List<DirectoryInfo> borthers = null)
+        public async Task OpenPictureAsync(DirectoryInfo dir, string filename = null, List<DirectoryInfo> borthers = null)
         {
             var newFolder = new Folder(dir, borthers);
 
@@ -200,6 +208,8 @@ namespace Zhai.PictureView
                 var oldFolder = Folder;
 
                 Folder = newFolder;
+                Folder.BorthersLoaded += Folder_BorthersLoaded;
+
                 await Folder.LoadAsync();
                 IsPictureCountMoreThanOne = Folder?.Count > 1;
                 CurrentPicture = (filename == null ? Folder : Folder.Where(t => t.PicturePath == filename)).FirstOrDefault();
@@ -215,8 +225,51 @@ namespace Zhai.PictureView
             }
         }
 
-        public Task OpenPicture(string filename)
-            => OpenPicture(Directory.GetParent(filename), filename);
+        public Task OpenPictureAsync(string filename)
+            => OpenPictureAsync(Directory.GetParent(filename), filename);
+
+        private void Folder_BorthersLoaded(object sender, List<DirectoryInfo> borthers)
+        {
+            Folder.BorthersLoaded -= Folder_BorthersLoaded;
+
+            if (borthers != null && borthers.Any())
+            {
+                ThreadPool.QueueUserWorkItem(_ =>
+                {
+                    FolderBorthers.Clear();
+
+                    foreach (var item in borthers)
+                    {
+                        FolderBorthers.Add(item);
+                    }
+                });
+            }
+        }
+
+        private void SetCurrentFolder()
+        {
+            CurrentFolder = FolderBorthers.Where(t => t.FullName == Folder.Current.FullName).FirstOrDefault();
+        }
+
+        public async void SearchFolderBorthers(string keyword)
+        {
+            if (Folder != null && Folder.Borthers != null && Folder.Borthers.Any())
+            {
+                await Task.Run(() =>
+                {
+                    FolderBorthers.Clear();
+
+                    var list = string.IsNullOrWhiteSpace(keyword) ? Folder.Borthers : Folder.Borthers.Where(t => t.Name.IndexOf(keyword) != -1);
+
+                    foreach (var item in list)
+                    {
+                        FolderBorthers.Add(item);
+                    }
+                });
+
+                SetCurrentFolder();
+            }
+        }
 
         #endregion
 
@@ -277,6 +330,8 @@ namespace Zhai.PictureView
         #endregion
 
         public event EventHandler<Picture> CurrentPictureChanged;
+
+        public event EventHandler<DirectoryInfo> CurrentFolderChanged;
 
         public event EventHandler<Double> ScaleChanged;
 

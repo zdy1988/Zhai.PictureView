@@ -92,22 +92,22 @@
                         <Border VerticalAlignment="Bottom" Margin="0 -1 0 0" Style="{StaticResource HorizontalLinearGradientBorder}"/>
                         <DockPanel>
                             <ZDY:TextBox x:Name="FolderListSearcher" DockPanel.Dock="Top" Margin="3 0 3 14"
-                                         ZDY:TextBoxExtension.Placeholder="查找..."
+                                         ZDY:TextBoxExtension.Placeholder="查找..." KeyDown="FolderListSearcher_KeyDown"
                                          ZDY:TextBoxExtension.Icon="Search" BorderThickness="1"
                                          ZDY:TextBoxExtension.IsClearButtonEnabled="True"/>
                             <ZDY:ListBox x:Name="FolderList"
-                                     ItemsSource="{Binding Folder.Borthers}"
-                                     VirtualizingPanel.ScrollUnit="Pixel"
-                                     VirtualizingPanel.VirtualizationMode="Standard"
-                                     VirtualizingPanel.IsVirtualizing="True"
-                                     VirtualizingPanel.IsContainerVirtualizable="True"
-                                     VirtualizingPanel.CacheLengthUnit="Item"
-                                     ScrollViewer.CanContentScroll="True"
-                                     ScrollViewer.VerticalScrollBarVisibility="Visible"
-                                     ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                                     ZDY:ScrollViewerExtension.MouseWheelOrientation="Vertical"
-                                     ZDY:ScrollViewerExtension.IsPenetrating="True"
-                                     SelectedItem="{Binding CurrentFolder}">
+                                         ItemsSource="{Binding FolderBorthers}"
+                                         VirtualizingPanel.ScrollUnit="Pixel"
+                                         VirtualizingPanel.VirtualizationMode="Standard"
+                                         VirtualizingPanel.IsVirtualizing="True"
+                                         VirtualizingPanel.IsContainerVirtualizable="True"
+                                         VirtualizingPanel.CacheLengthUnit="Item"
+                                         ScrollViewer.CanContentScroll="True"
+                                         ScrollViewer.VerticalScrollBarVisibility="Visible"
+                                         ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                                         ZDY:ScrollViewerExtension.MouseWheelOrientation="Vertical"
+                                         ZDY:ScrollViewerExtension.IsInertiaEnabled="True"
+                                         SelectedItem="{Binding CurrentFolder}">
                                 <ZDY:ListBox.ItemsPanel>
                                     <ItemsPanelTemplate>
                                         <VirtualizingStackPanel IsItemsHost="True"/>
@@ -115,23 +115,13 @@
                                 </ZDY:ListBox.ItemsPanel>
                                 <ZDY:ListBox.ItemContainerStyle>
                                     <Style TargetType="{x:Type ListBoxItem}">
-                                        <Setter Property="Visibility">
-                                            <Setter.Value>
-                                                <MultiBinding Converter="{Converters:KeywordToListItemVisibilityConverter}">
-                                                    <MultiBinding.Bindings>
-                                                        <Binding ElementName="FolderListSearcher" Path="Text"/>
-                                                        <Binding Path="Name"/>
-                                                    </MultiBinding.Bindings>
-                                                </MultiBinding>
-                                            </Setter.Value>
-                                        </Setter>
                                         <Setter Property="BorderThickness" Value="2"/>
                                         <Setter Property="BorderBrush" Value="Transparent"/>
                                         <Setter Property="Background" Value="Transparent"/>
                                         <Setter Property="Template">
                                             <Setter.Value>
                                                 <ControlTemplate TargetType="{x:Type ListBoxItem}">
-                                                    <DockPanel Background="{TemplateBinding Background}">
+                                                    <DockPanel x:Name="FolderItem" Background="{TemplateBinding Background}" MouseLeftButtonUp="FolderItem_MouseLeftButtonUp">
                                                         <Border DockPanel.Dock="Left" BorderBrush="{TemplateBinding BorderBrush}" HorizontalAlignment="Left" 
                                                                 Width="84" Height="56" Margin="1" Padding="1" CornerRadius="4"
                                                                 BorderThickness="{TemplateBinding BorderThickness}" Background="DarkGray" 
@@ -159,6 +149,10 @@
                                                             <Setter TargetName="RightMask" Property="Visibility" Value="Collapsed"/>
                                                         </DataTrigger>
                                                         <Trigger Property="IsMouseOver" Value="True">
+                                                            <Setter Property="BorderBrush" Value="{x:Static SystemColors.HighlightBrush}"/>
+                                                            <Setter Property="Background" Value="{StaticResource Zhai.Famil.SelectionActivedBrush}"/>
+                                                        </Trigger>
+                                                        <Trigger Property="IsSelected" Value="True">
                                                             <Setter Property="BorderBrush" Value="{x:Static SystemColors.HighlightBrush}"/>
                                                             <Setter Property="Background" Value="{StaticResource Zhai.Famil.SelectionActivedBrush}"/>
                                                         </Trigger>
@@ -192,7 +186,7 @@
                                          ScrollViewer.VerticalScrollBarVisibility="Disabled"
                                          ScrollViewer.HorizontalScrollBarVisibility="Visible"
                                          ZDY:ScrollViewerExtension.MouseWheelOrientation="Horizontal"
-                                         ZDY:ScrollViewerExtension.IsPenetrating="True"
+                                         ZDY:ScrollViewerExtension.IsInertiaEnabled="True"
                                          SelectedItem="{Binding CurrentPicture}"
                                          SelectedIndex="{Binding CurrentPictureIndex}">
                                     <ZDY:ListBox.ItemsPanel>
@@ -245,7 +239,7 @@
                                          ScrollViewer.VerticalScrollBarVisibility="Disabled"
                                          ScrollViewer.HorizontalScrollBarVisibility="Hidden"
                                          ZDY:ScrollViewerExtension.MouseWheelOrientation="Horizontal"
-                                         ZDY:ScrollViewerExtension.IsPenetrating="True">
+                                         ZDY:ScrollViewerExtension.IsInertiaEnabled="True">
                                     <ListBox.ItemsPanel>
                                         <ItemsPanelTemplate>
                                             <StackPanel Orientation="Horizontal" IsItemsHost="True"/>
@@ -377,9 +371,8 @@
                         <!--图片比例提示-->
                         <ZDY:Hint Text="{Binding Scale, Converter={Converters:ScaleTipsConverter}}" FontWeight="Normal" FontSize="16" CornerRadius="18"/>
                         <!--打开图片按钮-->
-                        <Border x:Name="OpenButton2"
-                            Visibility="{Binding CurrentPicture, Converter={ZDY:NullableToInverseVisibilityConverter}}"
-                            VerticalAlignment="Center" HorizontalAlignment="Center">
+                        <Border x:Name="OpenButton2" VerticalAlignment="Center" HorizontalAlignment="Center"
+                                Visibility="{Binding CurrentPicture, Converter={ZDY:NullableToInverseVisibilityConverter}}">
                             <StackPanel>
                                 <Button HorizontalAlignment="Center" Cursor="Hand" Margin="0 0 0 30" Click="OpenButton_Click"
                                     Foreground="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=Foreground}">
@@ -395,20 +388,28 @@
                             </StackPanel>
                         </Border>
                         <!--左右翻页按钮-->
-                        <Border x:Name="PageButton"
-                            Visibility="{Binding CurrentPicture, Converter={ZDY:NullableToVisibilityConverter}}">
-                            <Grid Visibility="{Binding IsPictureCountMoreThanOne, Converter={ZDY:BoolToVisibilityConverter}}">
+                        <Border x:Name="NavigateButton"
+                                Visibility="{Binding CurrentPicture, Converter={ZDY:NullableToVisibilityConverter}}">
+                            <Grid x:Name="NavigateButtonGrid">
+                                <Grid.Visibility>
+                                    <MultiBinding Converter="{ZDY:MultiBoolToVisibilityConverter}" ConverterParameter="AND">
+                                        <MultiBinding.Bindings>
+                                            <Binding Path="IsPictureCountMoreThanOne"/>
+                                            <Binding Path="Folder.IsBorthersMoreThanOne"/>
+                                        </MultiBinding.Bindings>
+                                    </MultiBinding>
+                                </Grid.Visibility>
                                 <ZDY:IconButton Icon="ChevronLeftThin" Width="54" Height="54" IconSize="42" Margin="24" Click="PrevButton_Click" ToolTip="上一张" HorizontalAlignment="Left"/>
                                 <ZDY:IconButton Icon="ChevronRightThin" Width="54" Height="54" IconSize="42" Margin="24" Click="NextButton_Click" ToolTip="下一张" HorizontalAlignment="Right"/>
                             </Grid>
                         </Border>
                         <!--Loading-->
-                        <Border x:Name="Loading"
+                        <Border x:Name="LoadingContainer"
                             Visibility="{Binding CurrentPicture, Converter={ZDY:NullableToVisibilityConverter}}"
                             Panel.ZIndex="100" IsHitTestVisible="False"
                             VerticalAlignment="Center" HorizontalAlignment="Center">
-                            <ZDY:Loading Theme="Circle" Foreground="{x:Static SystemColors.HighlightBrush}" Width="48" Height="48" 
-                                     Visibility="{Binding CurrentPicture.PictureState, Converter={Converters:LoadingVisibilityConverter}, Delay=1}"/>
+                            <ZDY:Loading x:Name="Loading" Theme="Circle" Foreground="{x:Static SystemColors.HighlightBrush}" Width="48" Height="48" 
+                                     Visibility="{Binding CurrentPicture.PictureState, Converter={Converters:LoadingVisibilityConverter}}"/>
                         </Border>
                     </Grid>
                     <Grid Grid.Row="1">
@@ -422,7 +423,8 @@
                                 <ZDY:IconButton x:Name="RotateLeftButton" Icon="RotateLeft" ToolTip="左转90度" Click="RotateLeftButton_Click"/>
                                 <ZDY:IconButton x:Name="RotateRightButton" Icon="RotateRight" ToolTip="右转90度" Click="RotateRightButton_Click"/>
 
-                                <ZDY:IconButton x:Name="AutoPlayButton" Icon="Play2" ToolTip="自动播放" Click="AutoPlayButton_Click" Visibility="{Binding IsPictureCountMoreThanOne, Converter={ZDY:BoolToVisibilityConverter}}">
+                                <ZDY:IconButton x:Name="AutoPlayButton" Icon="Play2" ToolTip="自动播放" Click="AutoPlayButton_Click" 
+                                                Visibility="{Binding IsPictureCountMoreThanOne, Converter={ZDY:BoolToVisibilityConverter}}">
                                     <ZDY:IconButton.Style>
                                         <Style TargetType="{x:Type ZDY:IconButton}">
                                             <Setter Property="RenderTransformOrigin" Value="0.5,0.5"/>
@@ -456,8 +458,8 @@
                                     </ZDY:IconButton.Style>
                                 </ZDY:IconButton>
 
-                                <ZDY:IconButton x:Name="PrevButton" Icon="ArrowLeft" ToolTip="上一张" Click="PrevButton_Click" Visibility="{Binding IsPictureCountMoreThanOne, Converter={ZDY:BoolToVisibilityConverter}}"/>
-                                <ZDY:IconButton x:Name="NextButton" Icon="ArrowRight" ToolTip="下一张" Click="NextButton_Click" Visibility="{Binding IsPictureCountMoreThanOne, Converter={ZDY:BoolToVisibilityConverter}}"/>
+                                <ZDY:IconButton x:Name="PrevButton" Icon="ArrowLeft" ToolTip="上一张" Click="PrevButton_Click" Visibility="{Binding ElementName=NavigateButtonGrid, Path=Visibility}"/>
+                                <ZDY:IconButton x:Name="NextButton" Icon="ArrowRight" ToolTip="下一张" Click="NextButton_Click" Visibility="{Binding ElementName=NavigateButtonGrid, Path=Visibility}"/>
                                 <ZDY:IconButton x:Name="DeleteButton" Icon="Delete" ToolTip="删除" Click="DeleteButton_Click"/>
                                 <ZDY:IconButton x:Name="PrintButton" Icon="Print" ToolTip="打印" Click="PrintButton_Click"/>
                                 <ZDY:IconButton x:Name="InfoButton" Icon="Info" ToolTip="图片信息" Click="InfoButton_Click"/>

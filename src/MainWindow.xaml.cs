@@ -28,7 +28,7 @@ namespace Zhai.PictureView
             Loaded += MainWindow_Loaded;
 
             ViewModel.CurrentPictureChanged += ViewModel_CurrentPictureChanged;
-
+            ViewModel.CurrentFolderChanged += ViewModel_CurrentFolderChanged;
 
             PictureBox.SizeChanged += PictureBox_SizeChanged;
             PictureBox.MouseLeftButtonDown += PictureBox_MouseLeftButtonDown;
@@ -58,7 +58,7 @@ namespace Zhai.PictureView
 
             if (arg != null)
             {
-                await ViewModel.OpenPicture(arg.ToString());
+                await ViewModel.OpenPictureAsync(arg.ToString());
             }
         }
 
@@ -83,6 +83,13 @@ namespace Zhai.PictureView
                 }
             }
         }
+
+        private void ViewModel_CurrentFolderChanged(object sender, DirectoryInfo e)
+        {
+            FolderList.ScrollIntoView(e);
+        }
+
+
 
         private double PictureOffsetX => Canvas.GetLeft(Picture);
         private double PictureOffsetY => Canvas.GetTop(Picture);
@@ -494,7 +501,7 @@ namespace Zhai.PictureView
             };
 
             if (dialog.ShowDialog() is true)
-                await ViewModel.OpenPicture(dialog.FileName);
+                await ViewModel.OpenPictureAsync(dialog.FileName);
         }
 
         private void ZoomInButton_Click(object sender, RoutedEventArgs e)
@@ -567,7 +574,7 @@ namespace Zhai.PictureView
 
                     if (navWindow.ShowDialog() == true)
                     {
-                        await ViewModel.OpenPicture(next, null, ViewModel.Folder.Borthers);
+                        await ViewModel.OpenPictureAsync(next, null, ViewModel.Folder.Borthers);
 
                         return;
                     }
@@ -601,7 +608,7 @@ namespace Zhai.PictureView
 
                     if (navWindow.ShowDialog() == true)
                     {
-                        await ViewModel.OpenPicture(prev, null, ViewModel.Folder.Borthers);
+                        await ViewModel.OpenPictureAsync(prev, null, ViewModel.Folder.Borthers);
 
                         return;
                     }
@@ -740,10 +747,13 @@ namespace Zhai.PictureView
         {
             if (ViewModel.CurrentPicture == null) return;
 
-            FocusManager.SetIsFocusScope(this, true);
-            FocusManager.SetFocusedElement(this, this);
+            if (e.OriginalSource is not Famil.Controls.TextBox)
+            {
+                FocusManager.SetIsFocusScope(this, true);
+                FocusManager.SetFocusedElement(this, this);
 
-            PressShortcutKey(sender, e);
+                PressShortcutKey(sender, e);
+            }
         }
 
         #endregion
@@ -774,7 +784,31 @@ namespace Zhai.PictureView
 
             if (File.Exists(filename) && PictureSupport.IsSupported(filename))
             {
-                await ViewModel.OpenPicture(filename);
+                await ViewModel.OpenPictureAsync(filename);
+            }
+        }
+
+        private async void FolderItem_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            if (((FrameworkElement)sender).DataContext is DirectoryInfo dir)
+            {
+                var file = dir.EnumerateFiles().Where(PictureSupport.PictureSupportExpression).OrderBy(t => t.Name).FirstOrDefault();
+
+                if (file != null)
+                {
+                    await ViewModel.OpenPictureAsync(dir, file.FullName, ViewModel.Folder.Borthers);
+                }
+            }
+        }
+
+        private void FolderListSearcher_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                if (sender is Famil.Controls.TextBox textbox)
+                {
+                    ViewModel.SearchFolderBorthers(textbox.Text);
+                }
             }
         }
     }
