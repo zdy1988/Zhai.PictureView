@@ -32,8 +32,8 @@ namespace Zhai.PictureView
             }
         }
 
-        private bool isShowPictureListView = false;
-        public bool IsShowPictureListView
+        private bool? isShowPictureListView;
+        public bool? IsShowPictureListView
         {
             get => isShowPictureListView;
             set => Set(() => IsShowPictureListView, ref isShowPictureListView, value);
@@ -216,7 +216,10 @@ namespace Zhai.PictureView
 
                 ThreadPool.QueueUserWorkItem(_ => ApplicationDispatcher.InvokeOnUIThread(() => oldFolder?.Cleanup()));
 
-                IsShowPictureListView = Folder != null && Folder.Count > 1;
+                if (IsShowPictureListView == null)
+                {
+                    IsShowPictureListView = Folder != null && Folder.Count > 1;
+                }
             }
             else
             {

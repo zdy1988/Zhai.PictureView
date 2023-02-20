@@ -106,7 +106,6 @@
                                          ScrollViewer.VerticalScrollBarVisibility="Visible"
                                          ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                                          ZDY:ScrollViewerExtension.MouseWheelOrientation="Vertical"
-                                         ZDY:ScrollViewerExtension.IsInertiaEnabled="True"
                                          SelectedItem="{Binding CurrentFolder}">
                                 <ZDY:ListBox.ItemsPanel>
                                     <ItemsPanelTemplate>
@@ -186,7 +185,6 @@
                                          ScrollViewer.VerticalScrollBarVisibility="Disabled"
                                          ScrollViewer.HorizontalScrollBarVisibility="Visible"
                                          ZDY:ScrollViewerExtension.MouseWheelOrientation="Horizontal"
-                                         ZDY:ScrollViewerExtension.IsInertiaEnabled="True"
                                          SelectedItem="{Binding CurrentPicture}"
                                          SelectedIndex="{Binding CurrentPictureIndex}">
                                     <ZDY:ListBox.ItemsPanel>
@@ -238,8 +236,7 @@
                                          SelectedItem="{Binding CurrentPictureEffect}"
                                          ScrollViewer.VerticalScrollBarVisibility="Disabled"
                                          ScrollViewer.HorizontalScrollBarVisibility="Hidden"
-                                         ZDY:ScrollViewerExtension.MouseWheelOrientation="Horizontal"
-                                         ZDY:ScrollViewerExtension.IsInertiaEnabled="True">
+                                         ZDY:ScrollViewerExtension.MouseWheelOrientation="Horizontal">
                                     <ListBox.ItemsPanel>
                                         <ItemsPanelTemplate>
                                             <StackPanel Orientation="Horizontal" IsItemsHost="True"/>
@@ -465,8 +462,7 @@
                                 <ZDY:IconButton x:Name="InfoButton" Icon="Info" ToolTip="图片信息" Click="InfoButton_Click"/>
 
                                 <ZDY:IconToggleButton x:Name="PictureListViewToggleButton" Icon="SidebarTop" ToolTip="显示缩略图列表" CheckedIcon="SidebarBottom" CheckedToolTip="关闭缩略图列表" 
-                                              IsChecked="{Binding IsShowPictureListView}" IsEnabled="{Binding CurrentPicture, Converter={ZDY:NullableToBoolConverter}}"
-                                              Visibility="{Binding IsPictureCountMoreThanOne, Converter={ZDY:BoolToVisibilityConverter}}"/>
+                                              IsChecked="{Binding IsShowPictureListView}" IsEnabled="{Binding CurrentPicture, Converter={ZDY:NullableToBoolConverter}}"/>
                                 <ZDY:IconToggleButton x:Name="FolderBorthersViewToggleButton" Icon="SidebarLeft" ToolTip="查看更多" CheckedIcon="SidebarRight" CheckedToolTip="关闭侧栏"
                                                       IsChecked="{Binding IsShowFolderBorthersView}"/>
                             </StackPanel>
