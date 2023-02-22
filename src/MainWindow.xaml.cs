@@ -86,7 +86,7 @@ namespace Zhai.PictureView
 
         private void ViewModel_CurrentFolderChanged(object sender, DirectoryInfo e)
         {
-            //FolderList.ScrollIntoView(e);
+            FolderList.ScrollIntoView(e);
         }
 
 

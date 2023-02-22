@@ -214,10 +214,15 @@ namespace Zhai.PictureView
                 IsPictureCountMoreThanOne = Folder?.Count > 1;
                 CurrentPicture = (filename == null ? Folder : Folder.Where(t => t.PicturePath == filename)).FirstOrDefault();
 
-                ThreadPool.QueueUserWorkItem(_ => ApplicationDispatcher.InvokeOnUIThread(() => oldFolder?.Cleanup()));
+                if (oldFolder != null)
+                {
+                    ThreadPool.QueueUserWorkItem(_ => ApplicationDispatcher.InvokeOnUIThread(() => oldFolder.Cleanup()));
+                }
 
                 if (IsShowPictureListView == null)
                 {
+                    await Task.Delay(1000);
+
                     IsShowPictureListView = Folder != null && Folder.Count > 1;
                 }
             }
