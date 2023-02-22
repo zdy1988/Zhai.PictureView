@@ -800,16 +800,5 @@ namespace Zhai.PictureView
                 }
             }
         }
-
-        private void FolderListSearcher_KeyDown(object sender, KeyEventArgs e)
-        {
-            if (e.Key == Key.Enter)
-            {
-                if (sender is Famil.Controls.TextBox textbox)
-                {
-                    ViewModel.SearchFolderBorthers(textbox.Text);
-                }
-            }
-        }
     }
 }

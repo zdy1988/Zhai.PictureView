@@ -154,6 +154,19 @@ namespace Zhai.PictureView
             set => Set(() => IsShowFolderBorthersView, ref isShowFolderBorthersView, value);
         }
 
+        private string folderBorthersSearchText;
+        public string FolderBorthersSearchText
+        {
+            get => folderBorthersSearchText;
+            set
+            {
+                if (Set(() => FolderBorthersSearchText, ref folderBorthersSearchText, value))
+                {
+                    SearchFolderBorthers(value);
+                }
+            }
+        }
+
         private ConcurrentObservableCollection<DirectoryInfo> folderBorthers = new ConcurrentObservableCollection<DirectoryInfo>();
         public ConcurrentObservableCollection<DirectoryInfo> FolderBorthers
         {

@@ -92,7 +92,8 @@
                         <Border VerticalAlignment="Bottom" Margin="0 -1 0 0" Style="{StaticResource HorizontalLinearGradientBorder}"/>
                         <DockPanel>
                             <ZDY:TextBox x:Name="FolderListSearcher" DockPanel.Dock="Top" Margin="3 0 3 14"
-                                         ZDY:TextBoxExtension.Placeholder="查找..." KeyDown="FolderListSearcher_KeyDown"
+                                         Text="{Binding FolderBorthersSearchText, UpdateSourceTrigger=PropertyChanged, Delay=1000}"
+                                         ZDY:TextBoxExtension.Placeholder="查找..."
                                          ZDY:TextBoxExtension.Icon="Search" BorderThickness="1"
                                          ZDY:TextBoxExtension.IsClearButtonEnabled="True"/>
                             <ZDY:ListBox x:Name="FolderList"
