@@ -7,6 +7,7 @@
 		<UseWPF>true</UseWPF>
 		<ApplicationIcon>favicon.ico</ApplicationIcon>
 		<AssemblyTitle>ZHAI PICTURE VIEW</AssemblyTitle>
+		<Platforms>AnyCPU;x64</Platforms>
 	</PropertyGroup>
 
 	<PropertyGroup>
