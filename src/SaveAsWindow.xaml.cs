@@ -20,9 +20,11 @@ namespace Zhai.PictureView
     /// </summary>
     public partial class SaveAsWindow : FamilWindow
     {
-        public SaveAsWindow()
+        internal SaveAsWindow(Picture picture)
         {
             InitializeComponent();
+
+            this.DataContext = new SaveAsWindowViewModel(picture);
         }
     }
 }

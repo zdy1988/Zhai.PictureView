@@ -4,6 +4,7 @@ using SkiaSharp.Views.WPF;
 using System;
 using System.Diagnostics;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Reflection;
 using System.Runtime.InteropServices;
@@ -11,6 +12,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Interop;
 using System.Windows.Media.Imaging;
+using System.Windows.Media.Media3D;
 
 namespace Zhai.PictureView
 {
@@ -431,36 +433,146 @@ namespace Zhai.PictureView
 
         #endregion
 
+        /// <summary>
+        /// 压缩图片
+        /// </summary>
+        /// <param name="img">图片</param>
+        /// <param name="format">图片格式</param>
+        /// <param name="targetLen">压缩后大小</param>
+        /// <param name="srcLen">原始大小</param>
+        /// <returns>压缩后的图片</returns>
+        private static Image CompressImage(Image img, ImageFormat format, long targetLen)
+        {
+            const long nearlyLen = 10240;
+
+            var ms = new MemoryStream();
+
+            long srcLen = 0;
+
+            if (0 == srcLen)
+            {
+                img.Save(ms, format);
+                srcLen = ms.Length;
+            }
+
+            targetLen *= 1024;
+
+            if (targetLen > srcLen)
+            {
+                ms.SetLength(0);
+                ms.Position = 0;
+                img.Save(ms, format);
+                img = Image.FromStream(ms);
+                return img;
+            }
+
+            var exitLen = targetLen - nearlyLen;
+
+            var quality = (long)Math.Floor(100.00 * targetLen / srcLen);
+
+            var parms = new EncoderParameters(1);
+
+            //获取编码器信息
+            ImageCodecInfo formatInfo = null;
+            var encoders = ImageCodecInfo.GetImageEncoders();
+            foreach (ImageCodecInfo icf in encoders)
+            {
+                if (icf.FormatID == format.Guid)
+                {
+                    formatInfo = icf;
+                    break;
+                }
+            }
+
+            //使用二分法进行查找 最接近的质量参数
+            long startQuality = quality;
+            long endQuality = 100;
+            quality = (startQuality + endQuality) / 2;
+
+            while (true)
+            {
+                //设置质量
+                parms.Param[0] = new EncoderParameter(System.Drawing.Imaging.Encoder.Quality, quality);
+
+                //清空内存流 然后保存图片
+                ms.SetLength(0);
+                ms.Position = 0;
+                img.Save(ms, formatInfo, parms);
+
+                //若压缩后大小低于目标大小，则满足条件退出
+                if (ms.Length >= exitLen && ms.Length <= targetLen)
+                {
+                    break;
+                }
+                else if (startQuality >= endQuality) //区间相等无需再次计算
+                {
+                    break;
+                }
+                else if (ms.Length < exitLen) //压缩过小,起始质量右移
+                {
+                    startQuality = quality;
+                }
+                else //压缩过大 终止质量左移
+                {
+                    endQuality = quality;
+                }
+
+                //重新设置质量参数 如果计算出来的质量没有发生变化，则终止查找。这样是为了避免重复计算情况{start:16,end:18} 和 {start:16,endQuality:17}
+                var newQuality = (startQuality + endQuality) / 2;
+
+                if (newQuality == quality)
+                {
+                    break;
+                }
+
+                quality = newQuality;
+            }
+
+            img = Image.FromStream(ms);
+
+            return img;
+        }
+
+        private async static Task<MagickImage> CreateMagickImageAsync(Stream stream, int? quality = null, int? width = null, int? height = null)
+        {
+            MagickImage magickImage = new();
+
+            await magickImage.ReadAsync(stream);
+
+            if (quality is not null)
+            {
+                magickImage.Quality = quality.Value;
+            }
+
+            if (width is not null && height is not null)
+            {
+                magickImage.Resize(width.Value, height.Value);
+            }
+            else if (width is not null && height is null)
+            {
+                magickImage.Resize(width.Value, 0);
+            }
+            else if (height is not null && width is null)
+            {
+                magickImage.Resize(0, height.Value);
+            }
+
+            return magickImage;
+        }
+
         public static async Task<bool> SaveImageAsync(Stream stream, string targetPath, int? quality = null, int? width = null, int? height = null)
         {
             try
             {
-                using MagickImage magickImage = new();
-
-                if (stream is not null)
-                {
-                   await magickImage.ReadAsync(stream);
-                }
-                else
+                if (stream is null)
                 {
                     return false;
                 }
 
-                if (quality is not null)
-                {
-                    magickImage.Quality = quality.Value;
+                using (MagickImage magickImage = await CreateMagickImageAsync(stream, quality, width, height))
+                { 
+                    await magickImage.WriteAsync(targetPath);
                 }
-
-                if (width is not null)
-                {
-                    magickImage.Resize(width.Value, 0);
-                }
-                else if (height is not null)
-                {
-                    magickImage.Resize(0, height.Value);
-                }
-
-                await magickImage.WriteAsync(targetPath);
             }
             catch (Exception e)
             {
@@ -469,6 +581,34 @@ namespace Zhai.PictureView
 #endif
 
                 return false; 
+            }
+
+            return true;
+        }
+
+        public static async Task<bool> SaveImageAsync(Stream stream, string targetPath, long targetLen, int? quality = null, int? width = null, int? height = null)
+        {
+            try
+            {
+                if (stream is null)
+                {
+                    return false;
+                }
+
+                using (MagickImage magickImage = await CreateMagickImageAsync(stream, quality, width, height))
+                {
+                    var image = magickImage.ToBitmap();
+
+                    await Task.Run(() => CompressImage(image, ImageFormat.Jpeg, targetLen).Save(targetPath));
+                }
+            }
+            catch (Exception e)
+            {
+#if DEBUG
+                Trace.WriteLine($"{nameof(SaveImageAsync)} {targetPath} exception, \n {e.Message}");
+#endif
+
+                return false;
             }
 
             return true;

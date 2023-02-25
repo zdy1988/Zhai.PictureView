@@ -308,15 +308,9 @@ namespace Zhai.PictureView
 
         }, () => CurrentPicture != null && CurrentPicture.IsLoaded)).Value;
 
-        public RelayCommand ExecuteSaveImageCommand => new Lazy<RelayCommand>(() => new RelayCommand(() =>
+        public RelayCommand ExecuteSaveImageCommand => new Lazy<RelayCommand>(() => new RelayCommand(async () =>
         {
-            
-
-        }, () => CurrentPicture != null && CurrentPicture.IsLoaded)).Value;
-
-        public RelayCommand ExecuteSaveAsImageCommand => new Lazy<RelayCommand>(() => new RelayCommand(async () =>
-        {
-            if (Famil.Win32.CommonDialog.SaveFileDialog(Folder.Current.FullName, "", "另存为...", "", CurrentPicture.Extension, default, out string filename))
+            if (Famil.Win32.CommonDialog.SaveFileDialog(Folder.Current.FullName, "", "保存...", "", CurrentPicture.Extension, default, out string filename))
             {
                 var isSuccess = await CurrentPicture.SaveAsync(filename);
 
@@ -329,6 +323,16 @@ namespace Zhai.PictureView
                     SendNotificationMessage("保存失败！");
                 }
             }
+
+        }, () => CurrentPicture != null && CurrentPicture.IsLoaded)).Value;
+
+        public RelayCommand ExecuteSaveAsImageCommand => new Lazy<RelayCommand>(() => new RelayCommand(() =>
+        {
+            var window = new SaveAsWindow(CurrentPicture);
+
+            window.Owner = App.Current.MainWindow;
+
+            window.ShowDialog();
 
         }, () => CurrentPicture != null && CurrentPicture.IsLoaded)).Value;
 
