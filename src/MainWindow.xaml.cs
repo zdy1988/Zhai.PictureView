@@ -138,7 +138,7 @@ namespace Zhai.PictureView
             Picture.Width = picture.PixelWidth;
             Picture.Height = picture.PixelHeight;
 
-            EffectList.SelectedItem = ViewModel.Effects.First();
+            //EffectList.SelectedItem = ViewModel.Effects.First();
 
             if (picture.PixelWidth >= picture.PixelHeight)
             {

@@ -233,14 +233,19 @@
                                 <ZDY:Button x:Name="CloseEffectsButton" DockPanel.Dock="Right" Content="关闭窗口" VerticalContentAlignment="Center" Background="Transparent" Click="CloseEffectsButton_Click"/>
                                 <Border DockPanel.Dock="Right" Margin="3 12 0 12" Style="{StaticResource VerticalLinearGradientBorder}"/>
                                 <ZDY:ListBox x:Name="EffectList" Margin="8 8 8 8"
-                                         ItemsSource="{Binding Effects}"
-                                         SelectedItem="{Binding CurrentPictureEffect}"
-                                         ScrollViewer.VerticalScrollBarVisibility="Disabled"
-                                         ScrollViewer.HorizontalScrollBarVisibility="Hidden"
-                                         ZDY:ScrollViewerExtension.MouseWheelOrientation="Horizontal">
+                                             ItemsSource="{Binding Effects}"
+                                             VirtualizingPanel.ScrollUnit="Pixel"
+                                             VirtualizingPanel.VirtualizationMode="Standard"
+                                             VirtualizingPanel.IsVirtualizing="True"
+                                             VirtualizingPanel.IsContainerVirtualizable="True"
+                                             VirtualizingPanel.CacheLengthUnit="Item"
+                                             ScrollViewer.VerticalScrollBarVisibility="Disabled"
+                                             ScrollViewer.HorizontalScrollBarVisibility="Hidden"
+                                             ZDY:ScrollViewerExtension.MouseWheelOrientation="Horizontal"
+                                             SelectedItem="{Binding CurrentPictureEffect}">
                                     <ListBox.ItemsPanel>
                                         <ItemsPanelTemplate>
-                                            <StackPanel Orientation="Horizontal" IsItemsHost="True"/>
+                                            <VirtualizingStackPanel Orientation="Horizontal" IsItemsHost="True"/>
                                         </ItemsPanelTemplate>
                                     </ListBox.ItemsPanel>
                                     <ListBox.ItemContainerStyle>
