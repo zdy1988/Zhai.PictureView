@@ -25,20 +25,20 @@
                 <Setter Property="VerticalAlignment" Value="Center"/>
                 <Setter Property="Margin" Value="0 0 24 0"/>
             </Style>
-            <!--<Style TargetType="{x:Type ZDY:TextBox}">
+            <Style TargetType="{x:Type ZDY:TextBox}">
                 <Setter Property="BorderThickness" Value="1"/>
-            </Style>-->
+            </Style>
             <Style TargetType="{x:Type ZDY:TextNumberBox}">
                 <Setter Property="BorderThickness" Value="1"/>
             </Style>
             <Style TargetType="{x:Type ZDY:RadioButton}">
                 <Setter Property="Margin" Value="8 0"/>
             </Style>
-            <Style TargetType="{x:Type StackPanel}">
+            <Style TargetType="{x:Type StackPanel}" x:Key="SaveAsItemContentStackPanel">
                 <Setter Property="Margin" Value="0 6"/>
                 <Setter Property="Height" Value="31"/>
             </Style>
-            <Style TargetType="{x:Type DockPanel}">
+            <Style TargetType="{x:Type DockPanel}" x:Key="SaveAsItemContentDockPanel">
                 <Setter Property="Margin" Value="0 6"/>
             </Style>
         </Grid.Resources>
@@ -57,7 +57,7 @@
         </Grid.RowDefinitions>
 
         <TextBlock Grid.Row="0" Grid.Column="0" Text="调整尺寸" Style="{StaticResource SaveAsItemHeaderTextBlock}"/>
-        <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Horizontal">
+        <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Horizontal" Style="{StaticResource SaveAsItemContentStackPanel}">
             <ZDY:TextNumberBox ZDY:TextBoxExtension.Placeholder="宽度" MinWidth="70" Text="{Binding ResizeWidth}">
                 <ZDY:TextBoxExtension.AddonContent>
                     <TextBlock Text="Px" VerticalAlignment="Center" Margin="0 0 12 0"/>
@@ -83,12 +83,12 @@
             <ZDY:IconButton Icon="RefreshRightSquare" Command="{Binding ExecuteResetResizePercentageCommand}"/>
         </StackPanel>
         <TextBlock Grid.Row="1" Grid.Column="0" Text="目标体积" Style="{StaticResource SaveAsItemHeaderTextBlock}"/>
-        <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Horizontal" IsEnabled="{Binding IsCanCustomFileSize}">
+        <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Horizontal" IsEnabled="{Binding IsCanCustomFileSize}" Style="{StaticResource SaveAsItemContentStackPanel}">
             <ZDY:RadioButton GroupName="ResizeSize" IsChecked="{Binding IsCustomFileSize, Converter={ZDY:ValueStringedToBoolConverter}, ConverterParameter=False}"/>
             <TextBlock Text="预计大小："/>
             <TextBlock Text="{Binding FileSize, Converter={ZDY:ByteLengthToStringConverter}}"/>
         </StackPanel>
-        <StackPanel Grid.Row="2" Grid.Column="1" Orientation="Horizontal" IsEnabled="{Binding IsCanCustomFileSize}">
+        <StackPanel Grid.Row="2" Grid.Column="1" Orientation="Horizontal" IsEnabled="{Binding IsCanCustomFileSize}" Style="{StaticResource SaveAsItemContentStackPanel}">
             <ZDY:RadioButton GroupName="ResizeSize" IsChecked="{Binding IsCustomFileSize, Converter={ZDY:ValueStringedToBoolConverter}, ConverterParameter=True}"/>
             <TextBlock Text="压缩至"/>
             <ZDY:TextNumberBox ZDY:TextBoxExtension.Placeholder="目标体积" Margin="8 0 0 0" MinWidth="120" Text="{Binding CustomFileSize}"
@@ -100,7 +100,7 @@
             <TextBlock Text=" （ 因图片太小，禁用此功能 ）" Visibility="{Binding IsCanCustomFileSize, Converter={ZDY:BoolToInverseVisibilityConverter}}"/>
         </StackPanel>
         <TextBlock Grid.Row="3" Grid.Column="0" Text="图片品质" Style="{StaticResource SaveAsItemHeaderTextBlock}"/>
-        <StackPanel Grid.Row="3" Grid.Column="1" Orientation="Horizontal">
+        <StackPanel Grid.Row="3" Grid.Column="1" Orientation="Horizontal" Style="{StaticResource SaveAsItemContentStackPanel}">
             <ZDY:RadioButton GroupName="Quality" Content="100" IsChecked="{Binding Quality, Converter={ZDY:ValueStringedToBoolConverter}, ConverterParameter=100}"/>
             <TextBlock Text="最佳"/>
             <ZDY:RadioButton GroupName="Quality" Content="80" IsChecked="{Binding Quality, Converter={ZDY:ValueStringedToBoolConverter}, ConverterParameter=80}"/>
@@ -113,7 +113,7 @@
             <TextBlock Text="低"/>
         </StackPanel>
         <TextBlock Grid.Row="4" Grid.Column="0" Text="名称路径" Style="{StaticResource SaveAsItemHeaderTextBlock}"/>
-        <DockPanel Grid.Row="4" Grid.Column="1">
+        <DockPanel Grid.Row="4" Grid.Column="1" Style="{StaticResource SaveAsItemContentDockPanel}">
             <ZDY:TextBox DockPanel.Dock="Left" ZDY:TextBoxExtension.Placeholder="所属文件夹路径" IsReadOnly="True">
                 <ZDY:TextBox.Text>
                     <Binding Path="FolderPath" UpdateSourceTrigger="PropertyChanged">
@@ -127,7 +127,7 @@
                 </ZDY:TextBoxExtension.AddonContent>
             </ZDY:TextBox>
         </DockPanel>
-        <DockPanel Grid.Row="5" Grid.Column="1">
+        <DockPanel Grid.Row="5" Grid.Column="1" Style="{StaticResource SaveAsItemContentDockPanel}">
             <ZDY:TextBox ZDY:TextBoxExtension.Placeholder="文件名">
                 <ZDY:TextBox.Text>
                     <Binding Path="FileName" UpdateSourceTrigger="PropertyChanged">
@@ -143,7 +143,7 @@
         </DockPanel>
         <StackPanel Grid.Row="6" Grid.ColumnSpan="2" VerticalAlignment="Bottom" HorizontalAlignment="Center" Margin="6 24 6 0">
             <ZDY:Button Width="120" Command="{Binding ExecuteSaveImageCommand}">
-                <StackPanel Orientation="Horizontal" Margin="0" Height="16">
+                <StackPanel Orientation="Horizontal">
                     <ZDY:Loading Width="14" Margin="0 -12 6 -12" Visibility="{Binding IsSaving, Converter={ZDY:BoolToVisibilityConverter}}"/>
                     <TextBlock Text="保存"/>
                 </StackPanel>
