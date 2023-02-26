@@ -14,6 +14,8 @@ using Zhai.Famil.Common.Mvvm;
 using Zhai.Famil.Common.Mvvm.Command;
 using Zhai.Famil.Common.Threads;
 using Zhai.Famil.Controls;
+using MessageBox = Zhai.Famil.Dialogs.MessageBox;
+using ConfirmBox = Zhai.Famil.Dialogs.ConfirmBox;
 
 namespace Zhai.PictureView
 {
@@ -241,8 +243,7 @@ namespace Zhai.PictureView
             }
             else
             {
-                var box = new Zhai.Famil.Dialogs.MessageBox(App.Current.MainWindow as WindowBase, ($"软件对路径：“{dir.FullName}”没有访问权限！"));
-                box.Show();
+                MessageBox.Show(App.Current.MainWindow as WindowBase, ($"软件对路径：“{dir.FullName}”没有访问权限！"));
             }
         }
 

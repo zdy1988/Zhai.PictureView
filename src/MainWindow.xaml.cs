@@ -12,6 +12,8 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using Zhai.Famil.Controls;
 using Timer = System.Timers.Timer;
+using MessageBox = Zhai.Famil.Dialogs.MessageBox;
+using ConfirmBox = Zhai.Famil.Dialogs.ConfirmBox;
 
 namespace Zhai.PictureView
 {
@@ -622,9 +624,7 @@ namespace Zhai.PictureView
         {
             if (ViewModel.CurrentPicture == null) return;
 
-            var box = new Zhai.Famil.Dialogs.ConfirmBox(this, "确定删除此图片？");
-
-            if (box.Show() == true)
+            if (ConfirmBox.Show(this, "确定删除此图片？") == true)
             {
                 var deletePicture = ViewModel.CurrentPicture;
 

@@ -114,14 +114,28 @@
         </StackPanel>
         <TextBlock Grid.Row="4" Grid.Column="0" Text="名称路径" Style="{StaticResource SaveAsItemHeaderTextBlock}"/>
         <DockPanel Grid.Row="4" Grid.Column="1">
-            <ZDY:TextBox DockPanel.Dock="Left" ZDY:TextBoxExtension.Placeholder="所属文件夹路径" IsReadOnly="True" Text="{Binding FolderPath}">
+            <ZDY:TextBox DockPanel.Dock="Left" ZDY:TextBoxExtension.Placeholder="所属文件夹路径" IsReadOnly="True">
+                <ZDY:TextBox.Text>
+                    <Binding Path="FolderPath" UpdateSourceTrigger="PropertyChanged">
+                        <Binding.ValidationRules>
+                            <ZDY:NullOrEmptyValidationRule/>
+                        </Binding.ValidationRules>
+                    </Binding>
+                </ZDY:TextBox.Text>
                 <ZDY:TextBoxExtension.AddonContent>
                     <ZDY:IconButton Icon="Open" Command="{Binding ExecuteSelectFolderCommand}"/>
                 </ZDY:TextBoxExtension.AddonContent>
             </ZDY:TextBox>
         </DockPanel>
         <DockPanel Grid.Row="5" Grid.Column="1">
-            <ZDY:TextBox ZDY:TextBoxExtension.Placeholder="文件名" Text="{Binding FileName}">
+            <ZDY:TextBox ZDY:TextBoxExtension.Placeholder="文件名">
+                <ZDY:TextBox.Text>
+                    <Binding Path="FileName" UpdateSourceTrigger="PropertyChanged">
+                        <Binding.ValidationRules>
+                            <ZDY:NullOrEmptyValidationRule/>
+                        </Binding.ValidationRules>
+                    </Binding>
+                </ZDY:TextBox.Text>
                 <ZDY:TextBoxExtension.AddonContent>
                     <ZDY:ComboBox SelectedValue="{Binding Extension}" ItemsSource="{Binding Extensions}"/>
                 </ZDY:TextBoxExtension.AddonContent>
