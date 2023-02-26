@@ -116,13 +116,6 @@ namespace Zhai.PictureView
             }
         }
 
-        private bool isPictureCountMoreThanOne = false;
-        public bool IsPictureCountMoreThanOne
-        {
-            get => isPictureCountMoreThanOne;
-            set => Set(() => IsPictureCountMoreThanOne, ref isPictureCountMoreThanOne, value);
-        }
-
         private bool isPictureCarouselPlaing = false;
         public bool IsPictureCarouselPlaing
         {
@@ -197,6 +190,10 @@ namespace Zhai.PictureView
         }
 
 
+        public bool IsPictureCountMoreThanOne => Folder?.Count > 1;
+
+        public bool IsCanPicturesNavigated => CurrentPicture != null && Folder != null && (Folder.Count > 1 || Folder.Borthers.Count > 1);
+
         public ObservableCollection<PictureEffect> Effects { get; }
 
 
@@ -226,7 +223,9 @@ namespace Zhai.PictureView
                 Folder.BorthersLoaded += Folder_BorthersLoaded;
 
                 await Folder.LoadAsync();
-                IsPictureCountMoreThanOne = Folder?.Count > 1;
+
+                base.RaisePropertyChanged(nameof(IsPictureCountMoreThanOne));
+
                 CurrentPicture = (filename == null ? Folder : Folder.Where(t => t.PicturePath == filename)).FirstOrDefault();
 
                 if (oldFolder != null)
@@ -256,6 +255,8 @@ namespace Zhai.PictureView
 
             if (borthers != null && borthers.Any())
             {
+                base.RaisePropertyChanged(nameof(IsCanPicturesNavigated));
+
                 ThreadPool.QueueUserWorkItem(_ =>
                 {
                     FolderBorthers.Clear();

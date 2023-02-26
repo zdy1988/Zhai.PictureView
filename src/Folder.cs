@@ -20,8 +20,6 @@ namespace Zhai.PictureView
 
         public List<DirectoryInfo> Borthers { get; private set; }
 
-        public bool IsBorthersMoreThanOne => Borthers?.Count > 1;
-
         public bool IsAccessed => CanAccess(Current);
 
         public Folder(DirectoryInfo dir, List<DirectoryInfo> borthers = null)
@@ -76,8 +74,6 @@ namespace Zhai.PictureView
                     return false;
 
                 }).OrderBy(t => t.Name).ToList();
-
-                base.OnPropertyChanged(new PropertyChangedEventArgs("IsBorthersMoreThanOne"));
 
                 BorthersLoaded?.Invoke(this, Borthers);
             }

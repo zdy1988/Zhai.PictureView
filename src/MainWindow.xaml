@@ -373,10 +373,11 @@
                         </Grid>
                         <!--图片比例提示-->
                         <ZDY:Hint Text="{Binding Scale, Converter={Converters:ScaleTipsConverter}}" FontWeight="Normal" FontSize="16" CornerRadius="18"/>
+                    </Grid>
+                    <Grid Grid.Row="0">
                         <!--打开图片按钮-->
-                        <Border x:Name="OpenButton2" VerticalAlignment="Center" HorizontalAlignment="Center"
-                                Visibility="{Binding CurrentPicture, Converter={ZDY:NullableToInverseVisibilityConverter}}">
-                            <StackPanel>
+                        <Border x:Name="OpenButtonContainer" Visibility="{Binding CurrentPicture, Converter={ZDY:NullableToInverseVisibilityConverter}}">
+                            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
                                 <Button HorizontalAlignment="Center" Cursor="Hand" Margin="0 0 0 30" Click="OpenButton_Click"
                                     Foreground="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=Foreground}">
                                     <Button.Template>
@@ -391,28 +392,18 @@
                             </StackPanel>
                         </Border>
                         <!--左右翻页按钮-->
-                        <Border x:Name="NavigateButton"
-                                Visibility="{Binding CurrentPicture, Converter={ZDY:NullableToVisibilityConverter}}">
-                            <Grid x:Name="NavigateButtonGrid">
-                                <Grid.Visibility>
-                                    <MultiBinding Converter="{ZDY:MultiBoolToVisibilityConverter}" ConverterParameter="AND">
-                                        <MultiBinding.Bindings>
-                                            <Binding Path="IsPictureCountMoreThanOne"/>
-                                            <Binding Path="Folder.IsBorthersMoreThanOne"/>
-                                        </MultiBinding.Bindings>
-                                    </MultiBinding>
-                                </Grid.Visibility>
+                        <Border x:Name="NavigateButtonContainer" Visibility="{Binding CurrentPicture, Converter={ZDY:NullableToVisibilityConverter}}">
+                            <Grid x:Name="NavigateButtonGrid" Visibility="{Binding IsCanPicturesNavigated, Converter={ZDY:BoolToVisibilityConverter}}">
                                 <ZDY:IconButton Icon="ChevronLeftThin" Width="54" Height="54" IconSize="42" Margin="24" Click="PrevButton_Click" ToolTip="上一张" HorizontalAlignment="Left"/>
                                 <ZDY:IconButton Icon="ChevronRightThin" Width="54" Height="54" IconSize="42" Margin="24" Click="NextButton_Click" ToolTip="下一张" HorizontalAlignment="Right"/>
                             </Grid>
                         </Border>
                         <!--Loading-->
-                        <Border x:Name="LoadingContainer"
-                            Visibility="{Binding CurrentPicture, Converter={ZDY:NullableToVisibilityConverter}}"
-                            Panel.ZIndex="100" IsHitTestVisible="False"
-                            VerticalAlignment="Center" HorizontalAlignment="Center">
+                        <Border x:Name="LoadingContainer" Visibility="{Binding CurrentPicture, Converter={ZDY:NullableToVisibilityConverter}}"
+                                Panel.ZIndex="100" IsHitTestVisible="False">
                             <ZDY:Loading x:Name="Loading" Theme="Circle" Foreground="{x:Static SystemColors.HighlightBrush}" Width="48" Height="48" 
-                                     Visibility="{Binding CurrentPicture.PictureState, Converter={Converters:LoadingVisibilityConverter}}"/>
+                                         VerticalAlignment="Center" HorizontalAlignment="Center"
+                                         Visibility="{Binding CurrentPicture.PictureState, Converter={Converters:LoadingVisibilityConverter}}"/>
                         </Border>
                     </Grid>
                     <Grid Grid.Row="1">
