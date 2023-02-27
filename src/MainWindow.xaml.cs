@@ -67,17 +67,7 @@ namespace Zhai.PictureView
 
         private async void ViewModel_CurrentPictureChanged(object sender, Picture picture)
         {
-            void CleanGif()
-            {
-                var stream = XamlAnimatedGif.AnimationBehavior.GetSourceStream(Picture);
-
-                if (stream != null)
-                {
-                    XamlAnimatedGif.AnimationBehavior.SetSourceUri(Picture, null);
-                }
-            }
-
-            CleanGif();
+            Picture.CleanAnimation();
 
             if (picture != null)
             {
@@ -91,12 +81,12 @@ namespace Zhai.PictureView
                 {
                     await InitPicture(picture);
 
-                    PictureList.ScrollIntoView(picture);
-
                     if (picture.IsAnimation)
                     {
-                        XamlAnimatedGif.AnimationBehavior.SetSourceUri(Picture, new Uri(picture.PicturePath));
+                        Picture.RunAnimation(picture);
                     }
+
+                    PictureList.ScrollIntoView(picture);
                 }
             }
         }
@@ -107,42 +97,13 @@ namespace Zhai.PictureView
         }
 
         #region Picture View
+
         private double PictureOffsetX => Canvas.GetLeft(Picture);
         private double PictureOffsetY => Canvas.GetTop(Picture);
         private double MoveRectOffsetX => Canvas.GetLeft(MoveRect);
         private double MoveRectOffsetY => Canvas.GetTop(MoveRect);
         private double ViewingAreaRatio => this.PictureBox.Width / this.MoveRect.RenderSize.Width;     //获取右侧大图框与透明矩形框的尺寸比率
         private double AdjustScale => Picture.Width / ViewModel.CurrentPicture.PixelWidth;
-
-
-        private readonly List<Picture> activedPictures = new();
-
-        private void ManagePictureCache(Picture current)
-        {
-            ThreadPool.QueueUserWorkItem(_ =>
-            {
-                var item = activedPictures.Where(t => t == current).FirstOrDefault();
-
-                if (item != null)
-                {
-                    activedPictures.Remove(item);
-                }
-
-                activedPictures.Insert(0, current);
-
-                if (activedPictures.Count > Properties.Settings.Default.ActivedPicturesCount)
-                {
-                    foreach (var p in activedPictures.Skip(Properties.Settings.Default.ActivedPicturesCount))
-                    {
-                        p.PictureSource = null;
-                        activedPictures.Remove(p);
-                    }
-
-                    GC.Collect();
-                    GC.WaitForPendingFinalizers();
-                }
-            });
-        }
 
         private async Task InitPicture(Picture picture)
         {
@@ -169,7 +130,7 @@ namespace Zhai.PictureView
 
             ResetPicture();
 
-            ManagePictureCache(picture);
+            PictureCacheManager.Managed(picture);
         }
 
         private void ResetPicture()
