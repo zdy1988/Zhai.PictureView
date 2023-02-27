@@ -13,7 +13,7 @@
         ResizeMode="NoResize"
         Icon="favicon.ico"
         Title="设置" 
-        Height="430" Width="560"
+        Height="480" Width="640"
         mc:Ignorable="d">
     <Border>
         <Grid>
@@ -46,12 +46,22 @@
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
                                     <StackPanel Orientation="Horizontal" Margin="0 0 16 8">
-                                        <ZDY:CheckBox x:Name="ExtCheckBox" IsChecked="{Binding IsSupported}"/>
+                                        <ZDY:CheckBox x:Name="ExtCheckBox" IsChecked="{Binding IsSupported, Delay=1000}"/>
                                         <TextBlock Margin="4 0 0 0" Text="{Binding Ext}"/>
                                     </StackPanel>
                                 </DataTemplate>
                             </ItemsControl.ItemTemplate>
                         </ItemsControl>
+                    </StackPanel>
+                </ZDY:TabItem>
+                <ZDY:TabItem Header="轮播设置">
+                    <StackPanel Margin="24">
+                        <StackPanel Orientation="Horizontal" Margin="0 0 0 8">
+                            <TextBlock Margin="8 0" Text="自动播放时间隔"/>
+                            <ZDY:Slider2 x:Name="AutoPlayIntervalSlider" Minimum="2" Maximum="10" Value="{Binding AutoPlayInterval, Delay=1000}"
+                                         SmallChange="1" LargeChange="2" Width="120" Margin="12 0" IsSnapToTickEnabled="True"/>
+                            <TextBlock Text="{Binding ElementName=AutoPlayIntervalSlider, Path=Value, StringFormat={}{0}秒}"/>
+                        </StackPanel>
                     </StackPanel>
                 </ZDY:TabItem>
                 <ZDY:TabItem Header="其他设置">

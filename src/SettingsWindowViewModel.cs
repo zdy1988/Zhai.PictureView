@@ -56,6 +56,20 @@ namespace Zhai.PictureView
             }
         }
 
+        private int autoPlayInterval = Properties.Settings.Default.AutoPlayInterval;
+        public int AutoPlayInterval
+        {
+            get => autoPlayInterval;
+            set
+            {
+                if (Set(() => AutoPlayInterval, ref autoPlayInterval, value))
+                {
+                    Properties.Settings.Default.AutoPlayInterval = value;
+                    Properties.Settings.Default.Save();
+                }
+            }
+        }
+
         public List<PictureSupportedItem> AllSupported { get; }
 
         public SettingsWindowViewModel()

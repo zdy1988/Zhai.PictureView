@@ -29,25 +29,39 @@ namespace Zhai.PictureView
                 newIndex = 0;
             }
 
+            var folder = App.ViewModelLocator.PictureWindow.Folder;
+
+            void IgnoreVideo()
+            {
+                if (folder != null && folder[newIndex] != null && folder[newIndex].IsVideo)
+                {
+                    newIndex += 1;
+
+                    IgnoreVideo();
+                }
+            }
+
+            IgnoreVideo();
+
             App.ViewModelLocator.PictureWindow.CurrentPictureIndex = newIndex;
         }
 
-        public void Play(double interval = 2000)
+        public void Play(double? interval = null)
         {
-            if (interval == 0) return;
+            if (interval == null || interval == 0)
+            {
+                interval = Properties.Settings.Default.AutoPlayInterval * 1000.0;
+            }
 
+            timer.Interval = TimeSpan.FromMilliseconds(interval.Value);
             timer.IsEnabled = true;
-            timer.Interval = TimeSpan.FromMilliseconds(interval);
             timer.Start();
         }
 
         public void Stop()
         {
-            if (timer.IsEnabled)
-            {
-                timer.IsEnabled = false;
-                timer.Stop();
-            }
+            timer.IsEnabled = false;
+            timer.Stop();
         }
     }
 }

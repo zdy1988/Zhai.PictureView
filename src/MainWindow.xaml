@@ -325,6 +325,7 @@
                                             <Separator/>
                                             <MenuItem Icon="{ZDY:Icon Kind=Magicpen}" Header="打开效果面板" Command="{Binding ExecuteTogglePictureEffectsViewCommand}" Visibility="{Binding IsShowPictureEffectsView, Converter={ZDY:BoolToInverseVisibilityConverter}}"/>
                                             <MenuItem Icon="{ZDY:Icon Kind=Magicpen}" Header="关闭效果面板" Command="{Binding ExecuteTogglePictureEffectsViewCommand}" Visibility="{Binding IsShowPictureEffectsView, Converter={ZDY:BoolToVisibilityConverter}}"/>
+                                            <MenuItem Icon="{ZDY:Icon Kind=PlayCricle}" Header="自动播放图片" Click="AutoPlayButton_Click" Visibility="{Binding IsCanPictureCarouselPlay, Converter={ZDY:BoolToVisibilityConverter}}"/>
                                             <Separator/>
                                             <MenuItem Icon="{ZDY:Icon Kind=Info}" Header="图片信息" Click="InfoButton_Click"/>
                                             <MenuItem Icon="{ZDY:Icon Kind=Folder2}" Header="打开所在的文件夹" Command="{Binding ExecuteOpenTheFolderCommand}"/>
@@ -381,7 +382,8 @@
                             <ZDY:Hint Text="{Binding Scale, Converter={Converters:ScaleTipsConverter}}" FontWeight="Normal" FontSize="16" CornerRadius="18"/>
                         </Grid>
                         <Grid Grid.Row="1">
-                            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Orientation="Horizontal" Margin="8">
+                            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Orientation="Horizontal" Margin="8"
+                                        Visibility="{Binding IsPictureCarouselPlaying, Converter={ZDY:BoolToInverseVisibilityConverter}}">
                                 <ZDY:IconButton x:Name="OpenButton" Icon="Open" ToolTip="打开" Click="OpenButton_Click"/>
 
                                 <StackPanel x:Name="ControlPanel" Orientation="Horizontal" IsEnabled="{Binding CurrentPicture, Converter={ZDY:NullableToBoolConverter}}">
@@ -391,41 +393,6 @@
                                     <ZDY:IconButton x:Name="RotateLeftButton" Icon="RotateLeft" ToolTip="左转90度" Click="RotateLeftButton_Click"/>
                                     <ZDY:IconButton x:Name="RotateRightButton" Icon="RotateRight" ToolTip="右转90度" Click="RotateRightButton_Click"/>
 
-                                    <ZDY:IconButton x:Name="AutoPlayButton" Icon="Play2" ToolTip="自动播放" Click="AutoPlayButton_Click" 
-                                                Visibility="{Binding IsPictureCountMoreThanOne, Converter={ZDY:BoolToVisibilityConverter}}">
-                                        <ZDY:IconButton.Style>
-                                            <Style TargetType="{x:Type ZDY:IconButton}">
-                                                <Setter Property="RenderTransformOrigin" Value="0.5,0.5"/>
-                                                <Setter Property="RenderTransform">
-                                                    <Setter.Value>
-                                                        <TransformGroup>
-                                                            <ScaleTransform ScaleX="1" ScaleY="1"/>
-                                                        </TransformGroup>
-                                                    </Setter.Value>
-                                                </Setter>
-                                                <Style.Triggers>
-                                                    <DataTrigger Binding="{Binding IsPictureCarouselPlaing}" Value="True">
-                                                        <DataTrigger.EnterActions>
-                                                            <BeginStoryboard x:Name="PictureCarouselPlaingAnimation">
-                                                                <Storyboard RepeatBehavior="Forever">
-                                                                    <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)">
-                                                                        <EasingDoubleKeyFrame Value="0.75" KeyTime="00:00:02"/>
-                                                                    </DoubleAnimationUsingKeyFrames>
-                                                                    <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)">
-                                                                        <EasingDoubleKeyFrame Value="0.75" KeyTime="00:00:02"/>
-                                                                    </DoubleAnimationUsingKeyFrames>
-                                                                </Storyboard>
-                                                            </BeginStoryboard>
-                                                        </DataTrigger.EnterActions>
-                                                        <DataTrigger.ExitActions>
-                                                            <StopStoryboard BeginStoryboardName="PictureCarouselPlaingAnimation"></StopStoryboard>
-                                                        </DataTrigger.ExitActions>
-                                                    </DataTrigger>
-                                                </Style.Triggers>
-                                            </Style>
-                                        </ZDY:IconButton.Style>
-                                    </ZDY:IconButton>
-
                                     <ZDY:IconButton x:Name="PrevButton" Icon="ArrowLeft" ToolTip="上一张" Click="PrevButton_Click" Visibility="{Binding ElementName=NavigateButtonGrid, Path=Visibility}"/>
                                     <ZDY:IconButton x:Name="NextButton" Icon="ArrowRight" ToolTip="下一张" Click="NextButton_Click" Visibility="{Binding ElementName=NavigateButtonGrid, Path=Visibility}"/>
                                     <ZDY:IconButton x:Name="DeleteButton" Icon="Delete" ToolTip="删除" Click="DeleteButton_Click"/>
@@ -433,9 +400,9 @@
                                     <ZDY:IconButton x:Name="InfoButton" Icon="Info" ToolTip="图片信息" Click="InfoButton_Click"/>
 
                                     <ZDY:IconToggleButton x:Name="PictureListViewToggleButton" Icon="SidebarTop" ToolTip="显示缩略图列表" CheckedIcon="SidebarBottom" CheckedToolTip="关闭缩略图列表" 
-                                              IsChecked="{Binding IsShowPictureListView}" IsEnabled="{Binding CurrentPicture, Converter={ZDY:NullableToBoolConverter}}"/>
+                                                          IsChecked="{Binding IsShowPictureListView}" IsEnabled="{Binding CurrentPicture, Converter={ZDY:NullableToBoolConverter}}"/>
                                     <ZDY:IconToggleButton x:Name="FolderBorthersViewToggleButton" Icon="SidebarLeft" ToolTip="查看更多" CheckedIcon="SidebarRight" CheckedToolTip="关闭侧栏"
-                                                      IsChecked="{Binding IsShowFolderBorthersView}"/>
+                                                          IsChecked="{Binding IsShowFolderBorthersView}"/>
                                 </StackPanel>
                             </StackPanel>
                         </Grid>
@@ -447,6 +414,17 @@
                             <MediaElement.RenderTransform>
                                 <RotateTransform Angle="{Binding RotateAngle}" />
                             </MediaElement.RenderTransform>
+                            <MediaElement.Style>
+                                <Style TargetType="{x:Type MediaElement}">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding CurrentPicture, Converter={ZDY:NullableToBoolConverter}}" Value="True">
+                                            <DataTrigger.Setters>
+                                                <Setter Property="Effect" Value="{Binding CurrentPictureEffect.Effect}"/>
+                                            </DataTrigger.Setters>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </MediaElement.Style>
                         </MediaElement>
                         <Grid Visibility="{Binding IsVideoErrored, Converter={ZDY:BoolToVisibilityConverter}}">
                             <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
@@ -533,16 +511,23 @@
                                          VerticalAlignment="Center" HorizontalAlignment="Center"
                                          Visibility="{Binding CurrentPicture.PictureState, Converter={Converters:LoadingVisibilityConverter}}"/>
                         </Border>
+                        <!-- 关闭自动播放按钮 -->
+                        <Border x:Name="AutoPlayCloseButtonContainer" Visibility="{Binding CurrentPicture, Converter={ZDY:NullableToVisibilityConverter}}"
+                                VerticalAlignment="Bottom" Margin="0 0 0 24">
+                            <ZDY:Button x:Name="AutoPlayCloseButton" Content="关闭自动播放" Click="AutoPlayCloseButton_Click"
+                                        Visibility="{Binding IsPictureCarouselPlaying, Converter={ZDY:BoolToVisibilityConverter}}"
+                                        HorizontalAlignment="Center" CornerRadius="16" Padding="16 8"/>
+                        </Border>
                     </Grid>
                 </Grid>
             </ZDY:Drawer>
         </ZDY:Drawer>
         <Grid x:Name="GalleryView" 
-              Background="#1e1e1e" MouseRightButtonUp="GalleryView_MouseRightButtonUp"
+              Background="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=Foreground, Converter={StaticResource FloatingBackgroundBrushRoundConverter}}" MouseRightButtonUp="GalleryView_MouseRightButtonUp"
               Visibility="{Binding IsShowGallery, Converter={ZDY:BoolToVisibilityConverter}}">
             <ZDY:ListBox ItemsSource="{Binding ElementName=PictureList, Path=Items}"
                           SelectedItem="{Binding CurrentPicture}"
-                          Margin="8 8 8 8" Background="Transparent" BorderThickness="0"
+                          Margin="18" Background="Transparent" BorderThickness="0"
                           VirtualizingPanel.CacheLengthUnit="Item"
                           VirtualizingPanel.ScrollUnit="Pixel"
                           VirtualizingPanel.VirtualizationMode="Standard">
@@ -553,7 +538,7 @@
                 </ZDY:ListBox.ItemsPanel>
                 <ZDY:ListBox.ItemContainerStyle>
                     <Style TargetType="{x:Type ListBoxItem}">
-                        <Setter Property="Margin" Value="0"/>
+                        <Setter Property="Margin" Value="6"/>
                         <Setter Property="Padding" Value="0"/>
                         <Setter Property="BorderThickness" Value="2"/>
                         <Setter Property="BorderBrush" Value="Transparent"/>
@@ -563,10 +548,10 @@
                                     <Grid Width="120" Height="120" ClipToBounds="True">
                                         <Border CornerRadius="6" BorderBrush="{TemplateBinding BorderBrush}" HorizontalAlignment="Center" BorderThickness="{TemplateBinding BorderThickness}"
                                             Padding="{TemplateBinding Padding}" SnapsToDevicePixels="True">
-                                            <Grid>
+                                            <Grid Background="#20000000">
                                                 <Image Stretch="Uniform" Source="{Binding ThumbSource}" ToolTip="{Binding Name}"
                                                         XamlServices:PictureThumbService.Picture="{Binding}"/>
-                                                <Border Background="#20000000" Visibility="{Binding IsVideo, Converter={ZDY:BoolToVisibilityConverter}}">
+                                                <Border Visibility="{Binding IsVideo, Converter={ZDY:BoolToVisibilityConverter}}">
                                                     <ZDY:Icon Kind="Play2" Width="22" Height="22" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                                 </Border>
                                             </Grid>
@@ -586,6 +571,10 @@
                     </Style>
                 </ZDY:ListBox.ItemContainerStyle>
             </ZDY:ListBox>
+            <Border VerticalAlignment="Bottom" Margin="0 0 0 36">
+                <ZDY:Button x:Name="GalleryCloseButton" Content="关闭窗口" Click="GalleryCloseButton_Click"
+                            HorizontalAlignment="Center" CornerRadius="16" Padding="16 8"/>
+            </Border>
             <Grid.Style>
                 <Style TargetType="{x:Type Grid}">
                     <Style.Triggers>

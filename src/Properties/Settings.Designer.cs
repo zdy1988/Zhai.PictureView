@@ -82,5 +82,17 @@ namespace Zhai.PictureView.Properties {
                 this["ActivedPicturesCount"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("2")]
+        public int AutoPlayInterval {
+            get {
+                return ((int)(this["AutoPlayInterval"]));
+            }
+            set {
+                this["AutoPlayInterval"] = value;
+            }
+        }
     }
 }

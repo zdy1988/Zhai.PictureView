@@ -118,13 +118,13 @@ namespace Zhai.PictureView
             }
         }
 
-        private bool isPictureCarouselPlaing = false;
-        public bool IsPictureCarouselPlaing
+        private bool isPictureCarouselPlaying = false;
+        public bool IsPictureCarouselPlaying
         {
-            get => isPictureCarouselPlaing;
+            get => isPictureCarouselPlaying;
             set
             {
-                if (Set(() => IsPictureCarouselPlaing, ref isPictureCarouselPlaing, value))
+                if (Set(() => IsPictureCarouselPlaying, ref isPictureCarouselPlaying, value))
                 {
                     if (Folder.Any())
                     {
@@ -194,6 +194,8 @@ namespace Zhai.PictureView
 
         public bool IsPictureCountMoreThanOne => Folder?.Count > 1;
 
+        public bool IsCanPictureCarouselPlay => Folder != null && Folder.Where(t => !t.IsVideo).Count() > 1;
+
         public bool IsCanPicturesNavigated => CurrentPicture != null && Folder != null && (Folder.Count > 1 || Folder.Borthers.Count > 1);
 
         public bool IsCurrentPictureIsVideo => CurrentPicture != null && CurrentPicture.IsVideo;
@@ -229,6 +231,7 @@ namespace Zhai.PictureView
                 await Folder.LoadAsync();
 
                 base.RaisePropertyChanged(nameof(IsPictureCountMoreThanOne));
+                base.RaisePropertyChanged(nameof(IsCanPictureCarouselPlay));
 
                 CurrentPicture = (filename == null ? Folder : Folder.Where(t => t.PicturePath == filename)).FirstOrDefault();
 

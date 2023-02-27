@@ -684,10 +684,15 @@ namespace Zhai.PictureView
         {
             if (ViewModel.Folder == null || ViewModel.Folder.Count <= 1) return;
 
-            if (ViewModel.IsPictureCountMoreThanOne)
+            if (ViewModel.IsCanPictureCarouselPlay)
             {
-                ViewModel.IsPictureCarouselPlaing = !ViewModel.IsPictureCarouselPlaing;
+                ViewModel.IsPictureCarouselPlaying = !ViewModel.IsPictureCarouselPlaying;
             }
+        }
+
+        private void AutoPlayCloseButton_Click(object sender, RoutedEventArgs e)
+        {
+            ViewModel.IsPictureCarouselPlaying = false;
         }
 
         private void InfoButton_Click(object sender, RoutedEventArgs e)
@@ -706,6 +711,11 @@ namespace Zhai.PictureView
         private void GalleryButton_Click(object sender, RoutedEventArgs e)
         {
             ViewModel.IsShowGallery = true;
+        }
+
+        private void GalleryCloseButton_Click(object sender, RoutedEventArgs e)
+        {
+            ViewModel.IsShowGallery = false;
         }
 
         private void GalleryView_MouseRightButtonUp(object sender, MouseButtonEventArgs e)
@@ -753,8 +763,21 @@ namespace Zhai.PictureView
                 ResetPicture();
             }
             else if (e.Key == Key.Tab)
-            { 
+            {
                 ViewModel.IsShowGallery = !ViewModel.IsShowGallery;
+            }
+            else if (e.Key == Key.Escape)
+            {
+                if (ViewModel.IsPictureCarouselPlaying)
+                {
+                    ViewModel.IsPictureCarouselPlaying = false;
+                    return;
+                }
+                else if (WindowState == WindowState.Maximized)
+                {
+                    WindowState = WindowState.Normal;
+                    return;
+                }
             }
         }
 
