@@ -45,7 +45,11 @@ namespace Zhai.PictureView
             ".pgm", ".ppm", ".cut", ".exr", ".dib", ".emf", ".wmf", ".wpg", ".pcx", ".xbm", ".xpm",
         };
 
-        internal static string[] All { get; } = (new List<IEnumerable<string>> { JPEG, PortableNetworkGraphic, GraphicsInterchangeFormat, Icon, Photoshop, Vector, Camera, Others }).Aggregate((x, y) => x.Concat(y)).ToArray();
+        internal static string[] Video { get; } = new string[] {
+            ".mp4", ".wmv", ".avi",
+        };
+
+        internal static string[] All { get; } = (new List<IEnumerable<string>> { JPEG, PortableNetworkGraphic, GraphicsInterchangeFormat, Icon, Photoshop, Vector, Camera, Others, Video }).Aggregate((x, y) => x.Concat(y)).ToArray();
 
         internal static string ToFilter(this IEnumerable<string> strings)
         {
@@ -63,6 +67,8 @@ Vector ({Vector.ToFilter()})|{Vector.ToFilter()}|
 Camera ({Camera.ToFilter()})|{Camera.ToFilter()}|
 Others ({Others.ToFilter()})|{Others.ToFilter()}|
 All Files (*.*)|*.*";
+
+        internal static bool IsVideo(string filename) => Video.Contains(Path.GetExtension(filename).ToLower());
 
         internal static bool IsSupported(string filename) => All.Contains(Path.GetExtension(filename).ToLower());
 

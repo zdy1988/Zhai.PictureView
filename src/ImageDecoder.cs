@@ -53,6 +53,7 @@ namespace Zhai.PictureView
                 return (Path.GetExtension(filename).ToUpperInvariant()) switch
                 {
                     ".JPG" or ".JPEG" or ".JPE" or ".PNG" or ".BMP" or ".GIF" or ".ICO" or ".JFIF" => GetWindowsThumbnail(filename),
+                    ".MP4" or ".AVI" or ".WMV" => GetWindowsThumbnail(filename),
                     _ => GetMagickThumbnail(filename),
                 };
             }

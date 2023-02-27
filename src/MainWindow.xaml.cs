@@ -8,8 +8,9 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using Zhai.Famil.Controls;
 using Timer = System.Timers.Timer;
 using MessageBox = Zhai.Famil.Dialogs.MessageBox;
@@ -66,22 +67,36 @@ namespace Zhai.PictureView
 
         private async void ViewModel_CurrentPictureChanged(object sender, Picture picture)
         {
-            var stream = XamlAnimatedGif.AnimationBehavior.GetSourceStream(Picture);
-
-            if (stream != null)
+            void CleanGif()
             {
-                XamlAnimatedGif.AnimationBehavior.SetSourceUri(Picture, null);
+                var stream = XamlAnimatedGif.AnimationBehavior.GetSourceStream(Picture);
+
+                if (stream != null)
+                {
+                    XamlAnimatedGif.AnimationBehavior.SetSourceUri(Picture, null);
+                }
             }
+
+            CleanGif();
 
             if (picture != null)
             {
-                await InitPicture(picture);
+                StopVideo();
 
-                PictureList.ScrollIntoView(picture);
-
-                if (picture.IsAnimation)
+                if (picture.IsVideo)
                 {
-                    XamlAnimatedGif.AnimationBehavior.SetSourceUri(Picture, new Uri(picture.PicturePath));
+                    InitVideo(picture);
+                }
+                else
+                {
+                    await InitPicture(picture);
+
+                    PictureList.ScrollIntoView(picture);
+
+                    if (picture.IsAnimation)
+                    {
+                        XamlAnimatedGif.AnimationBehavior.SetSourceUri(Picture, new Uri(picture.PicturePath));
+                    }
                 }
             }
         }
@@ -91,8 +106,7 @@ namespace Zhai.PictureView
             FolderList.ScrollIntoView(e);
         }
 
-
-
+        #region Picture View
         private double PictureOffsetX => Canvas.GetLeft(Picture);
         private double PictureOffsetY => Canvas.GetTop(Picture);
         private double MoveRectOffsetX => Canvas.GetLeft(MoveRect);
@@ -101,7 +115,7 @@ namespace Zhai.PictureView
         private double AdjustScale => Picture.Width / ViewModel.CurrentPicture.PixelWidth;
 
 
-        private List<Picture> activedPictures = new();
+        private readonly List<Picture> activedPictures = new();
 
         private void ManagePictureCache(Picture current)
         {
@@ -492,8 +506,9 @@ namespace Zhai.PictureView
             }
         }
 
+        #endregion
 
-        #region Contorllers
+        #region Picture Contorllers
 
         private async void OpenButton_Click(object sender, RoutedEventArgs e)
         {
@@ -754,6 +769,138 @@ namespace Zhai.PictureView
 
                 PressShortcutKey(sender, e);
             }
+        }
+
+        #endregion
+
+        #region Video View
+
+        private void InitVideo(Picture picture)
+        {
+            ViewModel.IsVideoErrored = false;
+            ViewModel.VideoErrorMessage = string.Empty;
+
+            this.MediaElement.Source = new Uri(picture.PicturePath);
+
+            this.MediaElement.MediaOpened += MediaElement_MediaOpened;
+
+            this.MediaElement.MediaEnded += MediaElement_MediaEnded;
+
+            this.MediaElement.MediaFailed += MediaElement_MediaFailed;
+
+            PlayVideo();
+        }
+
+        private Timer videoTimer;
+
+        private void PlayVideo()
+        {
+            this.MediaElement.Play();
+
+            ViewModel.IsVideoPlaying = true;
+
+            if (videoTimer == null)
+            {
+                videoTimer = new Timer
+                {
+                    Interval = 1000
+                };
+
+                videoTimer.Elapsed += VideoTimer_Elapsed;
+            }
+
+            videoTimer.Start();
+        }
+
+        private void PauseVideo()
+        {
+            this.MediaElement.Pause();
+
+            ViewModel.IsVideoPlaying = false;
+
+            videoTimer?.Stop();
+        }
+
+        private void StopVideo()
+        {
+            this.MediaElement.Stop();
+
+            ViewModel.IsVideoPlaying = false;
+
+            videoTimer?.Stop();
+        }
+
+        private void VideoTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+        {
+            this.Dispatcher.Invoke(() =>
+            {
+                this.PositionSlider.Value = this.MediaElement.Position.TotalSeconds;
+            });
+        }
+
+        private void MediaElement_MediaOpened(object sender, RoutedEventArgs e)
+        {
+            this.PositionSlider.Maximum = this.MediaElement.NaturalDuration.TimeSpan.TotalSeconds;
+
+            ViewModel.CurrentPicture.PixelWidth = this.MediaElement.NaturalVideoWidth;
+            ViewModel.CurrentPicture.PixelHeight = this.MediaElement.NaturalVideoHeight;
+        }
+
+        private void MediaElement_MediaEnded(object sender, RoutedEventArgs e)
+        {
+            StopVideo();
+        }
+
+        private void MediaElement_MediaFailed(object sender, ExceptionRoutedEventArgs e)
+        {
+            ViewModel.IsVideoErrored = true;
+            ViewModel.VideoErrorMessage = e.ErrorException.Message;
+
+            StopVideo();
+        }
+
+        #endregion
+
+        #region Video Contorllers
+
+        private void MediaPlayButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (this.MediaElement.HasVideo)
+            {
+                PlayVideo();
+            }
+        }
+
+        private void MediaPauseButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (this.MediaElement.HasVideo)
+            {
+                PauseVideo();
+            }
+        }
+
+        private void RotateLeftButton2_Click(object sender, RoutedEventArgs e)
+        {
+            if (ViewModel.CurrentPicture == null) return;
+
+            ViewModel.RotateAngle += 90;
+        }
+
+        private void RotateRightButton2_Click(object sender, RoutedEventArgs e)
+        {
+            if (ViewModel.CurrentPicture == null) return;
+
+            ViewModel.RotateAngle -= 90;
+        }
+
+        private void PositionSlider_DragCompleted(object sender, DragCompletedEventArgs e)
+        {
+            this.MediaElement.Position = new TimeSpan(0, 0, 0, (int)this.PositionSlider.Value);
+        }
+
+        private void PositionSlider_PreviewMouseUp(object sender, MouseButtonEventArgs e)
+        {
+            this.MediaElement.Position = new TimeSpan(0, 0, 0, (int)this.PositionSlider.Value);
         }
 
         #endregion

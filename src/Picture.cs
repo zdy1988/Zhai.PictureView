@@ -83,6 +83,16 @@ namespace Zhai.PictureView
             }
         }
 
+        public bool IsVideo
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(PicturePath)) return false;
+
+                return PictureSupport.IsVideo(PicturePath);
+            }
+        }
+
         public bool IsLoaded
         {
             get

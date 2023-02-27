@@ -64,6 +64,8 @@ namespace Zhai.PictureView
                         //{
                         //    ThreadPool.QueueUserWorkItem(_ => value.DrawThumb());
                         //}
+
+                        base.RaisePropertyChanged(nameof(IsCurrentPictureIsVideo));
                     }
                 }
             }
@@ -193,6 +195,8 @@ namespace Zhai.PictureView
         public bool IsPictureCountMoreThanOne => Folder?.Count > 1;
 
         public bool IsCanPicturesNavigated => CurrentPicture != null && Folder != null && (Folder.Count > 1 || Folder.Borthers.Count > 1);
+
+        public bool IsCurrentPictureIsVideo => CurrentPicture != null && CurrentPicture.IsVideo;
 
         public ObservableCollection<PictureEffect> Effects { get; }
 

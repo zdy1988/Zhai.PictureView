@@ -204,8 +204,13 @@
                                                             Width="50" Height="50" Margin="1" Padding="1"
                                                             BorderThickness="{TemplateBinding BorderThickness}" Background="DarkGray" 
                                                             SnapsToDevicePixels="true">
-                                                            <Image Stretch="Uniform" ToolTip="{Binding Name}" VerticalAlignment="Center"
-                                                               XamlServices:PictureThumbService.Picture="{Binding}"/>
+                                                            <Grid>
+                                                                <Image Stretch="Uniform" ToolTip="{Binding Name}" VerticalAlignment="Center"
+                                                                       XamlServices:PictureThumbService.Picture="{Binding}"/>
+                                                                <Border Background="#20000000" Visibility="{Binding IsVideo, Converter={ZDY:BoolToVisibilityConverter}}">
+                                                                    <ZDY:Icon Kind="Play2" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                                </Border>
+                                                            </Grid>
                                                         </Border>
                                                         <ControlTemplate.Triggers>
                                                             <Trigger Property="IsMouseOver" Value="True">
@@ -261,7 +266,7 @@
                                                                 BorderThickness="{TemplateBinding BorderThickness}" Background="DarkGray" 
                                                                 SnapsToDevicePixels="true">
                                                                 <Image Stretch="Uniform" Source="{Binding DataContext.CurrentPicture.ThumbSource, RelativeSource={RelativeSource AncestorType=ListBox}}" 
-                                                                   Effect="{Binding Effect}" ToolTip="{Binding Name}"/>
+                                                                       Effect="{Binding Effect}" ToolTip="{Binding Name}"/>
                                                             </Border>
                                                         </StackPanel>
                                                         <ControlTemplate.Triggers>
@@ -283,98 +288,221 @@
                     </Border>
                 </ZDY:Drawer.TopDrawerContent>
                 <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="*"/>
-                        <RowDefinition Height="Auto"/>
-                    </Grid.RowDefinitions>
-                    <Grid Grid.Row="0">
-                        <!--大图-->
-                        <Canvas x:Name="PictureBox" 
-                            RenderTransformOrigin="0.5,0.5" ClipToBounds="True"
-                            Width="{Binding ActualWidth, RelativeSource={RelativeSource AncestorType=Grid}}" 
-                            Height="{Binding ActualHeight, RelativeSource={RelativeSource AncestorType=Grid}}"
-                            Background="Transparent">
-                            <Canvas.RenderTransform>
-                                <RotateTransform Angle="{Binding RotateAngle}" />
-                            </Canvas.RenderTransform>
-                            <Image x:Name="Picture" Canvas.Top="0" Canvas.Left="0">
-                                <Image.Style>
-                                    <Style TargetType="{x:Type Image}">
-                                        <Style.Triggers>
-                                            <DataTrigger Binding="{Binding CurrentPicture, Converter={ZDY:NullableToBoolConverter}}" Value="True">
-                                                <DataTrigger.Setters>
-                                                    <Setter Property="Effect" Value="{Binding CurrentPictureEffect.Effect}"/>
-                                                </DataTrigger.Setters>
-                                            </DataTrigger>
-                                        </Style.Triggers>
-                                    </Style>
-                                </Image.Style>
-                                <Image.ContextMenu>
-                                    <ZDY:ContextMenu>
-                                        <MenuItem Icon="{ZDY:Icon Kind=VuesaxOutlineDocumentCopy}" Header="复制图片" Command="{Binding ExecuteCopyCurrentPictureSourceCommand}"/>
-                                        <MenuItem Icon="{ZDY:Icon Kind=Copy2}" Header="复制图片地址" Command="{Binding ExecuteCopyCurrentPicturePathCommand}"/>
-                                        <MenuItem Icon="{ZDY:Icon Kind=Save}" Header="保存" Command="{Binding ExecuteSaveImageCommand}"/>
-                                        <MenuItem Icon="{ZDY:Icon Kind=SaveAs}" Header="另存为..." Command="{Binding ExecuteSaveAsImageCommand}"/>
-                                        <MenuItem Icon="{ZDY:Icon Kind=Delete}" Header="删除" Click="DeleteButton_Click"/>
-                                        <Separator/>
-                                        <MenuItem Icon="{ZDY:Icon Kind=Magicpen}" Header="打开效果面板" Command="{Binding ExecuteTogglePictureEffectsViewCommand}" Visibility="{Binding IsShowPictureEffectsView, Converter={ZDY:BoolToInverseVisibilityConverter}}"/>
-                                        <MenuItem Icon="{ZDY:Icon Kind=Magicpen}" Header="关闭效果面板" Command="{Binding ExecuteTogglePictureEffectsViewCommand}" Visibility="{Binding IsShowPictureEffectsView, Converter={ZDY:BoolToVisibilityConverter}}"/>
-                                        <Separator/>
-                                        <MenuItem Icon="{ZDY:Icon Kind=Info}" Header="图片信息" Click="InfoButton_Click"/>
-                                        <MenuItem Icon="{ZDY:Icon Kind=Folder2}" Header="打开所在的文件夹" Command="{Binding ExecuteOpenTheFolderCommand}"/>
-                                    </ZDY:ContextMenu>
-                                </Image.ContextMenu>
-                            </Image>
-                        </Canvas>
-                        <!--小图-->
-                        <Grid x:Name="ThumbContainer" 
+                    <Grid x:Name="PictureView" Visibility="{Binding ElementName=VideoView, Path=Visibility, Converter={ZDY:VisibilityToInverseVisibilityConverter}}">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <Grid Grid.Row="0">
+                            <!--大图-->
+                            <Canvas x:Name="PictureBox" 
+                                RenderTransformOrigin="0.5,0.5" ClipToBounds="True"
+                                Width="{Binding ActualWidth, RelativeSource={RelativeSource AncestorType=Grid}}" 
+                                Height="{Binding ActualHeight, RelativeSource={RelativeSource AncestorType=Grid}}"
+                                Background="Transparent">
+                                <Canvas.RenderTransform>
+                                    <RotateTransform Angle="{Binding RotateAngle}" />
+                                </Canvas.RenderTransform>
+                                <Image x:Name="Picture" Canvas.Top="0" Canvas.Left="0">
+                                    <Image.Style>
+                                        <Style TargetType="{x:Type Image}">
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding CurrentPicture, Converter={ZDY:NullableToBoolConverter}}" Value="True">
+                                                    <DataTrigger.Setters>
+                                                        <Setter Property="Effect" Value="{Binding CurrentPictureEffect.Effect}"/>
+                                                    </DataTrigger.Setters>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Image.Style>
+                                    <Image.ContextMenu>
+                                        <ZDY:ContextMenu>
+                                            <MenuItem Icon="{ZDY:Icon Kind=VuesaxOutlineDocumentCopy}" Header="复制图片" Command="{Binding ExecuteCopyCurrentPictureSourceCommand}"/>
+                                            <MenuItem Icon="{ZDY:Icon Kind=Copy2}" Header="复制图片地址" Command="{Binding ExecuteCopyCurrentPicturePathCommand}"/>
+                                            <MenuItem Icon="{ZDY:Icon Kind=Save}" Header="保存" Command="{Binding ExecuteSaveImageCommand}"/>
+                                            <MenuItem Icon="{ZDY:Icon Kind=SaveAs}" Header="另存为..." Command="{Binding ExecuteSaveAsImageCommand}"/>
+                                            <MenuItem Icon="{ZDY:Icon Kind=Delete}" Header="删除" Click="DeleteButton_Click"/>
+                                            <Separator/>
+                                            <MenuItem Icon="{ZDY:Icon Kind=Magicpen}" Header="打开效果面板" Command="{Binding ExecuteTogglePictureEffectsViewCommand}" Visibility="{Binding IsShowPictureEffectsView, Converter={ZDY:BoolToInverseVisibilityConverter}}"/>
+                                            <MenuItem Icon="{ZDY:Icon Kind=Magicpen}" Header="关闭效果面板" Command="{Binding ExecuteTogglePictureEffectsViewCommand}" Visibility="{Binding IsShowPictureEffectsView, Converter={ZDY:BoolToVisibilityConverter}}"/>
+                                            <Separator/>
+                                            <MenuItem Icon="{ZDY:Icon Kind=Info}" Header="图片信息" Click="InfoButton_Click"/>
+                                            <MenuItem Icon="{ZDY:Icon Kind=Folder2}" Header="打开所在的文件夹" Command="{Binding ExecuteOpenTheFolderCommand}"/>
+                                        </ZDY:ContextMenu>
+                                    </Image.ContextMenu>
+                                </Image>
+                            </Canvas>
+                            <!--小图-->
+                            <Grid x:Name="ThumbContainer" 
                           VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="2" 
                           Visibility="{Binding Scale, Converter={Converters:ThumbBoxVisibilityConverter}}"
                           IsHitTestVisible="{Binding IsPictureMoving, Converter={ZDY:BoolToInverseBoolConverter}}">
-                            <Border Width="148" Height="148" BorderThickness="4" Background="Black" BorderBrush="#CC000000" ClipToBounds="True">
-                                <Canvas x:Name="ThumbBox" MouseMove="MoveRect_MouseMove" RenderTransformOrigin="0.5,0.5" ClipToBounds="True">
-                                    <Canvas.RenderTransform>
-                                        <RotateTransform Angle="{Binding RotateAngle}" />
-                                    </Canvas.RenderTransform>
-                                    <Canvas.Background>
-                                        <ImageBrush ImageSource="{Binding ElementName=Picture, Path=Source}" Stretch="Uniform" TileMode="None"/>
-                                    </Canvas.Background>
-                                    <Rectangle x:Name="MoveRect" Stroke="White" Canvas.Top="0" Canvas.Left="0"/>
-                                </Canvas>
-                            </Border>
-                            <Grid x:Name="ThumbBoxMask" IsHitTestVisible="False"
+                                <Border Width="148" Height="148" BorderThickness="4" Background="Black" BorderBrush="#CC000000" ClipToBounds="True">
+                                    <Canvas x:Name="ThumbBox" MouseMove="MoveRect_MouseMove" RenderTransformOrigin="0.5,0.5" ClipToBounds="True">
+                                        <Canvas.RenderTransform>
+                                            <RotateTransform Angle="{Binding RotateAngle}" />
+                                        </Canvas.RenderTransform>
+                                        <Canvas.Background>
+                                            <ImageBrush ImageSource="{Binding ElementName=Picture, Path=Source}" Stretch="Uniform" TileMode="None"/>
+                                        </Canvas.Background>
+                                        <Rectangle x:Name="MoveRect" Stroke="White" Canvas.Top="0" Canvas.Left="0"/>
+                                    </Canvas>
+                                </Border>
+                                <Grid x:Name="ThumbBoxMask" IsHitTestVisible="False"
                               Width="{Binding ElementName=ThumbBox, Path=ActualWidth}" Height="{Binding ElementName=ThumbBox, Path=ActualHeight}"
                               VerticalAlignment="Center" HorizontalAlignment="Center">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition/>
-                                    <ColumnDefinition/>
-                                    <ColumnDefinition Width="*"/>
-                                </Grid.ColumnDefinitions>
-                                <Grid.RowDefinitions>
-                                    <RowDefinition/>
-                                    <RowDefinition/>
-                                    <RowDefinition Height="*"/>
-                                </Grid.RowDefinitions>
-                                <Grid.Resources>
-                                    <Style TargetType="{x:Type Border}">
-                                        <Setter Property="Background" Value="#70000000"/>
-                                    </Style>
-                                </Grid.Resources>
-                                <Border Grid.Row="0" Grid.Column="0"/>
-                                <Border Grid.Row="1" Grid.Column="0"/>
-                                <Border Grid.Row="2" Grid.Column="0"/>
-                                <Border Grid.Row="0" Grid.Column="1"/>
-                                <Border Grid.Row="1" Grid.Column="1" Background="Transparent"/>
-                                <Border Grid.Row="2" Grid.Column="1"/>
-                                <Border Grid.Row="0" Grid.Column="2"/>
-                                <Border Grid.Row="1" Grid.Column="2"/>
-                                <Border Grid.Row="2" Grid.Column="2"/>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition/>
+                                        <ColumnDefinition/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition/>
+                                        <RowDefinition/>
+                                        <RowDefinition Height="*"/>
+                                    </Grid.RowDefinitions>
+                                    <Grid.Resources>
+                                        <Style TargetType="{x:Type Border}">
+                                            <Setter Property="Background" Value="#70000000"/>
+                                        </Style>
+                                    </Grid.Resources>
+                                    <Border Grid.Row="0" Grid.Column="0"/>
+                                    <Border Grid.Row="1" Grid.Column="0"/>
+                                    <Border Grid.Row="2" Grid.Column="0"/>
+                                    <Border Grid.Row="0" Grid.Column="1"/>
+                                    <Border Grid.Row="1" Grid.Column="1" Background="Transparent"/>
+                                    <Border Grid.Row="2" Grid.Column="1"/>
+                                    <Border Grid.Row="0" Grid.Column="2"/>
+                                    <Border Grid.Row="1" Grid.Column="2"/>
+                                    <Border Grid.Row="2" Grid.Column="2"/>
+                                </Grid>
                             </Grid>
+                            <!--图片比例提示-->
+                            <ZDY:Hint Text="{Binding Scale, Converter={Converters:ScaleTipsConverter}}" FontWeight="Normal" FontSize="16" CornerRadius="18"/>
                         </Grid>
-                        <!--图片比例提示-->
-                        <ZDY:Hint Text="{Binding Scale, Converter={Converters:ScaleTipsConverter}}" FontWeight="Normal" FontSize="16" CornerRadius="18"/>
+                        <Grid Grid.Row="1">
+                            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Orientation="Horizontal" Margin="8">
+                                <ZDY:IconButton x:Name="OpenButton" Icon="Open" ToolTip="打开" Click="OpenButton_Click"/>
+
+                                <StackPanel x:Name="ControlPanel" Orientation="Horizontal" IsEnabled="{Binding CurrentPicture, Converter={ZDY:NullableToBoolConverter}}">
+                                    <ZDY:IconToggleButton x:Name="ZoomQuickButton" Icon="Origin" ToolTip="原图大小" CheckedIcon="Adapt" CheckedToolTip="适应屏幕" IsChecked="{Binding Scale, Converter={Converters:ScaleAdaptToBoolConverter}, Mode=OneWay}" Click="ZoomQuickButton_Click"/>
+                                    <ZDY:IconButton x:Name="ZoomInButton" Icon="ZoomPlus" ToolTip="放大" Click="ZoomInButton_Click"/>
+                                    <ZDY:IconButton x:Name="ZoomOutButton" Icon="ZoomMinus" ToolTip="缩小" Click="ZoomOutButton_Click"/>
+                                    <ZDY:IconButton x:Name="RotateLeftButton" Icon="RotateLeft" ToolTip="左转90度" Click="RotateLeftButton_Click"/>
+                                    <ZDY:IconButton x:Name="RotateRightButton" Icon="RotateRight" ToolTip="右转90度" Click="RotateRightButton_Click"/>
+
+                                    <ZDY:IconButton x:Name="AutoPlayButton" Icon="Play2" ToolTip="自动播放" Click="AutoPlayButton_Click" 
+                                                Visibility="{Binding IsPictureCountMoreThanOne, Converter={ZDY:BoolToVisibilityConverter}}">
+                                        <ZDY:IconButton.Style>
+                                            <Style TargetType="{x:Type ZDY:IconButton}">
+                                                <Setter Property="RenderTransformOrigin" Value="0.5,0.5"/>
+                                                <Setter Property="RenderTransform">
+                                                    <Setter.Value>
+                                                        <TransformGroup>
+                                                            <ScaleTransform ScaleX="1" ScaleY="1"/>
+                                                        </TransformGroup>
+                                                    </Setter.Value>
+                                                </Setter>
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding IsPictureCarouselPlaing}" Value="True">
+                                                        <DataTrigger.EnterActions>
+                                                            <BeginStoryboard x:Name="PictureCarouselPlaingAnimation">
+                                                                <Storyboard RepeatBehavior="Forever">
+                                                                    <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)">
+                                                                        <EasingDoubleKeyFrame Value="0.75" KeyTime="00:00:02"/>
+                                                                    </DoubleAnimationUsingKeyFrames>
+                                                                    <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)">
+                                                                        <EasingDoubleKeyFrame Value="0.75" KeyTime="00:00:02"/>
+                                                                    </DoubleAnimationUsingKeyFrames>
+                                                                </Storyboard>
+                                                            </BeginStoryboard>
+                                                        </DataTrigger.EnterActions>
+                                                        <DataTrigger.ExitActions>
+                                                            <StopStoryboard BeginStoryboardName="PictureCarouselPlaingAnimation"></StopStoryboard>
+                                                        </DataTrigger.ExitActions>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </ZDY:IconButton.Style>
+                                    </ZDY:IconButton>
+
+                                    <ZDY:IconButton x:Name="PrevButton" Icon="ArrowLeft" ToolTip="上一张" Click="PrevButton_Click" Visibility="{Binding ElementName=NavigateButtonGrid, Path=Visibility}"/>
+                                    <ZDY:IconButton x:Name="NextButton" Icon="ArrowRight" ToolTip="下一张" Click="NextButton_Click" Visibility="{Binding ElementName=NavigateButtonGrid, Path=Visibility}"/>
+                                    <ZDY:IconButton x:Name="DeleteButton" Icon="Delete" ToolTip="删除" Click="DeleteButton_Click"/>
+                                    <ZDY:IconButton x:Name="PrintButton" Icon="Print" ToolTip="打印" Click="PrintButton_Click"/>
+                                    <ZDY:IconButton x:Name="InfoButton" Icon="Info" ToolTip="图片信息" Click="InfoButton_Click"/>
+
+                                    <ZDY:IconToggleButton x:Name="PictureListViewToggleButton" Icon="SidebarTop" ToolTip="显示缩略图列表" CheckedIcon="SidebarBottom" CheckedToolTip="关闭缩略图列表" 
+                                              IsChecked="{Binding IsShowPictureListView}" IsEnabled="{Binding CurrentPicture, Converter={ZDY:NullableToBoolConverter}}"/>
+                                    <ZDY:IconToggleButton x:Name="FolderBorthersViewToggleButton" Icon="SidebarLeft" ToolTip="查看更多" CheckedIcon="SidebarRight" CheckedToolTip="关闭侧栏"
+                                                      IsChecked="{Binding IsShowFolderBorthersView}"/>
+                                </StackPanel>
+                            </StackPanel>
+                        </Grid>
                     </Grid>
-                    <Grid Grid.Row="0">
+                    <Grid x:Name="VideoView" Visibility="{Binding IsCurrentPictureIsVideo, Converter={ZDY:BoolToVisibilityConverter}}"
+                          Background="Black">
+                        <MediaElement x:Name="MediaElement" LoadedBehavior="Manual"
+                                      RenderTransformOrigin="0.5,0.5" >
+                            <MediaElement.RenderTransform>
+                                <RotateTransform Angle="{Binding RotateAngle}" />
+                            </MediaElement.RenderTransform>
+                        </MediaElement>
+                        <Grid Visibility="{Binding IsVideoErrored, Converter={ZDY:BoolToVisibilityConverter}}">
+                            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                                <ZDY:Icon Kind="VuesaxOutlineWarning2" Width="32" Height="32" HorizontalAlignment="Center" Margin="0 0 0 24"/>
+                                <TextBlock Text="{Binding VideoErrorMessage, StringFormat=错误信息：{0}}"/>
+                            </StackPanel>
+                        </Grid>
+                        <Grid VerticalAlignment="Bottom" Margin="0 24 0 6">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="16"></RowDefinition>
+                                <RowDefinition Height="54"></RowDefinition>
+                            </Grid.RowDefinitions>
+
+                            <ZDY:Slider Name="PositionSlider" Grid.Row="0" Cursor="Hand"
+                                        Foreground="{StaticResource Zhai.Famil.ColorfulBrush}"
+                                        IsSnapToTickEnabled="False" Minimum="0"
+                                        Thumb.DragCompleted="PositionSlider_DragCompleted"  
+                                        PreviewMouseUp="PositionSlider_PreviewMouseUp"/>
+
+                            <DockPanel Grid.Row="1" Margin="20 0">
+                                <Border Name="LeftControls" DockPanel.Dock="Left" Width="200">
+                                    <StackPanel Orientation="Horizontal" Height="14" HorizontalAlignment="Left">
+                                        <TextBlock FontSize="12" Text="{Binding ElementName=PositionSlider, Path=Maximum, Mode=OneWay, TargetNullValue=00:00:00, Converter={Converters:VideoDurationToStringConverter}}"/>
+                                        <TextBlock FontSize="12" Text=" - "/>
+                                        <TextBlock FontSize="12" Text="{Binding ElementName=PositionSlider, Path=Value, Mode=OneWay, TargetNullValue=00:00:00, Converter={Converters:VideoDurationToStringConverter}}"/>
+                                    </StackPanel>
+                                </Border>
+
+                                <Border Name="RightControls" DockPanel.Dock="Right" Width="200">
+                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0 0 -8 0">
+                                        <ZDY:IconToggleButton x:Name="MuteButton" IsChecked="{Binding ElementName=MediaElement, Path=IsMuted, Mode=TwoWay}" CheckedIcon="VolumeSlash" Icon="VolumeHigh"/>
+
+                                        <ZDY:Slider2 Name="VolumeSlider" Cursor="Hand" Foreground="{StaticResource Zhai.Famil.ColorfulBrush}"
+                                                     IsEnabled="{Binding ElementName=MediaElement, Path=IsMuted, Converter={ZDY:BoolToInverseBoolConverter}}" 
+                                                     Width="120" Minimum="0" Maximum="1" Margin="4 0" 
+                                                     Value="{Binding ElementName=MediaElement, Path=Volume, Mode=TwoWay, Delay=1}"/>
+
+                                    </StackPanel>
+                                </Border>
+
+                                <Border Name="CenterControls">
+                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" IsEnabled="{Binding CurrentPicture, Converter={ZDY:NullableToBoolConverter}}">
+                                        <ZDY:IconButton x:Name="RotateLeftButton2" Icon="RotateLeft" ToolTip="左转90度" Click="RotateLeftButton2_Click"/>
+                                        <ZDY:IconButton x:Name="RotateRightButton2" Icon="RotateRight" ToolTip="右转90度" Click="RotateRightButton2_Click"/>
+                                        <ZDY:IconButton x:Name="MediaPlayButton" Icon="Play2" ToolTip="播放" Click="MediaPlayButton_Click" Visibility="{Binding IsVideoPlaying, Converter={ZDY:BoolToInverseVisibilityConverter}}"/>
+                                        <ZDY:IconButton x:Name="MediaPauseButton" Icon="Pause" ToolTip="暂停" Click="MediaPauseButton_Click" Visibility="{Binding IsVideoPlaying, Converter={ZDY:BoolToVisibilityConverter}}"/>
+                                        <ZDY:IconToggleButton x:Name="PictureListViewToggleButton2" Icon="SidebarTop" ToolTip="显示缩略图列表" CheckedIcon="SidebarBottom" CheckedToolTip="关闭缩略图列表" 
+                                              IsChecked="{Binding IsShowPictureListView}" IsEnabled="{Binding CurrentPicture, Converter={ZDY:NullableToBoolConverter}}"/>
+                                        <ZDY:IconToggleButton x:Name="FolderBorthersViewToggleButton2" Icon="SidebarLeft" ToolTip="查看更多" CheckedIcon="SidebarRight" CheckedToolTip="关闭侧栏"
+                                                      IsChecked="{Binding IsShowFolderBorthersView}"/>
+                                    </StackPanel>
+                                </Border>
+                            </DockPanel>
+                        </Grid>
+                    </Grid>
+                    <Grid Margin="0 0 0 52">
                         <!--打开图片按钮-->
                         <Border x:Name="OpenButtonContainer" Visibility="{Binding CurrentPicture, Converter={ZDY:NullableToInverseVisibilityConverter}}">
                             <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
@@ -406,65 +534,6 @@
                                          Visibility="{Binding CurrentPicture.PictureState, Converter={Converters:LoadingVisibilityConverter}}"/>
                         </Border>
                     </Grid>
-                    <Grid Grid.Row="1">
-                        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Orientation="Horizontal" Margin="8">
-                            <ZDY:IconButton x:Name="OpenButton" Icon="Open" ToolTip="打开" Click="OpenButton_Click"/>
-
-                            <StackPanel x:Name="ControlPanel" Orientation="Horizontal" IsEnabled="{Binding CurrentPicture, Converter={ZDY:NullableToBoolConverter}}">
-                                <ZDY:IconToggleButton x:Name="ZoomQuickButton" Icon="Origin" ToolTip="原图大小" CheckedIcon="Adapt" CheckedToolTip="适应屏幕" IsChecked="{Binding Scale, Converter={Converters:ScaleAdaptToBoolConverter}, Mode=OneWay}" Click="ZoomQuickButton_Click"/>
-                                <ZDY:IconButton x:Name="ZoomInButton" Icon="ZoomPlus" ToolTip="放大" Click="ZoomInButton_Click"/>
-                                <ZDY:IconButton x:Name="ZoomOutButton" Icon="ZoomMinus" ToolTip="缩小" Click="ZoomOutButton_Click"/>
-                                <ZDY:IconButton x:Name="RotateLeftButton" Icon="RotateLeft" ToolTip="左转90度" Click="RotateLeftButton_Click"/>
-                                <ZDY:IconButton x:Name="RotateRightButton" Icon="RotateRight" ToolTip="右转90度" Click="RotateRightButton_Click"/>
-
-                                <ZDY:IconButton x:Name="AutoPlayButton" Icon="Play2" ToolTip="自动播放" Click="AutoPlayButton_Click" 
-                                                Visibility="{Binding IsPictureCountMoreThanOne, Converter={ZDY:BoolToVisibilityConverter}}">
-                                    <ZDY:IconButton.Style>
-                                        <Style TargetType="{x:Type ZDY:IconButton}">
-                                            <Setter Property="RenderTransformOrigin" Value="0.5,0.5"/>
-                                            <Setter Property="RenderTransform">
-                                                <Setter.Value>
-                                                    <TransformGroup>
-                                                        <ScaleTransform ScaleX="1" ScaleY="1"/>
-                                                    </TransformGroup>
-                                                </Setter.Value>
-                                            </Setter>
-                                            <Style.Triggers>
-                                                <DataTrigger Binding="{Binding IsPictureCarouselPlaing}" Value="True">
-                                                    <DataTrigger.EnterActions>
-                                                        <BeginStoryboard x:Name="PictureCarouselPlaingAnimation">
-                                                            <Storyboard RepeatBehavior="Forever">
-                                                                <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)">
-                                                                    <EasingDoubleKeyFrame Value="0.75" KeyTime="00:00:02"/>
-                                                                </DoubleAnimationUsingKeyFrames>
-                                                                <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)">
-                                                                    <EasingDoubleKeyFrame Value="0.75" KeyTime="00:00:02"/>
-                                                                </DoubleAnimationUsingKeyFrames>
-                                                            </Storyboard>
-                                                        </BeginStoryboard>
-                                                    </DataTrigger.EnterActions>
-                                                    <DataTrigger.ExitActions>
-                                                        <StopStoryboard BeginStoryboardName="PictureCarouselPlaingAnimation"></StopStoryboard>
-                                                    </DataTrigger.ExitActions>
-                                                </DataTrigger>
-                                            </Style.Triggers>
-                                        </Style>
-                                    </ZDY:IconButton.Style>
-                                </ZDY:IconButton>
-
-                                <ZDY:IconButton x:Name="PrevButton" Icon="ArrowLeft" ToolTip="上一张" Click="PrevButton_Click" Visibility="{Binding ElementName=NavigateButtonGrid, Path=Visibility}"/>
-                                <ZDY:IconButton x:Name="NextButton" Icon="ArrowRight" ToolTip="下一张" Click="NextButton_Click" Visibility="{Binding ElementName=NavigateButtonGrid, Path=Visibility}"/>
-                                <ZDY:IconButton x:Name="DeleteButton" Icon="Delete" ToolTip="删除" Click="DeleteButton_Click"/>
-                                <ZDY:IconButton x:Name="PrintButton" Icon="Print" ToolTip="打印" Click="PrintButton_Click"/>
-                                <ZDY:IconButton x:Name="InfoButton" Icon="Info" ToolTip="图片信息" Click="InfoButton_Click"/>
-
-                                <ZDY:IconToggleButton x:Name="PictureListViewToggleButton" Icon="SidebarTop" ToolTip="显示缩略图列表" CheckedIcon="SidebarBottom" CheckedToolTip="关闭缩略图列表" 
-                                              IsChecked="{Binding IsShowPictureListView}" IsEnabled="{Binding CurrentPicture, Converter={ZDY:NullableToBoolConverter}}"/>
-                                <ZDY:IconToggleButton x:Name="FolderBorthersViewToggleButton" Icon="SidebarLeft" ToolTip="查看更多" CheckedIcon="SidebarRight" CheckedToolTip="关闭侧栏"
-                                                      IsChecked="{Binding IsShowFolderBorthersView}"/>
-                            </StackPanel>
-                        </StackPanel>
-                    </Grid>
                 </Grid>
             </ZDY:Drawer>
         </ZDY:Drawer>
@@ -494,8 +563,13 @@
                                     <Grid Width="120" Height="120" ClipToBounds="True">
                                         <Border CornerRadius="6" BorderBrush="{TemplateBinding BorderBrush}" HorizontalAlignment="Center" BorderThickness="{TemplateBinding BorderThickness}"
                                             Padding="{TemplateBinding Padding}" SnapsToDevicePixels="True">
-                                            <Image Stretch="Uniform" Source="{Binding ThumbSource}" ToolTip="{Binding Name}"
-                                               XamlServices:PictureThumbService.Picture="{Binding}"/>
+                                            <Grid>
+                                                <Image Stretch="Uniform" Source="{Binding ThumbSource}" ToolTip="{Binding Name}"
+                                                        XamlServices:PictureThumbService.Picture="{Binding}"/>
+                                                <Border Background="#20000000" Visibility="{Binding IsVideo, Converter={ZDY:BoolToVisibilityConverter}}">
+                                                    <ZDY:Icon Kind="Play2" Width="22" Height="22" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                </Border>
+                                            </Grid>
                                         </Border>
                                     </Grid>
                                     <ControlTemplate.Triggers>
