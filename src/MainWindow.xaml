@@ -71,7 +71,7 @@
             <MenuItem Icon="{ZDY:Icon Kind=PlayCricle}" Header="自动播放图片" Click="AutoPlayButton_Click" Visibility="{Binding IsCanPictureCarouselPlay, Converter={ZDY:BoolToVisibilityConverter}}"/>
             <Separator/>
             <MenuItem Icon="{ZDY:Icon Kind=Info}" Header="图片信息" Click="InfoButton_Click"/>
-            <MenuItem Icon="{ZDY:Icon Kind=Folder2}" Header="打开所在的文件夹" Command="{Binding ExecuteOpenTheFolderCommand}"/>
+            <MenuItem Icon="{ZDY:Icon Kind=Folder2}" Header="打开所在的文件夹" Command="{Binding ExecuteOpenExplorerForCurrentPictureCommand}"/>
         </ZDY:ContextMenu>
         <ZDY:ContextMenu x:Key="VideoViewContextMenu">
             <MenuItem Icon="{ZDY:Icon Kind=CopySuccess}" Header="复制视频位置" Command="{Binding ExecuteCopyCurrentPicturePathCommand}"/>
@@ -80,7 +80,10 @@
             <MenuItem Icon="{ZDY:Icon Kind=Magicpen}" Header="打开效果面板" Command="{Binding ExecuteTogglePictureEffectsViewCommand}" Visibility="{Binding IsShowPictureEffectsView, Converter={ZDY:BoolToInverseVisibilityConverter}}"/>
             <MenuItem Icon="{ZDY:Icon Kind=Magicpen}" Header="关闭效果面板" Command="{Binding ExecuteTogglePictureEffectsViewCommand}" Visibility="{Binding IsShowPictureEffectsView, Converter={ZDY:BoolToVisibilityConverter}}"/>
             <Separator/>
-            <MenuItem Icon="{ZDY:Icon Kind=Folder2}" Header="打开所在的文件夹" Command="{Binding ExecuteOpenTheFolderCommand}"/>
+            <MenuItem Icon="{ZDY:Icon Kind=Folder2}" Header="打开所在的文件夹" Command="{Binding ExecuteOpenExplorerForCurrentPictureCommand}"/>
+        </ZDY:ContextMenu>
+        <ZDY:ContextMenu x:Key="FolderListContextMenu">
+            <MenuItem Icon="{ZDY:Icon Kind=Folder2}" Header="打开所在的文件夹" Command="{Binding DataContext.ExecuteOpenExplorerForFolderCommand, RelativeSource={RelativeSource AncestorType=ZDY:ListBox}}" CommandParameter="{Binding}"/>
         </ZDY:ContextMenu>
     </ZDY:GlassesWindow.Resources>
     <ZDY:GlassesWindow.TitleBarContent>
@@ -120,7 +123,7 @@
                                          ZDY:TextBoxExtension.Placeholder="查找..."
                                          ZDY:TextBoxExtension.Icon="Search" BorderThickness="1"
                                          ZDY:TextBoxExtension.IsClearButtonEnabled="True"/>
-                            <ZDY:ListBox x:Name="FolderList"
+                            <ZDY:ListBox x:Name="FolderList" PreviewMouseDown="FolderList_PreviewMouseDown"
                                          ItemsSource="{Binding FolderBorthers}"
                                          VirtualizingPanel.ScrollUnit="Pixel"
                                          VirtualizingPanel.VirtualizationMode="Standard"
@@ -142,6 +145,7 @@
                                         <Setter Property="BorderThickness" Value="2"/>
                                         <Setter Property="BorderBrush" Value="Transparent"/>
                                         <Setter Property="Background" Value="Transparent"/>
+                                        <Setter Property="ContextMenu" Value="{StaticResource FolderListContextMenu}"/>
                                         <Setter Property="Template">
                                             <Setter.Value>
                                                 <ControlTemplate TargetType="{x:Type ListBoxItem}">

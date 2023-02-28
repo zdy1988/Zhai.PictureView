@@ -931,5 +931,11 @@ namespace Zhai.PictureView
                 }
             }
         }
+
+        private void FolderList_PreviewMouseDown(object sender, MouseButtonEventArgs e)
+        {
+            if (e.RightButton == MouseButtonState.Pressed)
+                e.Handled = true;
+        }
     }
 }

@@ -256,23 +256,23 @@ namespace Zhai.PictureView
         public Task OpenPictureAsync(string filename)
             => OpenPictureAsync(Directory.GetParent(filename), filename);
 
-        private void Folder_BorthersLoaded(object sender, List<DirectoryInfo> borthers)
+        private async void Folder_BorthersLoaded(object sender, List<DirectoryInfo> borthers)
         {
-            Folder.BorthersLoaded -= Folder_BorthersLoaded;
+            FolderBorthers.Clear();
 
             if (borthers != null && borthers.Any())
             {
                 base.RaisePropertyChanged(nameof(IsCanPicturesNavigated));
 
-                ThreadPool.QueueUserWorkItem(_ =>
+                await Task.Run(() =>
                 {
-                    FolderBorthers.Clear();
-
                     foreach (var item in borthers)
                     {
                         FolderBorthers.Add(item);
                     }
                 });
+
+                SetCurrentFolder();
             }
         }
 
@@ -351,7 +351,7 @@ namespace Zhai.PictureView
 
         })).Value;
 
-        public RelayCommand ExecuteOpenTheFolderCommand => new Lazy<RelayCommand>(() => new RelayCommand(() =>
+        public RelayCommand ExecuteOpenExplorerForCurrentPictureCommand => new Lazy<RelayCommand>(() => new RelayCommand(() =>
         {
             var info = new System.Diagnostics.ProcessStartInfo("Explorer.exe")
             {
@@ -360,6 +360,16 @@ namespace Zhai.PictureView
             System.Diagnostics.Process.Start(info);
 
         }, () => CurrentPicture != null)).Value;
+
+        public RelayCommand<DirectoryInfo> ExecuteOpenExplorerForFolderCommand => new Lazy<RelayCommand<DirectoryInfo>>(() => new RelayCommand<DirectoryInfo>(dir =>
+        {
+            var info = new System.Diagnostics.ProcessStartInfo("Explorer.exe")
+            {
+                Arguments = dir.FullName
+            };
+            System.Diagnostics.Process.Start(info);
+
+        }, folder => CurrentPicture != null)).Value;
 
         #endregion
 
