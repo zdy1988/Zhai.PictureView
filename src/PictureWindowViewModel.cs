@@ -309,7 +309,7 @@ namespace Zhai.PictureView
         {
             IsShowPictureEffectsView = !IsShowPictureEffectsView;
 
-        }, () => CurrentPicture != null && CurrentPicture.IsLoaded)).Value;
+        }, () => CurrentPicture != null)).Value;
 
         public RelayCommand ExecuteCopyCurrentPictureSourceCommand => new Lazy<RelayCommand>(() => new RelayCommand(() =>
         {
@@ -319,7 +319,7 @@ namespace Zhai.PictureView
 
         public RelayCommand ExecuteSaveImageCommand => new Lazy<RelayCommand>(() => new RelayCommand(async () =>
         {
-            if (Famil.Win32.CommonDialog.SaveFileDialog(Folder.Current.FullName, "", "保存...", "", CurrentPicture.Extension, default, out string filename))
+            if (Famil.Win32.CommonDialog.SaveFileDialog(Folder.Current.FullName, "", "保存...", CurrentPicture.Name, CurrentPicture.Extension, default, out string filename))
             {
                 var isSuccess = await CurrentPicture.SaveAsync(filename);
 

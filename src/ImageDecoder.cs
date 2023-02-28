@@ -434,15 +434,16 @@ namespace Zhai.PictureView
 
         #endregion
 
+
         /// <summary>
-        /// 压缩图片
+        /// 压缩图片至目标大小
         /// </summary>
         /// <param name="img">图片</param>
         /// <param name="format">图片格式</param>
         /// <param name="targetLen">压缩后大小</param>
         /// <param name="srcLen">原始大小</param>
         /// <returns>压缩后的图片</returns>
-        private static Image CompressImage(Image img, ImageFormat format, long targetLen)
+        private static Image CompressImageToTargetSize(Image img, ImageFormat format, long targetLen)
         {
             const long nearlyLen = 10240;
 
@@ -534,11 +535,9 @@ namespace Zhai.PictureView
             return img;
         }
 
-        private async static Task<MagickImage> CreateMagickImageAsync(Stream stream, int? quality = null, int? width = null, int? height = null)
+        private static MagickImage CreateMagickImage(byte[] bytes, int? quality = null, int? width = null, int? height = null, bool? isIgnoreRatio = false)
         {
-            MagickImage magickImage = new();
-
-            await magickImage.ReadAsync(stream);
+            var magickImage = new MagickImage(bytes);
 
             if (quality is not null)
             {
@@ -547,32 +546,92 @@ namespace Zhai.PictureView
 
             if (width is not null && height is not null)
             {
-                magickImage.Resize(width.Value, height.Value);
+                if (isIgnoreRatio == true)
+                    magickImage.LiquidRescale(width.Value, height.Value);
+                else
+                    magickImage.Resize(width.Value, height.Value);
             }
             else if (width is not null && height is null)
             {
-                magickImage.Resize(width.Value, 0);
+                if (isIgnoreRatio == true)
+                    magickImage.LiquidRescale(width.Value, 0);
+                else
+                    magickImage.Resize(width.Value, 0);
             }
             else if (height is not null && width is null)
             {
-                magickImage.Resize(0, height.Value);
+                if (isIgnoreRatio == true)
+                    magickImage.LiquidRescale(0, height.Value);
+                else
+                    magickImage.Resize(0, height.Value);
             }
 
             return magickImage;
         }
 
-        public static async Task<bool> SaveImageAsync(Stream stream, string targetPath, int? quality = null, int? width = null, int? height = null)
+        private static MagickImageCollection CreateMagickImageCollection(byte[] bytes, int? quality = null, int? width = null, int? height = null, bool? isIgnoreRatio = false)
+        {
+            var magickImageCollection = new MagickImageCollection(bytes);
+
+            magickImageCollection.Coalesce();
+
+            foreach (var magickImage in magickImageCollection)
+            {
+                if (quality is not null)
+                {
+                    magickImage.Quality = quality.Value;
+                }
+
+                if (width is not null && height is not null)
+                {
+                    if (isIgnoreRatio == true)
+                        magickImage.LiquidRescale(width.Value, height.Value);
+                    else
+                        magickImage.Resize(width.Value, height.Value);
+                }
+                else if (width is not null && height is null)
+                {
+                    if (isIgnoreRatio == true)
+                        magickImage.LiquidRescale(width.Value, 0);
+                    else
+                        magickImage.Resize(width.Value, 0);
+                }
+                else if (height is not null && width is null)
+                {
+                    if (isIgnoreRatio == true)
+                        magickImage.LiquidRescale(0, height.Value);
+                    else
+                        magickImage.Resize(0, height.Value);
+                }
+            }
+
+            return magickImageCollection;
+        }
+
+        public static async Task<bool> SaveImageAsync(byte[] bytes, string targetPath, int? quality = null, int? width = null, int? height = null, bool? isIgnoreRatio = false)
         {
             try
             {
-                if (stream is null)
+                if (bytes is null)
                 {
                     return false;
                 }
 
-                using (MagickImage magickImage = await CreateMagickImageAsync(stream, quality, width, height))
-                { 
-                    await magickImage.WriteAsync(targetPath);
+                var ext = Path.GetExtension(targetPath);
+
+                if (ext.ToUpper() == ".GIF")
+                {
+                    using (MagickImageCollection magickImageCollection = CreateMagickImageCollection(bytes, quality, width, height, isIgnoreRatio))
+                    {
+                        await Task.Run(async () => await magickImageCollection.WriteAsync(targetPath));
+                    }
+                }
+                else
+                {
+                    using (MagickImage magickImage = CreateMagickImage(bytes, quality, width, height))
+                    {
+                        await Task.Run(async () => await magickImage.WriteAsync(targetPath));
+                    }
                 }
             }
             catch (Exception e)
@@ -581,26 +640,29 @@ namespace Zhai.PictureView
                 Trace.WriteLine($"{nameof(SaveImageAsync)} {targetPath} exception, \n {e.Message}");
 #endif
 
-                return false; 
+                return false;
             }
 
             return true;
         }
 
-        public static async Task<bool> SaveImageAsync(Stream stream, string targetPath, long targetLen, int? quality = null, int? width = null, int? height = null)
+        public static async Task<bool> SaveImageAsync(byte[] bytes, string targetPath, long targetLen, int? quality = null, int? width = null, int? height = null, bool? isIgnoreRatio = false)
         {
             try
             {
-                if (stream is null)
+                if (bytes is null)
                 {
                     return false;
                 }
 
-                using (MagickImage magickImage = await CreateMagickImageAsync(stream, quality, width, height))
+                using (MagickImage magickImage = CreateMagickImage(bytes, quality, width, height, isIgnoreRatio))
                 {
-                    var image = magickImage.ToBitmap();
+                    await Task.Run(() =>
+                    {
+                        var image = magickImage.ToBitmap();
 
-                    await Task.Run(() => CompressImage(image, ImageFormat.Jpeg, targetLen).Save(targetPath));
+                        CompressImageToTargetSize(image, ImageFormat.Jpeg, targetLen).Save(targetPath);
+                    });
                 }
             }
             catch (Exception e)
