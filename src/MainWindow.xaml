@@ -89,7 +89,6 @@
                 <Border Width="220" Margin="24 24 8 24" Cursor="Arrow">
                     <Grid>
                         <Border HorizontalAlignment="Left" Margin="-11.5 0 0 0" Style="{StaticResource VerticalLinearGradientBorder}"/>
-                        <Border VerticalAlignment="Bottom" Margin="0 -1 0 0" Style="{StaticResource HorizontalLinearGradientBorder}"/>
                         <DockPanel>
                             <ZDY:TextBox x:Name="FolderListSearcher" DockPanel.Dock="Top" Margin="3 0 3 14"
                                          Text="{Binding FolderBorthersSearchText, UpdateSourceTrigger=PropertyChanged, Delay=1000}"
@@ -335,9 +334,9 @@
                             </Canvas>
                             <!--小图-->
                             <Grid x:Name="ThumbContainer" 
-                          VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="2" 
-                          Visibility="{Binding Scale, Converter={Converters:ThumbBoxVisibilityConverter}}"
-                          IsHitTestVisible="{Binding IsPictureMoving, Converter={ZDY:BoolToInverseBoolConverter}}">
+                                  VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="2" 
+                                  Visibility="{Binding Scale, Converter={Converters:ThumbBoxVisibilityConverter}}"
+                                  IsHitTestVisible="{Binding IsPictureMoving, Converter={ZDY:BoolToInverseBoolConverter}}">
                                 <Border Width="148" Height="148" BorderThickness="4" Background="Black" BorderBrush="#CC000000" ClipToBounds="True">
                                     <Canvas x:Name="ThumbBox" MouseMove="MoveRect_MouseMove" RenderTransformOrigin="0.5,0.5" ClipToBounds="True">
                                         <Canvas.RenderTransform>
