@@ -58,6 +58,33 @@
                 </Setter>
             </Style.Setters>
         </Style>
+
+        <ZDY:ContextMenu x:Key="PictureViewContextMenu">
+            <MenuItem Icon="{ZDY:Icon Kind=VuesaxOutlineDocumentCopy}" Header="复制图片" Command="{Binding ExecuteCopyCurrentPictureSourceCommand}"/>
+            <MenuItem Icon="{ZDY:Icon Kind=CopySuccess}" Header="复制图片位置" Command="{Binding ExecuteCopyCurrentPicturePathCommand}"/>
+            <MenuItem Icon="{ZDY:Icon Kind=Save}" Header="保存" Command="{Binding ExecuteSaveImageCommand}"/>
+            <MenuItem Icon="{ZDY:Icon Kind=SaveAs}" Header="另存为..." Command="{Binding ExecuteSaveAsImageCommand}"/>
+            <MenuItem Icon="{ZDY:Icon Kind=Delete}" Header="删除" Click="DeleteButton_Click"/>
+            <Separator/>
+            <MenuItem Icon="{ZDY:Icon Kind=Magicpen}" Header="打开效果面板" Command="{Binding ExecuteTogglePictureEffectsViewCommand}" Visibility="{Binding IsShowPictureEffectsView, Converter={ZDY:BoolToInverseVisibilityConverter}}"/>
+            <MenuItem Icon="{ZDY:Icon Kind=Magicpen}" Header="关闭效果面板" Command="{Binding ExecuteTogglePictureEffectsViewCommand}" Visibility="{Binding IsShowPictureEffectsView, Converter={ZDY:BoolToVisibilityConverter}}"/>
+            <MenuItem Icon="{ZDY:Icon Kind=PlayCricle}" Header="自动播放图片" Click="AutoPlayButton_Click" Visibility="{Binding IsCanPictureCarouselPlay, Converter={ZDY:BoolToVisibilityConverter}}"/>
+            <Separator/>
+            <MenuItem Icon="{ZDY:Icon Kind=Info}" Header="图片信息" Click="InfoButton_Click"/>
+            <MenuItem Icon="{ZDY:Icon Kind=Folder2}" Header="打开所在的文件夹" Command="{Binding ExecuteOpenExplorerForCurrentPictureCommand}"/>
+        </ZDY:ContextMenu>
+        <ZDY:ContextMenu x:Key="VideoViewContextMenu">
+            <MenuItem Icon="{ZDY:Icon Kind=CopySuccess}" Header="复制视频位置" Command="{Binding ExecuteCopyCurrentPicturePathCommand}"/>
+            <MenuItem Icon="{ZDY:Icon Kind=Delete}" Header="删除" Click="DeleteButton_Click"/>
+            <Separator/>
+            <MenuItem Icon="{ZDY:Icon Kind=Magicpen}" Header="打开效果面板" Command="{Binding ExecuteTogglePictureEffectsViewCommand}" Visibility="{Binding IsShowPictureEffectsView, Converter={ZDY:BoolToInverseVisibilityConverter}}"/>
+            <MenuItem Icon="{ZDY:Icon Kind=Magicpen}" Header="关闭效果面板" Command="{Binding ExecuteTogglePictureEffectsViewCommand}" Visibility="{Binding IsShowPictureEffectsView, Converter={ZDY:BoolToVisibilityConverter}}"/>
+            <Separator/>
+            <MenuItem Icon="{ZDY:Icon Kind=Folder2}" Header="打开所在的文件夹" Command="{Binding ExecuteOpenExplorerForCurrentPictureCommand}"/>
+        </ZDY:ContextMenu>
+        <ZDY:ContextMenu x:Key="FolderListContextMenu">
+            <MenuItem Icon="{ZDY:Icon Kind=Folder2}" Header="打开所在的文件夹" Command="{Binding DataContext.ExecuteOpenExplorerForFolderCommand, RelativeSource={RelativeSource AncestorType=ZDY:ListBox}}" CommandParameter="{Binding}"/>
+        </ZDY:ContextMenu>
     </ZDY:GlassesWindow.Resources>
     <ZDY:GlassesWindow.TitleBarContent>
         <DockPanel>
@@ -95,7 +122,7 @@
                                          ZDY:TextBoxExtension.Placeholder="查找..."
                                          ZDY:TextBoxExtension.Icon="Search" BorderThickness="1"
                                          ZDY:TextBoxExtension.IsClearButtonEnabled="True"/>
-                            <ZDY:ListBox x:Name="FolderList"
+                            <ZDY:ListBox x:Name="FolderList" PreviewMouseDown="FolderList_PreviewMouseDown"
                                          ItemsSource="{Binding FolderBorthers}"
                                          VirtualizingPanel.ScrollUnit="Pixel"
                                          VirtualizingPanel.VirtualizationMode="Standard"
@@ -117,6 +144,7 @@
                                         <Setter Property="BorderThickness" Value="2"/>
                                         <Setter Property="BorderBrush" Value="Transparent"/>
                                         <Setter Property="Background" Value="Transparent"/>
+                                        <Setter Property="ContextMenu" Value="{StaticResource FolderListContextMenu}"/>
                                         <Setter Property="Template">
                                             <Setter.Value>
                                                 <ControlTemplate TargetType="{x:Type ListBoxItem}">
@@ -302,7 +330,7 @@
                                 <Canvas.RenderTransform>
                                     <RotateTransform Angle="{Binding RotateAngle}" />
                                 </Canvas.RenderTransform>
-                                <Image x:Name="Picture" Canvas.Top="0" Canvas.Left="0">
+                                <Image x:Name="Picture" Canvas.Top="0" Canvas.Left="0" ContextMenu="{StaticResource PictureViewContextMenu}">
                                     <Image.Style>
                                         <Style TargetType="{x:Type Image}">
                                             <Style.Triggers>
@@ -314,22 +342,6 @@
                                             </Style.Triggers>
                                         </Style>
                                     </Image.Style>
-                                    <Image.ContextMenu>
-                                        <ZDY:ContextMenu>
-                                            <MenuItem Icon="{ZDY:Icon Kind=VuesaxOutlineDocumentCopy}" Header="复制图片" Command="{Binding ExecuteCopyCurrentPictureSourceCommand}"/>
-                                            <MenuItem Icon="{ZDY:Icon Kind=Copy2}" Header="复制图片地址" Command="{Binding ExecuteCopyCurrentPicturePathCommand}"/>
-                                            <MenuItem Icon="{ZDY:Icon Kind=Save}" Header="保存" Command="{Binding ExecuteSaveImageCommand}"/>
-                                            <MenuItem Icon="{ZDY:Icon Kind=SaveAs}" Header="另存为..." Command="{Binding ExecuteSaveAsImageCommand}"/>
-                                            <MenuItem Icon="{ZDY:Icon Kind=Delete}" Header="删除" Click="DeleteButton_Click"/>
-                                            <Separator/>
-                                            <MenuItem Icon="{ZDY:Icon Kind=Magicpen}" Header="打开效果面板" Command="{Binding ExecuteTogglePictureEffectsViewCommand}" Visibility="{Binding IsShowPictureEffectsView, Converter={ZDY:BoolToInverseVisibilityConverter}}"/>
-                                            <MenuItem Icon="{ZDY:Icon Kind=Magicpen}" Header="关闭效果面板" Command="{Binding ExecuteTogglePictureEffectsViewCommand}" Visibility="{Binding IsShowPictureEffectsView, Converter={ZDY:BoolToVisibilityConverter}}"/>
-                                            <MenuItem Icon="{ZDY:Icon Kind=PlayCricle}" Header="自动播放图片" Click="AutoPlayButton_Click" Visibility="{Binding IsCanPictureCarouselPlay, Converter={ZDY:BoolToVisibilityConverter}}"/>
-                                            <Separator/>
-                                            <MenuItem Icon="{ZDY:Icon Kind=Info}" Header="图片信息" Click="InfoButton_Click"/>
-                                            <MenuItem Icon="{ZDY:Icon Kind=Folder2}" Header="打开所在的文件夹" Command="{Binding ExecuteOpenTheFolderCommand}"/>
-                                        </ZDY:ContextMenu>
-                                    </Image.ContextMenu>
                                 </Image>
                             </Canvas>
                             <!--小图-->
@@ -408,7 +420,7 @@
                     </Grid>
                     <Grid x:Name="VideoView" Visibility="{Binding IsCurrentPictureIsVideo, Converter={ZDY:BoolToVisibilityConverter}}"
                           Background="Black">
-                        <MediaElement x:Name="MediaElement" LoadedBehavior="Manual"
+                        <MediaElement x:Name="MediaElement" LoadedBehavior="Manual" ContextMenu="{StaticResource VideoViewContextMenu}"
                                       RenderTransformOrigin="0.5,0.5" >
                             <MediaElement.RenderTransform>
                                 <RotateTransform Angle="{Binding RotateAngle}" />

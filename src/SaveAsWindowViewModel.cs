@@ -182,7 +182,13 @@ namespace Zhai.PictureView
         public string Extension
         {
             get { return extension; }
-            set { Set(() => Extension, ref extension, value); }
+            set
+            {
+                if (Set(() => Extension, ref extension, value))
+                {
+                    base.RaisePropertyChanged(nameof(IsCanCustomFileSize));
+                }
+            }
         }
 
         private string[] extensions;
@@ -197,6 +203,13 @@ namespace Zhai.PictureView
         {
             get { return isSaving; }
             set { Set(() => IsSaving, ref isSaving, value); }
+        }
+
+        private bool isSavedToShow;
+        public bool IsSavedToShow
+        {
+            get { return isSavedToShow; }
+            set { Set(() => IsSavedToShow, ref isSavedToShow, value); }
         }
 
         #endregion
@@ -217,7 +230,7 @@ namespace Zhai.PictureView
         public static string[] CustomFileSizeUnits => new string[] { "KB", "MB" };
 
         // 至少大于 5KB 才可以自定义压缩
-        public bool IsCanCustomFileSize => this.fileSize > 5 * 1024;
+        public bool IsCanCustomFileSize => this.FileSize > 5 * 1024;
 
         public SaveAsWindowViewModel(Picture picture)
         {
@@ -298,11 +311,11 @@ namespace Zhai.PictureView
             return exts.Distinct().ToArray();
         }
 
-        public Task<bool> SaveAsync()
+        public Task<bool> SaveAsync(out string targetPath)
         {
-            var targetPath = Path.Combine(FolderPath, $"{FileName}.{Extension}");
+            targetPath = Path.Combine(FolderPath, $"{FileName}.{Extension}");
 
-            async Task<bool> Save()
+            async Task<bool> Save(string targetPath)
             {
 
                 IsSaving = true;
@@ -311,15 +324,17 @@ namespace Zhai.PictureView
 
                 bool isSuccess;
 
+                var bytes = await currentPicture.ReadAsync();
+
                 if (IsCustomFileSize && CustomFileSize != null && CustomFileSize > 0)
                 {
                     var targetLen = CustomFileSizeUnit == "KB" ? CustomFileSize.Value * 1024L : CustomFileSize.Value * 1024L * 1024L;
 
-                    isSuccess = await ImageDecoder.SaveImageAsync(currentPicture.PictureStream, targetPath, targetLen, Quality, ResizeWidth, ResizeHeight);
+                    isSuccess = await ImageDecoder.SaveImageAsync(bytes, targetPath, targetLen, Quality, ResizeWidth, ResizeHeight, !IsLockedResizePercentage);
                 }
                 else
                 {
-                    isSuccess = await ImageDecoder.SaveImageAsync(currentPicture.PictureStream, targetPath, Quality, ResizeWidth, ResizeHeight);
+                    isSuccess = await ImageDecoder.SaveImageAsync(bytes, targetPath, Quality, ResizeWidth, ResizeHeight, !IsLockedResizePercentage);
                 }
 
                 IsSaving = false;
@@ -331,7 +346,7 @@ namespace Zhai.PictureView
             {
                 if (ConfirmBox.Show("当前文件已存在！要将此现有文件覆盖吗？") == true)
                 {
-                    return Save();
+                    return Save(targetPath);
                 }
                 else
                 {
@@ -339,7 +354,7 @@ namespace Zhai.PictureView
                 }
             }
 
-            return Save();
+            return Save(targetPath);
         }
 
         #endregion
@@ -380,7 +395,16 @@ namespace Zhai.PictureView
 
         public RelayCommand ExecuteSaveImageCommand => new Lazy<RelayCommand>(() => new RelayCommand(async () =>
         {
-            await SaveAsync();
+            var isSuccess = await SaveAsync(out string targetPath);
+
+            if (isSuccess && IsSavedToShow)
+            {
+                var info = new System.Diagnostics.ProcessStartInfo("Explorer.exe")
+                {
+                    Arguments = $"/select,{targetPath}"
+                };
+                System.Diagnostics.Process.Start(info);
+            }
 
         }, () => currentPicture != null && currentPicture.IsLoaded)).Value;
 

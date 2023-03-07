@@ -1,5 +1,6 @@
 ﻿using SkiaSharp;
 using System;
+using System.Drawing;
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows.Media;
@@ -50,27 +51,6 @@ namespace Zhai.PictureView
         {
             get => pictureExif;
             set => Set(() => PictureExif, ref pictureExif, value);
-        }
-
-        public Stream PictureStream
-        {
-            get
-            {
-                if (PictureSource == null) return null;
-
-                var ms = new MemoryStream();
-
-                BitmapEncoder encoder = new BmpBitmapEncoder();
-                encoder.Frames.Add(BitmapFrame.Create(PictureSource));
-                encoder.Save(ms);
-
-                if (ms.CanSeek)
-                {
-                    ms.Seek(0, SeekOrigin.Begin);
-                }
-
-                return ms;
-            }
         }
 
         public bool IsAnimation
@@ -176,13 +156,27 @@ namespace Zhai.PictureView
             return PictureExif;
         }
 
-        public async Task<bool> SaveAsync(string? targetPath)
+        public async Task<byte[]> ReadAsync()
+        {
+            try
+            {
+                return await File.ReadAllBytesAsync(PicturePath);
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        public async Task<bool> SaveAsync(string targetPath)
         {
             if (IsLoaded)
             {
                 targetPath ??= PicturePath;
 
-                return await ImageDecoder.SaveImageAsync(PictureStream, targetPath);
+                var bytes = await ReadAsync();
+
+                return await ImageDecoder.SaveImageAsync(bytes, targetPath);
             }
 
             return false;
