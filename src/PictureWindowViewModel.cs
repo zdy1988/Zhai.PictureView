@@ -60,11 +60,6 @@ namespace Zhai.PictureView
                     {
                         CurrentPictureChanged?.Invoke(this, value);
 
-                        //if (value != null && value.ThumbState == PictureState.Failed)
-                        //{
-                        //    ThreadPool.QueueUserWorkItem(_ => value.DrawThumb());
-                        //}
-
                         base.RaisePropertyChanged(nameof(IsCurrentPictureIsVideo));
                     }
                 }
@@ -91,13 +86,6 @@ namespace Zhai.PictureView
             set => Set(() => DisplayedPictureIndex, ref displayedPictureIndex, value);
         }
 
-        private bool isPictureMoving = false;
-        public bool IsPictureMoving
-        {
-            get => isPictureMoving;
-            set => Set(() => IsPictureMoving, ref isPictureMoving, value);
-        }
-
         private double rotateAngle = 0.0;
         public double RotateAngle
         {
@@ -109,13 +97,7 @@ namespace Zhai.PictureView
         public double Scale
         {
             get => scale;
-            set
-            {
-                if (Set(() => Scale, ref scale, value))
-                {
-                    ScaleChanged?.Invoke(this, value);
-                }
-            }
+            set => Set(() => Scale, ref scale, value);
         }
 
         private bool isPictureCarouselPlaying = false;
@@ -319,7 +301,7 @@ namespace Zhai.PictureView
 
         public RelayCommand ExecuteSaveImageCommand => new Lazy<RelayCommand>(() => new RelayCommand(async () =>
         {
-            if (Famil.Win32.CommonDialog.SaveFileDialog(Folder.Current.FullName, "", "保存...", CurrentPicture.Name, CurrentPicture.Extension, default, out string filename))
+            if (Famil.Win32.CommonDialog.SaveFileDialog(App.Current.MainWindow, Folder.Current.FullName, "", "保存...", CurrentPicture.Name, CurrentPicture.Extension, default, out string filename))
             {
                 var isSuccess = await CurrentPicture.SaveAsync(filename);
 
@@ -376,8 +358,6 @@ namespace Zhai.PictureView
         public event EventHandler<Picture> CurrentPictureChanged;
 
         public event EventHandler<DirectoryInfo> CurrentFolderChanged;
-
-        public event EventHandler<Double> ScaleChanged;
 
         public override void Cleanup()
         {

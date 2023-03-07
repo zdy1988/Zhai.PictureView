@@ -15,7 +15,7 @@ namespace Zhai.PictureView.Converters
         {
             if (value is double scale)
             {
-                return $"{System.Convert.ToInt32(Math.Round(scale, 1) * 100)}%";
+                return $"{System.Convert.ToInt32(Math.Round(scale, 2) * 100)}%";
             }
 
             return "100%";

@@ -321,74 +321,21 @@
                             <RowDefinition Height="Auto"/>
                         </Grid.RowDefinitions>
                         <Grid Grid.Row="0">
-                            <!--大图-->
-                            <Canvas x:Name="PictureBox" 
-                                RenderTransformOrigin="0.5,0.5" ClipToBounds="True"
-                                Width="{Binding ActualWidth, RelativeSource={RelativeSource AncestorType=Grid}}" 
-                                Height="{Binding ActualHeight, RelativeSource={RelativeSource AncestorType=Grid}}"
-                                Background="Transparent">
-                                <Canvas.RenderTransform>
-                                    <RotateTransform Angle="{Binding RotateAngle}" />
-                                </Canvas.RenderTransform>
-                                <Image x:Name="Picture" Canvas.Top="0" Canvas.Left="0" ContextMenu="{StaticResource PictureViewContextMenu}">
-                                    <Image.Style>
-                                        <Style TargetType="{x:Type Image}">
-                                            <Style.Triggers>
-                                                <DataTrigger Binding="{Binding CurrentPicture, Converter={ZDY:NullableToBoolConverter}}" Value="True">
-                                                    <DataTrigger.Setters>
-                                                        <Setter Property="Effect" Value="{Binding CurrentPictureEffect.Effect}"/>
-                                                    </DataTrigger.Setters>
-                                                </DataTrigger>
-                                            </Style.Triggers>
-                                        </Style>
-                                    </Image.Style>
-                                </Image>
-                            </Canvas>
-                            <!--小图-->
-                            <Grid x:Name="ThumbContainer" 
-                                  VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="2" 
-                                  Visibility="{Binding Scale, Converter={Converters:ThumbBoxVisibilityConverter}}"
-                                  IsHitTestVisible="{Binding IsPictureMoving, Converter={ZDY:BoolToInverseBoolConverter}}">
-                                <Border Width="148" Height="148" BorderThickness="4" Background="Black" BorderBrush="#CC000000" ClipToBounds="True">
-                                    <Canvas x:Name="ThumbBox" MouseMove="MoveRect_MouseMove" RenderTransformOrigin="0.5,0.5" ClipToBounds="True">
-                                        <Canvas.RenderTransform>
-                                            <RotateTransform Angle="{Binding RotateAngle}" />
-                                        </Canvas.RenderTransform>
-                                        <Canvas.Background>
-                                            <ImageBrush ImageSource="{Binding ElementName=Picture, Path=Source}" Stretch="Uniform" TileMode="None"/>
-                                        </Canvas.Background>
-                                        <Rectangle x:Name="MoveRect" Stroke="White" Canvas.Top="0" Canvas.Left="0"/>
-                                    </Canvas>
-                                </Border>
-                                <Grid x:Name="ThumbBoxMask" IsHitTestVisible="False"
-                              Width="{Binding ElementName=ThumbBox, Path=ActualWidth}" Height="{Binding ElementName=ThumbBox, Path=ActualHeight}"
-                              VerticalAlignment="Center" HorizontalAlignment="Center">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition/>
-                                        <ColumnDefinition/>
-                                        <ColumnDefinition Width="*"/>
-                                    </Grid.ColumnDefinitions>
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition/>
-                                        <RowDefinition/>
-                                        <RowDefinition Height="*"/>
-                                    </Grid.RowDefinitions>
-                                    <Grid.Resources>
-                                        <Style TargetType="{x:Type Border}">
-                                            <Setter Property="Background" Value="#70000000"/>
-                                        </Style>
-                                    </Grid.Resources>
-                                    <Border Grid.Row="0" Grid.Column="0"/>
-                                    <Border Grid.Row="1" Grid.Column="0"/>
-                                    <Border Grid.Row="2" Grid.Column="0"/>
-                                    <Border Grid.Row="0" Grid.Column="1"/>
-                                    <Border Grid.Row="1" Grid.Column="1" Background="Transparent"/>
-                                    <Border Grid.Row="2" Grid.Column="1"/>
-                                    <Border Grid.Row="0" Grid.Column="2"/>
-                                    <Border Grid.Row="1" Grid.Column="2"/>
-                                    <Border Grid.Row="2" Grid.Column="2"/>
-                                </Grid>
-                            </Grid>
+                            <ZDY:ImageView x:Name="PictureElement" Scale="{Binding Scale, Mode=TwoWay}" RotateAngle="{Binding RotateAngle, Mode=TwoWay}" InitializeScale="0.9">
+                                <ZDY:ImageView.Style>
+                                    <Style TargetType="{x:Type ZDY:ImageView}">
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding CurrentPicture, Converter={ZDY:NullableToBoolConverter}}" Value="True">
+                                                <DataTrigger.Setters>
+                                                    <Setter Property="ImageEffect" Value="{Binding CurrentPictureEffect.Effect}"/>
+                                                    <Setter Property="RotateAngle" Value="{Binding RotateAngle}"/>
+                                                    <Setter Property="ContextMenu" Value="{StaticResource PictureViewContextMenu}"/>
+                                                </DataTrigger.Setters>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </ZDY:ImageView.Style>
+                            </ZDY:ImageView>
                             <!--图片比例提示-->
                             <ZDY:Hint Text="{Binding Scale, Converter={Converters:ScaleTipsConverter}}" FontWeight="Normal" FontSize="16" CornerRadius="18"/>
                         </Grid>
@@ -418,78 +365,35 @@
                             </StackPanel>
                         </Grid>
                     </Grid>
-                    <Grid x:Name="VideoView" Visibility="{Binding IsCurrentPictureIsVideo, Converter={ZDY:BoolToVisibilityConverter}}"
-                          Background="Black">
-                        <MediaElement x:Name="MediaElement" LoadedBehavior="Manual" ContextMenu="{StaticResource VideoViewContextMenu}"
-                                      RenderTransformOrigin="0.5,0.5" >
-                            <MediaElement.RenderTransform>
-                                <RotateTransform Angle="{Binding RotateAngle}" />
-                            </MediaElement.RenderTransform>
-                            <MediaElement.Style>
-                                <Style TargetType="{x:Type MediaElement}">
+                    <Grid x:Name="VideoView" Visibility="{Binding IsCurrentPictureIsVideo, Converter={ZDY:BoolToVisibilityConverter}}" Background="Black">
+                        <ZDY:VideoView x:Name="VideoElement" RotateAngle="{Binding RotateAngle, Mode=TwoWay}">
+                            <ZDY:VideoView.Style>
+                                <Style TargetType="{x:Type ZDY:VideoView}">
                                     <Style.Triggers>
                                         <DataTrigger Binding="{Binding CurrentPicture, Converter={ZDY:NullableToBoolConverter}}" Value="True">
                                             <DataTrigger.Setters>
-                                                <Setter Property="Effect" Value="{Binding CurrentPictureEffect.Effect}"/>
+                                                <Setter Property="VideoEffect" Value="{Binding CurrentPictureEffect.Effect}"/>
+                                                <Setter Property="ContextMenu" Value="{StaticResource VideoViewContextMenu}"/>
                                             </DataTrigger.Setters>
                                         </DataTrigger>
                                     </Style.Triggers>
                                 </Style>
-                            </MediaElement.Style>
-                        </MediaElement>
-                        <Grid Visibility="{Binding IsVideoErrored, Converter={ZDY:BoolToVisibilityConverter}}">
-                            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
-                                <ZDY:Icon Kind="VuesaxOutlineWarning2" Width="32" Height="32" HorizontalAlignment="Center" Margin="0 0 0 24"/>
-                                <TextBlock Text="{Binding VideoErrorMessage, StringFormat=错误信息：{0}}"/>
-                            </StackPanel>
-                        </Grid>
-                        <Grid VerticalAlignment="Bottom" Margin="0 24 0 6">
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="16"></RowDefinition>
-                                <RowDefinition Height="54"></RowDefinition>
-                            </Grid.RowDefinitions>
-
-                            <ZDY:Slider Name="PositionSlider" Grid.Row="0" Cursor="Hand"
-                                        Foreground="{StaticResource Zhai.Famil.ColorfulBrush}"
-                                        IsSnapToTickEnabled="False" Minimum="0"
-                                        Thumb.DragCompleted="PositionSlider_DragCompleted"  
-                                        PreviewMouseUp="PositionSlider_PreviewMouseUp"/>
-
-                            <DockPanel Grid.Row="1" Margin="20 0">
-                                <Border Name="LeftControls" DockPanel.Dock="Left" Width="200">
-                                    <StackPanel Orientation="Horizontal" Height="14" HorizontalAlignment="Left">
-                                        <TextBlock FontSize="12" Text="{Binding ElementName=PositionSlider, Path=Maximum, Mode=OneWay, TargetNullValue=00:00:00, Converter={Converters:VideoDurationToStringConverter}}"/>
-                                        <TextBlock FontSize="12" Text=" - "/>
-                                        <TextBlock FontSize="12" Text="{Binding ElementName=PositionSlider, Path=Value, Mode=OneWay, TargetNullValue=00:00:00, Converter={Converters:VideoDurationToStringConverter}}"/>
-                                    </StackPanel>
-                                </Border>
-
-                                <Border Name="RightControls" DockPanel.Dock="Right" Width="200">
-                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0 0 -8 0">
-                                        <ZDY:IconToggleButton x:Name="MuteButton" IsChecked="{Binding ElementName=MediaElement, Path=IsMuted, Mode=TwoWay}" CheckedIcon="VolumeSlash" Icon="VolumeHigh"/>
-
-                                        <ZDY:Slider2 Name="VolumeSlider" Cursor="Hand" Foreground="{StaticResource Zhai.Famil.ColorfulBrush}"
-                                                     IsEnabled="{Binding ElementName=MediaElement, Path=IsMuted, Converter={ZDY:BoolToInverseBoolConverter}}" 
-                                                     Width="120" Minimum="0" Maximum="1" Margin="4 0" 
-                                                     Value="{Binding ElementName=MediaElement, Path=Volume, Mode=TwoWay, Delay=1}"/>
-
-                                    </StackPanel>
-                                </Border>
-
-                                <Border Name="CenterControls">
-                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" IsEnabled="{Binding CurrentPicture, Converter={ZDY:NullableToBoolConverter}}">
-                                        <ZDY:IconButton x:Name="RotateLeftButton2" Icon="RotateLeft" ToolTip="左转90度" Click="RotateLeftButton2_Click"/>
-                                        <ZDY:IconButton x:Name="RotateRightButton2" Icon="RotateRight" ToolTip="右转90度" Click="RotateRightButton2_Click"/>
-                                        <ZDY:IconButton x:Name="MediaPlayButton" Icon="Play2" ToolTip="播放" Click="MediaPlayButton_Click" Visibility="{Binding IsVideoPlaying, Converter={ZDY:BoolToInverseVisibilityConverter}}"/>
-                                        <ZDY:IconButton x:Name="MediaPauseButton" Icon="Pause" ToolTip="暂停" Click="MediaPauseButton_Click" Visibility="{Binding IsVideoPlaying, Converter={ZDY:BoolToVisibilityConverter}}"/>
-                                        <ZDY:IconToggleButton x:Name="PictureListViewToggleButton2" Icon="SidebarTop" ToolTip="显示缩略图列表" CheckedIcon="SidebarBottom" CheckedToolTip="关闭缩略图列表" 
+                            </ZDY:VideoView.Style>
+                            <ZDY:VideoView.LeftIconButtonContainer>
+                                <StackPanel Orientation="Horizontal">
+                                    <ZDY:IconButton x:Name="RotateLeftButton2" Icon="RotateLeft" ToolTip="左转90度" Click="RotateLeftButton2_Click"/>
+                                    <ZDY:IconButton x:Name="RotateRightButton2" Icon="RotateRight" ToolTip="右转90度" Click="RotateRightButton2_Click"/>
+                                </StackPanel>
+                            </ZDY:VideoView.LeftIconButtonContainer>
+                            <ZDY:VideoView.RightIconButtonContainer>
+                                <StackPanel Orientation="Horizontal">
+                                    <ZDY:IconToggleButton x:Name="PictureListViewToggleButton2" Icon="SidebarTop" ToolTip="显示缩略图列表" CheckedIcon="SidebarBottom" CheckedToolTip="关闭缩略图列表" 
                                               IsChecked="{Binding IsShowPictureListView}" IsEnabled="{Binding CurrentPicture, Converter={ZDY:NullableToBoolConverter}}"/>
-                                        <ZDY:IconToggleButton x:Name="FolderBorthersViewToggleButton2" Icon="SidebarLeft" ToolTip="查看更多" CheckedIcon="SidebarRight" CheckedToolTip="关闭侧栏"
+                                    <ZDY:IconToggleButton x:Name="FolderBorthersViewToggleButton2" Icon="SidebarLeft" ToolTip="查看更多" CheckedIcon="SidebarRight" CheckedToolTip="关闭侧栏"
                                                       IsChecked="{Binding IsShowFolderBorthersView}"/>
-                                    </StackPanel>
-                                </Border>
-                            </DockPanel>
-                        </Grid>
+                                </StackPanel>
+                            </ZDY:VideoView.RightIconButtonContainer>
+                        </ZDY:VideoView>
                     </Grid>
                     <Grid Margin="0 0 0 52">
                         <!--打开图片按钮-->
