@@ -328,7 +328,6 @@
                                             <DataTrigger Binding="{Binding CurrentPicture, Converter={ZDY:NullableToBoolConverter}}" Value="True">
                                                 <DataTrigger.Setters>
                                                     <Setter Property="ImageEffect" Value="{Binding CurrentPictureEffect.Effect}"/>
-                                                    <Setter Property="RotateAngle" Value="{Binding RotateAngle}"/>
                                                     <Setter Property="ContextMenu" Value="{StaticResource PictureViewContextMenu}"/>
                                                 </DataTrigger.Setters>
                                             </DataTrigger>

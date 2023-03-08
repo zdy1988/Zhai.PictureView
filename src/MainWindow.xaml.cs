@@ -340,12 +340,17 @@ namespace Zhai.PictureView
 
         private void VideoElement_MediaElementReady(object sender, RoutedEventArgs e)
         {
-            this.VideoElement.Play();
+            VideoElement.MediaElementReady -= VideoElement_MediaElementReady;
+
+            if (ViewModel.IsCurrentPictureIsVideo)
+            {
+                InitVideo(ViewModel.CurrentPicture);
+            }
         }
 
         private void InitVideo(Picture picture)
         {
-            if (this.VideoElement.MediaElement != null)
+            if (this.VideoElement.IsMediaElementReady)
             {
                 this.VideoElement.Source = new Uri(picture.PicturePath);
 
@@ -355,7 +360,7 @@ namespace Zhai.PictureView
 
         private void StopVideo()
         {
-            if (this.VideoElement.MediaElement != null)
+            if (this.VideoElement.IsMediaElementReady)
             {
                 this.VideoElement.Stop();
             }
