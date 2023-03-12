@@ -1,0 +1,145 @@
+﻿<ZDY:FamilWindow x:Class="Zhai.PictureView.EditWindow"
+                 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                 xmlns:Converters="clr-namespace:Zhai.PictureView.Converters"  
+                 xmlns:ZDY="http://www.zdyla.com/coding"
+                 WindowStartupLocation ="CenterScreen"
+                 mc:Ignorable="d"
+                 Title="EditWindow" Height="600" Width="800">
+    <Grid Margin="24">
+        <Grid.Resources>
+            <Style TargetType="{x:Type TextBlock}">
+                <Setter Property="VerticalAlignment" Value="Center"/>
+            </Style>
+            <Style TargetType="{x:Type TextBlock}" x:Key="ItemHeaderTextBlock">
+                <Setter Property="FontSize" Value="13"/>
+                <Setter Property="VerticalAlignment" Value="Center"/>
+                <Setter Property="Margin" Value="0 0 24 0"/>
+            </Style>
+            <Style TargetType="{x:Type TextBlock}" x:Key="ItemValueTextBlock">
+                <Setter Property="VerticalAlignment" Value="Center"/>
+                <Setter Property="Margin" Value="12 0 0 0"/>
+                <Setter Property="HorizontalAlignment" Value="Right"/>
+            </Style>
+            <Style TargetType="{x:Type ZDY:TextBox}">
+                <Setter Property="BorderThickness" Value="1"/>
+            </Style>
+            <Style TargetType="{x:Type ZDY:ComboBox}">
+                <Setter Property="BorderThickness" Value="1"/>
+            </Style>
+            <Style TargetType="{x:Type ZDY:TextNumberBox}">
+                <Setter Property="BorderThickness" Value="1"/>
+            </Style>
+            <Style TargetType="{x:Type ZDY:RadioButton}">
+                <Setter Property="Margin" Value="8 0"/>
+            </Style>
+            <Style TargetType="{x:Type ZDY:CheckBox}">
+                <Setter Property="Margin" Value="8 0"/>
+            </Style>
+            <Style TargetType="{x:Type StackPanel}" x:Key="ItemContentStackPanel">
+                <Setter Property="Margin" Value="0 6"/>
+                <Setter Property="Height" Value="31"/>
+            </Style>
+            <Style TargetType="{x:Type DockPanel}" x:Key="ItemContentDockPanel">
+                <Setter Property="Margin" Value="0 6"/>
+                <Setter Property="Height" Value="26"/>
+            </Style>
+        </Grid.Resources>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" MinWidth="360"/>
+            <ColumnDefinition Width="254" MinWidth="254"/>
+        </Grid.ColumnDefinitions>
+        <Grid ClipToBounds="True">
+            <Grid x:Name="ImageContainer" MouseWheel="Grid_MouseWheel">
+                <Grid.Background>
+                    <ImageBrush ImageSource="/Zhai.Famil;component/Resources/transparent_bg.png" TileMode="Tile" Viewport="0,0,8,8" ViewportUnits="Absolute" />
+                </Grid.Background>
+                <Image x:Name="CurrentImage" VerticalAlignment="Center" HorizontalAlignment="Center" 
+                       Source="{Binding PreviewSource}"/>
+                <Grid.RenderTransform>
+                    <TransformGroup>
+                        <ScaleTransform/>
+                        <TranslateTransform/>
+                    </TransformGroup>
+                </Grid.RenderTransform>
+            </Grid>
+            <Border HorizontalAlignment="Left" Style="{StaticResource Zhai.Famil.FadeBothEndsVerticalDivider}"/>
+            <Border HorizontalAlignment="Right" Style="{StaticResource Zhai.Famil.FadeBothEndsVerticalDivider}"/>
+            <Border VerticalAlignment="Top" Style="{StaticResource Zhai.Famil.FadeBothEndsHorizontalDivider}"/>
+            <Border VerticalAlignment="Bottom" Style="{StaticResource Zhai.Famil.FadeBothEndsHorizontalDivider}"/>
+        </Grid>
+        <GridSplitter Grid.Column="0" Width="4" HorizontalAlignment="Right" Background="Transparent" Margin="0 0 -12 0"/>
+        <Border Grid.Column="1" Margin="24 0 0 0">
+            <DockPanel>
+                <Grid DockPanel.Dock="Top">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="36"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    
+                    <TextBlock Grid.Row="0" Grid.Column="0" Text="色相" Style="{StaticResource ItemHeaderTextBlock}"/>
+                    <DockPanel Grid.Row="0" Grid.Column="1" Style="{StaticResource ItemContentDockPanel}">
+                        <ZDY:Slider2 Minimum="0" Maximum="100" Value="{Binding Modulate.Hue}" SmallChange="1" LargeChange="5" PreviewMouseDoubleClick="Slider2_PreviewMouseDoubleClick"/>
+                    </DockPanel>
+                    <TextBlock Grid.Row="0" Grid.Column="2" Text="{Binding Modulate.Hue}" Style="{StaticResource ItemValueTextBlock}"/>
+                    
+                    <!--
+                    <TextBlock Grid.Row="1" Grid.Column="0" Text="明度" Style="{StaticResource ItemHeaderTextBlock}"/>
+                    <DockPanel Grid.Row="1" Grid.Column="1" Style="{StaticResource ItemContentDockPanel}">
+                        <ZDY:Slider2 Minimum="0" Maximum="100" Value="{Binding Modulate.Brightness}" SmallChange="1" LargeChange="5" PreviewMouseDoubleClick="Slider2_PreviewMouseDoubleClick"/>
+                    </DockPanel>
+                    <TextBlock Grid.Row="1" Grid.Column="2" Text="{Binding Modulate.Brightness}" Style="{StaticResource ItemValueTextBlock}"/>
+                    -->
+                    
+                    <TextBlock Grid.Row="2" Grid.Column="0" Text="饱和度" Style="{StaticResource ItemHeaderTextBlock}"/>
+                    <DockPanel Grid.Row="2" Grid.Column="1" Style="{StaticResource ItemContentDockPanel}">
+                        <ZDY:Slider2 Minimum="0" Maximum="100" Value="{Binding Modulate.Saturation}" SmallChange="1" LargeChange="5" PreviewMouseDoubleClick="Slider2_PreviewMouseDoubleClick"/>
+                    </DockPanel>
+                    <TextBlock Grid.Row="2" Grid.Column="2" Text="{Binding Modulate.Saturation}" Style="{StaticResource ItemValueTextBlock}"/>
+                    
+                    <TextBlock Grid.Row="3" Grid.Column="0" Text="曝光" Style="{StaticResource ItemHeaderTextBlock}"/>
+                    <DockPanel Grid.Row="3" Grid.Column="1" Style="{StaticResource ItemContentDockPanel}">
+                        <ZDY:Slider2 Minimum="0" Maximum="100" Value="{Binding Modulate.Exposure}" SmallChange="1" LargeChange="5" PreviewMouseDoubleClick="Slider2_PreviewMouseDoubleClick"/>
+                    </DockPanel>
+                    <TextBlock Grid.Row="3" Grid.Column="2" Text="{Binding Modulate.Exposure}" Style="{StaticResource ItemValueTextBlock}"/>
+                    
+                    <TextBlock Grid.Row="4" Grid.Column="0" Text="对比度" Style="{StaticResource ItemHeaderTextBlock}"/>
+                    <DockPanel Grid.Row="4" Grid.Column="1" Style="{StaticResource ItemContentDockPanel}">
+                        <ZDY:Slider2 Minimum="0" Maximum="100" Value="{Binding Modulate.Contrast}" SmallChange="1" LargeChange="5" PreviewMouseDoubleClick="Slider2_PreviewMouseDoubleClick"/>
+                    </DockPanel>
+                    <TextBlock Grid.Row="4" Grid.Column="2" Text="{Binding Modulate.Contrast}" Style="{StaticResource ItemValueTextBlock}"/>
+                    
+                    <TextBlock Grid.Row="5" Grid.Column="0" Text="黑色" Style="{StaticResource ItemHeaderTextBlock}"/>
+                    <DockPanel Grid.Row="5" Grid.Column="1" Style="{StaticResource ItemContentDockPanel}">
+                        <ZDY:Slider2 Minimum="0" Maximum="99" Value="{Binding Modulate.ContrastBlack}" SmallChange="1" LargeChange="5" PreviewMouseDoubleClick="Slider2_PreviewMouseDoubleClick"/>
+                    </DockPanel>
+                    <TextBlock Grid.Row="5" Grid.Column="2" Text="{Binding Modulate.ContrastBlack}" Style="{StaticResource ItemValueTextBlock}"/>
+                    
+                    <TextBlock Grid.Row="6" Grid.Column="0" Text="白色" Style="{StaticResource ItemHeaderTextBlock}"/>
+                    <DockPanel Grid.Row="6" Grid.Column="1" Style="{StaticResource ItemContentDockPanel}">
+                        <ZDY:Slider2 Minimum="0" Maximum="99" Value="{Binding Modulate.ContrastWhite}" SmallChange="1" LargeChange="5" PreviewMouseDoubleClick="Slider2_PreviewMouseDoubleClick"/>
+                    </DockPanel>
+                    <TextBlock Grid.Row="6" Grid.Column="2" Text="{Binding Modulate.ContrastWhite}" Style="{StaticResource ItemValueTextBlock}"/>
+
+
+                </Grid>
+                <Grid>
+                    <ZDY:Button Content="确定" MinWidth="88" VerticalAlignment="Bottom" HorizontalAlignment="Center"/>
+                </Grid>
+            </DockPanel>
+        </Border>
+
+    </Grid>
+</ZDY:FamilWindow>

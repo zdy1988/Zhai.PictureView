@@ -6,22 +6,20 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
-using System.Reflection;
-using System.Runtime.InteropServices;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Interop;
 using System.Windows.Media.Imaging;
 using System.Windows.Media.Media3D;
+using Zhai.Famil.Win32.Common;
+using Zhai.Famil.Win32.NativeMethods;
 
 namespace Zhai.PictureView
 {
     internal static partial class ImageDecoder
     {
-        [DllImport("gdi32.dll", CharSet = CharSet.Auto, SetLastError = true)]
-        internal static extern bool DeleteObject(IntPtr hObject);
-
-        internal static BitmapSource GetBitmapSource(Bitmap bitmap)
+        internal static BitmapSource ToBitmapSource(this Bitmap bitmap)
         {
             if (bitmap == null) return null;
 
@@ -38,12 +36,62 @@ namespace Zhai.PictureView
             finally
             {
                 if (handle != IntPtr.Zero)
-                    DeleteObject(handle);
+                    Gdi32.DeleteObject(handle);
             }
 
             return bitmapSource;
         }
 
+        internal static Stream ToStream(this BitmapSource bitmapSource)
+        {
+            Stream stream = new MemoryStream();
+
+            BitmapEncoder encoder = new PngBitmapEncoder();
+            encoder.Frames.Add(BitmapFrame.Create(bitmapSource));
+            encoder.Save(stream);
+
+            stream.Position = 0;
+
+            return stream;
+        }
+
+        internal static byte[] ToByteArray(this BitmapSource bitmapSource)
+        {
+            byte[] buffer = null;
+
+            Stream stream = bitmapSource.ToStream();
+
+            if (stream.Length > 0)
+            {
+                using (var br = new BinaryReader(stream))
+                {
+                    buffer = br.ReadBytes((int)stream.Length);
+                }
+            }
+
+            stream.Close();
+
+            return buffer;
+        }
+
+        public static BitmapImage ToBitmapImage(this byte[] byteArray)
+        {
+            BitmapImage bmp;
+
+            try
+            {
+                bmp = new BitmapImage();
+                bmp.BeginInit();
+                bmp.StreamSource = new MemoryStream(byteArray);
+                bmp.EndInit();
+            }
+            catch
+            {
+                bmp = null;
+            }
+
+            return bmp;
+        }
 
 
         internal static BitmapSource GetThumb(string filename)
@@ -65,7 +113,7 @@ namespace Zhai.PictureView
         {
             try
             {
-                var thumb = Microsoft.WindowsAPICodePack.Shell.ShellFile.FromFilePath(filename).Thumbnail.BitmapSource;
+                var thumb = Zhai.Famil.Win32.ThumbnailProvider.GetThumbnail(filename);
 
                 if (!thumb.IsFrozen)
                 {
@@ -434,6 +482,7 @@ namespace Zhai.PictureView
 
         #endregion
 
+        #region Save
 
         /// <summary>
         /// 压缩图片至目标大小
@@ -443,7 +492,7 @@ namespace Zhai.PictureView
         /// <param name="targetLen">压缩后大小</param>
         /// <param name="srcLen">原始大小</param>
         /// <returns>压缩后的图片</returns>
-        private static Image CompressImageToTargetSize(Image img, ImageFormat format, long targetLen)
+        public static Image CompressImageToTargetSize(Image img, ImageFormat format, long targetLen)
         {
             const long nearlyLen = 10240;
 
@@ -535,79 +584,6 @@ namespace Zhai.PictureView
             return img;
         }
 
-        private static MagickImage CreateMagickImage(byte[] bytes, int? quality = null, int? width = null, int? height = null, bool? isIgnoreRatio = false)
-        {
-            var magickImage = new MagickImage(bytes);
-
-            if (quality is not null)
-            {
-                magickImage.Quality = quality.Value;
-            }
-
-            if (width is not null && height is not null)
-            {
-                if (isIgnoreRatio == true)
-                    magickImage.LiquidRescale(width.Value, height.Value);
-                else
-                    magickImage.Resize(width.Value, height.Value);
-            }
-            else if (width is not null && height is null)
-            {
-                if (isIgnoreRatio == true)
-                    magickImage.LiquidRescale(width.Value, 0);
-                else
-                    magickImage.Resize(width.Value, 0);
-            }
-            else if (height is not null && width is null)
-            {
-                if (isIgnoreRatio == true)
-                    magickImage.LiquidRescale(0, height.Value);
-                else
-                    magickImage.Resize(0, height.Value);
-            }
-
-            return magickImage;
-        }
-
-        private static MagickImageCollection CreateMagickImageCollection(byte[] bytes, int? quality = null, int? width = null, int? height = null, bool? isIgnoreRatio = false)
-        {
-            var magickImageCollection = new MagickImageCollection(bytes);
-
-            magickImageCollection.Coalesce();
-
-            foreach (var magickImage in magickImageCollection)
-            {
-                if (quality is not null)
-                {
-                    magickImage.Quality = quality.Value;
-                }
-
-                if (width is not null && height is not null)
-                {
-                    if (isIgnoreRatio == true)
-                        magickImage.LiquidRescale(width.Value, height.Value);
-                    else
-                        magickImage.Resize(width.Value, height.Value);
-                }
-                else if (width is not null && height is null)
-                {
-                    if (isIgnoreRatio == true)
-                        magickImage.LiquidRescale(width.Value, 0);
-                    else
-                        magickImage.Resize(width.Value, 0);
-                }
-                else if (height is not null && width is null)
-                {
-                    if (isIgnoreRatio == true)
-                        magickImage.LiquidRescale(0, height.Value);
-                    else
-                        magickImage.Resize(0, height.Value);
-                }
-            }
-
-            return magickImageCollection;
-        }
-
         public static async Task<bool> SaveImageAsync(byte[] bytes, string targetPath, int? quality = null, int? width = null, int? height = null, bool? isIgnoreRatio = false)
         {
             try
@@ -617,19 +593,78 @@ namespace Zhai.PictureView
                     return false;
                 }
 
-                var ext = Path.GetExtension(targetPath);
+                bool isMultiframe = Path.GetExtension(targetPath) == ".GIF";
 
-                if (ext.ToUpper() == ".GIF")
+                if (isMultiframe)
                 {
-                    using (MagickImageCollection magickImageCollection = CreateMagickImageCollection(bytes, quality, width, height, isIgnoreRatio))
+                    using (var magickImageCollection = new MagickImageCollection(bytes))
                     {
+                        magickImageCollection.Coalesce();
+
+                        foreach (var magickImage in magickImageCollection)
+                        {
+                            if (quality is not null)
+                            {
+                                magickImage.Quality = quality.Value;
+                            }
+
+                            if (width is not null && height is not null)
+                            {
+                                //if (isIgnoreRatio == true)
+                                //    magickImage.LiquidRescale(width.Value, height.Value);
+                                //else
+                                magickImage.Resize(width.Value, height.Value);
+                            }
+                            else if (width is not null && height is null)
+                            {
+                                //if (isIgnoreRatio == true)
+                                //    magickImage.LiquidRescale(width.Value, 0);
+                                //else
+                                magickImage.Resize(width.Value, 0);
+                            }
+                            else if (height is not null && width is null)
+                            {
+                                //if (isIgnoreRatio == true)
+                                //    magickImage.LiquidRescale(0, height.Value);
+                                //else
+                                magickImage.Resize(0, height.Value);
+                            }
+                        }
+
                         await Task.Run(async () => await magickImageCollection.WriteAsync(targetPath));
                     }
                 }
                 else
                 {
-                    using (MagickImage magickImage = CreateMagickImage(bytes, quality, width, height))
+                    using (var magickImage = new MagickImage(bytes))
                     {
+                        if (quality is not null)
+                        {
+                            magickImage.Quality = quality.Value;
+                        }
+
+                        if (width is not null && height is not null)
+                        {
+                            //if (isIgnoreRatio == true)
+                            //    magickImage.LiquidRescale(width.Value, height.Value);
+                            //else
+                            magickImage.Resize(width.Value, height.Value);
+                        }
+                        else if (width is not null && height is null)
+                        {
+                            //if (isIgnoreRatio == true)
+                            //    magickImage.LiquidRescale(width.Value, 0);
+                            //else
+                            magickImage.Resize(width.Value, 0);
+                        }
+                        else if (height is not null && width is null)
+                        {
+                            //if (isIgnoreRatio == true)
+                            //    magickImage.LiquidRescale(0, height.Value);
+                            //else
+                            magickImage.Resize(0, height.Value);
+                        }
+
                         await Task.Run(async () => await magickImage.WriteAsync(targetPath));
                     }
                 }
@@ -655,13 +690,40 @@ namespace Zhai.PictureView
                     return false;
                 }
 
-                using (MagickImage magickImage = CreateMagickImage(bytes, quality, width, height, isIgnoreRatio))
+                using (var magickImage = new MagickImage(bytes))
                 {
+                    if (quality is not null)
+                    {
+                        magickImage.Quality = quality.Value;
+                    }
+
+                    if (width is not null && height is not null)
+                    {
+                        //if (isIgnoreRatio == true)
+                        //    magickImage.LiquidRescale(width.Value, height.Value);
+                        //else
+                        magickImage.Resize(width.Value, height.Value);
+                    }
+                    else if (width is not null && height is null)
+                    {
+                        //if (isIgnoreRatio == true)
+                        //    magickImage.LiquidRescale(width.Value, 0);
+                        //else
+                        magickImage.Resize(width.Value, 0);
+                    }
+                    else if (height is not null && width is null)
+                    {
+                        //if (isIgnoreRatio == true)
+                        //    magickImage.LiquidRescale(0, height.Value);
+                        //else
+                        magickImage.Resize(0, height.Value);
+                    }
+
                     await Task.Run(() =>
                     {
                         var image = magickImage.ToBitmap();
 
-                        CompressImageToTargetSize(image, ImageFormat.Jpeg, targetLen).Save(targetPath);
+                        CompressImageToTargetSize(image, ImageFormat.Png, targetLen).Save(targetPath);
                     });
                 }
             }
@@ -670,6 +732,274 @@ namespace Zhai.PictureView
 #if DEBUG
                 Trace.WriteLine($"{nameof(SaveImageAsync)} {targetPath} exception, \n {e.Message}");
 #endif
+
+                return false;
+            }
+
+            return true;
+        }
+
+        #endregion
+
+        /// <summary>
+        /// 裁剪
+        /// </summary>
+        public static bool Crop(byte[] bytes, Rect rect, bool isMultiframe, out byte[] result)
+        {
+            try
+            {
+                if (bytes is null)
+                {
+                    result = null;
+
+                    return false;
+                }
+
+                if (isMultiframe)
+                {
+                    using (var magickImageCollection = new MagickImageCollection(bytes))
+                    {
+                        magickImageCollection.Coalesce();
+
+                        foreach (var magickImage in magickImageCollection)
+                        {
+                            magickImage.Quality = 100;
+                            magickImage.Crop(new MagickGeometry((int)rect.X, (int)rect.Y, (int)rect.Width, (int)rect.Height));
+                        }
+
+                        result = magickImageCollection.ToByteArray();
+                    }
+                }
+                else
+                {
+                    using (var magickImage = new MagickImage(bytes))
+                    {
+                        magickImage.Quality = 100;
+                        magickImage.Crop(new MagickGeometry((int)rect.X, (int)rect.Y, (int)rect.Width, (int)rect.Height));
+
+                        result = magickImage.ToByteArray();
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+#if DEBUG
+                Trace.WriteLine($"{nameof(Crop)} exception, \n {e.Message}");
+#endif
+                result = null;
+
+                return false;
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// 水平翻转
+        /// </summary>
+        public static bool Flop(byte[] bytes, bool isMultiframe, out byte[] result)
+        {
+            try
+            {
+                if (bytes is null)
+                {
+                    result = null;
+
+                    return false;
+                }
+
+                if (isMultiframe)
+                {
+                    using (var magickImageCollection = new MagickImageCollection(bytes))
+                    {
+                        magickImageCollection.Coalesce();
+
+                        foreach (var magickImage in magickImageCollection)
+                        {
+                            magickImage.Quality = 100;
+                            magickImage.Flop();
+                        }
+
+                        result = magickImageCollection.ToByteArray();
+                    }
+                }
+                else
+                {
+                    using (var magickImage = new MagickImage(bytes))
+                    {
+                        magickImage.Quality = 100;
+                        magickImage.Flop();
+
+                        result = magickImage.ToByteArray();
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+#if DEBUG
+                Trace.WriteLine($"{nameof(Flop)} exception, \n {e.Message}");
+#endif
+                result = null;
+
+                return false;
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// 垂直翻转
+        /// </summary>
+        public static bool Flip(byte[] bytes, bool isMultiframe, out byte[] result)
+        {
+            try
+            {
+                if (bytes is null)
+                {
+                    result = null;
+
+                    return false;
+                }
+
+                if (isMultiframe)
+                {
+                    using (var magickImageCollection = new MagickImageCollection(bytes))
+                    {
+                        magickImageCollection.Coalesce();
+
+                        foreach (var magickImage in magickImageCollection)
+                        {
+                            magickImage.Quality = 100;
+                            magickImage.Flip();
+                        }
+
+                        result = magickImageCollection.ToByteArray();
+                    }
+                }
+                else
+                {
+                    using (var magickImage = new MagickImage(bytes))
+                    {
+                        magickImage.Quality = 100;
+                        magickImage.Flip();
+
+                        result = magickImage.ToByteArray();
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+#if DEBUG
+                Trace.WriteLine($"{nameof(Flip)} exception, \n {e.Message}");
+#endif
+                result = null;
+
+                return false;
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// 向左旋转
+        /// </summary>
+        public static bool RotateRight(byte[] bytes, double degrees, bool isMultiframe, out byte[] result)
+        {
+            try
+            {
+                if (bytes is null)
+                {
+                    result = null;
+
+                    return false;
+                }
+
+                if (isMultiframe)
+                {
+
+                    using (var magickImageCollection = new MagickImageCollection(bytes))
+                    {
+                        magickImageCollection.Coalesce();
+
+                        foreach (var magickImage in magickImageCollection)
+                        {
+                            magickImage.Quality = 100;
+                            magickImage.Rotate(degrees);
+                        }
+
+                        result = magickImageCollection.ToByteArray();
+                    }
+                }
+                else
+                {
+                    using (var magickImage = new MagickImage(bytes))
+                    {
+                        magickImage.Quality = 100;
+                        magickImage.Rotate(degrees);
+
+                        result = magickImage.ToByteArray();
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+#if DEBUG
+                Trace.WriteLine($"{nameof(RotateRight)} exception, \n {e.Message}");
+#endif
+                result = null;
+
+                return false;
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// 向右旋转
+        /// </summary>
+        public static bool RotateLeft(byte[] bytes, double degrees, bool isMultiframe, out byte[] result)
+        {
+            try
+            {
+                if (bytes is null)
+                {
+                    result = null;
+
+                    return false;
+                }
+
+                if (isMultiframe)
+                {
+                    using (var magickImageCollection = new MagickImageCollection(bytes))
+                    {
+                        magickImageCollection.Coalesce();
+
+                        foreach (var magickImage in magickImageCollection)
+                        {
+                            magickImage.Quality = 100;
+                            magickImage.Rotate(-degrees);
+                        }
+
+                        result = magickImageCollection.ToByteArray();
+                    }
+                }
+                else
+                {
+                    using (var magickImage = new MagickImage(bytes))
+                    {
+                        magickImage.Quality = 100;
+                        magickImage.Rotate(-degrees);
+
+                        result = magickImage.ToByteArray();
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+#if DEBUG
+                Trace.WriteLine($"{nameof(RotateLeft)} exception, \n {e.Message}");
+#endif
+                result = null;
 
                 return false;
             }

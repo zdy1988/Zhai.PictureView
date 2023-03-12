@@ -2,9 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using System.Windows.Forms;
 using Zhai.Famil.Common.Mvvm;
 using Zhai.Famil.Common.Mvvm.Command;
 using MessageBox = Zhai.Famil.Dialogs.MessageBox;
@@ -324,7 +322,7 @@ namespace Zhai.PictureView
 
                 bool isSuccess;
 
-                var bytes = await currentPicture.ReadAsync();
+                var bytes = currentPicture.ReadAllBytes();
 
                 if (IsCustomFileSize && CustomFileSize != null && CustomFileSize > 0)
                 {
@@ -382,14 +380,10 @@ namespace Zhai.PictureView
 
         public RelayCommand ExecuteSelectFolderCommand => new Lazy<RelayCommand>(() => new RelayCommand(() =>
         {
-            var folderDialog = new FolderBrowserDialog
+            if (Zhai.Famil.Win32.CommonDialog.OpenFolderDialog(null, String.IsNullOrEmpty(FolderPath) ? String.Empty : Path.GetDirectoryName(FolderPath), "", "", false, out string filename) == true)
             {
-                InitialDirectory = String.IsNullOrEmpty(FolderPath) ? String.Empty : Path.GetDirectoryName(FolderPath),
-                SelectedPath = FolderPath
-            };
-
-            if (folderDialog.ShowDialog() == DialogResult.OK)
-                FolderPath = folderDialog.SelectedPath;
+                FolderPath = filename;
+            }
 
         })).Value;
 

@@ -14,6 +14,7 @@ using System.Windows.Controls.Primitives;
 using Zhai.Famil.Controls;
 using MessageBox = Zhai.Famil.Dialogs.MessageBox;
 using ConfirmBox = Zhai.Famil.Dialogs.ConfirmBox;
+using SkiaSharp;
 
 namespace Zhai.PictureView
 {
@@ -36,6 +37,7 @@ namespace Zhai.PictureView
 
             ViewModel.CurrentPictureChanged += ViewModel_CurrentPictureChanged;
             ViewModel.CurrentFolderChanged += ViewModel_CurrentFolderChanged;
+            ViewModel.CurrentPictureSourceUpdated += ViewModel_CurrentPictureSourceUpdated;
 
             PictureElement.MouseRightButtonDown += PictureElement_MouseRightButtonDown;
             VideoElement.MouseRightButtonDown += VideoElement_MouseRightButtonDown;
@@ -84,6 +86,20 @@ namespace Zhai.PictureView
         private void ViewModel_CurrentFolderChanged(object sender, DirectoryInfo e)
         {
             FolderList.ScrollIntoView(e);
+        }
+
+        private void ViewModel_CurrentPictureSourceUpdated(object sender, Picture picture)
+        {
+            this.PictureElement.ImageElement.CleanAnimation();
+
+            this.PictureElement.Source = picture.PictureSource;
+
+            this.PictureElement.Reset();
+
+            if (picture.IsAnimation)
+            {
+                this.PictureElement.ImageElement.RunAnimation(new MemoryStream(picture.PictureBytes));
+            }
         }
 
         #region Picture View

@@ -18,6 +18,15 @@ namespace Zhai.PictureView
 
         public String PicturePath { get; }
 
+        public byte[] PictureBytes { get; private set; }
+
+        private BitmapSource pictureSource = PictureThumbStateResources.ImageLoading;
+        public BitmapSource PictureSource
+        {
+            get => pictureSource;
+            set => Set(() => PictureSource, ref pictureSource, value);
+        }
+
         private double pixelWidth;
         public double PixelWidth
         {
@@ -30,13 +39,6 @@ namespace Zhai.PictureView
         {
             get => pixelHeight;
             set => Set(() => PixelHeight, ref pixelHeight, value);
-        }
-
-        private BitmapSource pictureSource = PictureThumbStateResources.ImageLoading;
-        public BitmapSource PictureSource
-        {
-            get => pictureSource;
-            set => Set(() => PictureSource, ref pictureSource, value);
         }
 
         private PictureThumbState pictureState = PictureThumbState.Failed;
@@ -156,16 +158,20 @@ namespace Zhai.PictureView
             return PictureExif;
         }
 
-        public async Task<byte[]> ReadAsync()
+        public byte[] ReadAllBytes()
         {
             try
             {
-                return await File.ReadAllBytesAsync(PicturePath);
+                if (IsLoaded)
+                {
+                    PictureBytes ??= File.ReadAllBytes(PicturePath);
+
+                    return PictureBytes;
+                }
             }
-            catch
-            {
-                return null;
-            }
+            catch { }
+
+            return null;
         }
 
         public async Task<bool> SaveAsync(string targetPath)
@@ -174,12 +180,23 @@ namespace Zhai.PictureView
             {
                 targetPath ??= PicturePath;
 
-                var bytes = await ReadAsync();
+                var bytes = ReadAllBytes();
 
                 return await ImageDecoder.SaveImageAsync(bytes, targetPath);
             }
 
             return false;
+        }
+
+        public void UpdatePictureSource(byte[] imageBytes)
+        {
+            PictureBytes = imageBytes;
+
+            PictureSource = imageBytes.ToBitmapImage();
+
+            PixelWidth = PictureSource.PixelWidth;
+
+            PixelHeight = PictureSource.PixelHeight;
         }
 
         public bool Delete()
@@ -202,6 +219,7 @@ namespace Zhai.PictureView
 
             ThumbSource = null;
             PictureSource = null;
+            PictureBytes = null;
 
             GC.Collect();
             GC.WaitForPendingFinalizers();

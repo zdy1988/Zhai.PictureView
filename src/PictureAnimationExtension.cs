@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -22,6 +23,11 @@ namespace Zhai.PictureView
         public static void RunAnimation(this Image image, Picture picture)
         {
             XamlAnimatedGif.AnimationBehavior.SetSourceUri(image, new Uri(picture.PicturePath));
+        }
+
+        public static void RunAnimation(this Image image, Stream stream)
+        {
+            XamlAnimatedGif.AnimationBehavior.SetSourceStream(image, stream);
         }
     }
 }

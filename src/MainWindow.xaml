@@ -30,34 +30,6 @@
         <Style TargetType="{x:Type ZDY:IconToggleButton}">
             <Setter Property="Margin" Value="3"/>
         </Style>
-        <Style TargetType="{x:Type Border}" x:Key="HorizontalLinearGradientBorder">
-            <Style.Setters>
-                <Setter Property="Height" Value="1"/>
-                <Setter Property="Background">
-                    <Setter.Value>
-                        <LinearGradientBrush>
-                            <GradientStop Color="#00666666" Offset="0"/>
-                            <GradientStop Color="#E6666666" Offset="0.5"/>
-                            <GradientStop Color="#00666666" Offset="1"/>
-                        </LinearGradientBrush>
-                    </Setter.Value>
-                </Setter>
-            </Style.Setters>
-        </Style>
-        <Style TargetType="{x:Type Border}" x:Key="VerticalLinearGradientBorder">
-            <Style.Setters>
-                <Setter Property="Width" Value="1"/>
-                <Setter Property="Background">
-                    <Setter.Value>
-                        <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
-                            <GradientStop Color="#00666666" Offset="0"/>
-                            <GradientStop Color="#E6666666" Offset="0.5"/>
-                            <GradientStop Color="#00666666" Offset="1"/>
-                        </LinearGradientBrush>
-                    </Setter.Value>
-                </Setter>
-            </Style.Setters>
-        </Style>
 
         <ZDY:ContextMenu x:Key="PictureViewContextMenu">
             <MenuItem Icon="{ZDY:Icon Kind=VuesaxOutlineDocumentCopy}" Header="复制图片" Command="{Binding ExecuteCopyCurrentPictureSourceCommand}"/>
@@ -65,6 +37,8 @@
             <MenuItem Icon="{ZDY:Icon Kind=Save}" Header="保存" Command="{Binding ExecuteSaveImageCommand}"/>
             <MenuItem Icon="{ZDY:Icon Kind=SaveAs}" Header="另存为..." Command="{Binding ExecuteSaveAsImageCommand}"/>
             <MenuItem Icon="{ZDY:Icon Kind=Delete}" Header="删除" Click="DeleteButton_Click"/>
+            <Separator/>
+            <MenuItem Icon="{ZDY:Icon Kind=FormatSquare}" Header="裁剪/旋转" Command="{Binding ExecuteCropImageCommand}"/>
             <Separator/>
             <MenuItem Icon="{ZDY:Icon Kind=Magicpen}" Header="打开效果面板" Command="{Binding ExecuteTogglePictureEffectsViewCommand}" Visibility="{Binding IsShowPictureEffectsView, Converter={ZDY:BoolToInverseVisibilityConverter}}"/>
             <MenuItem Icon="{ZDY:Icon Kind=Magicpen}" Header="关闭效果面板" Command="{Binding ExecuteTogglePictureEffectsViewCommand}" Visibility="{Binding IsShowPictureEffectsView, Converter={ZDY:BoolToVisibilityConverter}}"/>
@@ -115,7 +89,7 @@
             <ZDY:Drawer.RightDrawerContent>
                 <Border Width="220" Margin="24 24 8 24" Cursor="Arrow">
                     <Grid>
-                        <Border HorizontalAlignment="Left" Margin="-11.5 0 0 0" Style="{StaticResource VerticalLinearGradientBorder}"/>
+                        <Border HorizontalAlignment="Left" Margin="-11.5 0 0 0" Style="{StaticResource Zhai.Famil.FadeBothEndsVerticalDivider}"/>
                         <DockPanel>
                             <ZDY:TextBox x:Name="FolderListSearcher" DockPanel.Dock="Top" Margin="3 0 3 14"
                                          Text="{Binding FolderBorthersSearchText, UpdateSourceTrigger=PropertyChanged, Delay=1000}"
@@ -198,10 +172,10 @@
                 <ZDY:Drawer.BottomDrawerContent>
                     <Border Height="72">
                         <Grid Visibility="{Binding CurrentPicture, Converter={ZDY:NullableToVisibilityConverter}}">
-                            <Border VerticalAlignment="Top" MaxWidth="360" Style="{StaticResource HorizontalLinearGradientBorder}"/>
+                            <Border VerticalAlignment="Top" MaxWidth="360" Style="{StaticResource Zhai.Famil.FadeBothEndsHorizontalDivider}"/>
                             <DockPanel HorizontalAlignment="Center" MaxWidth="888">
                                 <ZDY:Button x:Name="GalleryButton" DockPanel.Dock="Right" Content="全部图片" VerticalContentAlignment="Center" Background="Transparent" Click="GalleryButton_Click"/>
-                                <Border DockPanel.Dock="Right" Margin="3 12 0 12" Style="{StaticResource VerticalLinearGradientBorder}"/>
+                                <Border DockPanel.Dock="Right" Margin="3 12 0 12" Style="{StaticResource Zhai.Famil.FadeBothEndsVerticalDivider}"/>
                                 <ZDY:ListBox x:Name="PictureList" Margin="8 8 8 -6"
                                          ItemsSource="{Binding Folder}"
                                          VirtualizingPanel.ScrollUnit="Pixel"
@@ -260,10 +234,10 @@
                 <ZDY:Drawer.TopDrawerContent>
                     <Border Height="68">
                         <Grid Visibility="{Binding CurrentPicture, Converter={ZDY:NullableToVisibilityConverter}}">
-                            <Border VerticalAlignment="Bottom" MaxWidth="360" Style="{StaticResource HorizontalLinearGradientBorder}"/>
+                            <Border VerticalAlignment="Bottom" MaxWidth="360" Style="{StaticResource Zhai.Famil.FadeBothEndsHorizontalDivider}"/>
                             <DockPanel HorizontalAlignment="Center" MaxWidth="888">
                                 <ZDY:Button x:Name="CloseEffectsButton" DockPanel.Dock="Right" Content="关闭窗口" VerticalContentAlignment="Center" Background="Transparent" Click="CloseEffectsButton_Click"/>
-                                <Border DockPanel.Dock="Right" Margin="3 12 0 12" Style="{StaticResource VerticalLinearGradientBorder}"/>
+                                <Border DockPanel.Dock="Right" Margin="3 12 0 12" Style="{StaticResource Zhai.Famil.FadeBothEndsVerticalDivider}"/>
                                 <ZDY:ListBox x:Name="EffectList" Margin="8 8 8 8"
                                              ItemsSource="{Binding Effects}"
                                              VirtualizingPanel.ScrollUnit="Pixel"

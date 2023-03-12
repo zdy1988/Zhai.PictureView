@@ -16,6 +16,8 @@ using Zhai.Famil.Common.Threads;
 using Zhai.Famil.Controls;
 using MessageBox = Zhai.Famil.Dialogs.MessageBox;
 using ConfirmBox = Zhai.Famil.Dialogs.ConfirmBox;
+using Zhai.Famil.Common.ExtensionMethods;
+using System.Windows.Media.Imaging;
 
 namespace Zhai.PictureView
 {
@@ -327,6 +329,23 @@ namespace Zhai.PictureView
 
         }, () => CurrentPicture != null && CurrentPicture.IsLoaded)).Value;
 
+        public RelayCommand ExecuteCropImageCommand => new Lazy<RelayCommand>(() => new RelayCommand(() =>
+        {
+            var window = new CropWindow(CurrentPicture);
+
+            window.Owner = App.Current.MainWindow;
+
+            window.CorpFinished += (s, e) =>
+            {
+                this.CurrentPicture.UpdatePictureSource(e);
+
+                CurrentPictureSourceUpdated?.Invoke(this, CurrentPicture);
+            };
+
+            window.ShowDialog();
+
+        }, () => CurrentPicture != null && CurrentPicture.IsLoaded)).Value;
+
         public RelayCommand ExecuteCopyCurrentPicturePathCommand => new Lazy<RelayCommand>(() => new RelayCommand(() =>
         {
             System.Windows.Clipboard.SetText(CurrentPicture.PicturePath);
@@ -354,6 +373,8 @@ namespace Zhai.PictureView
         }, folder => CurrentPicture != null)).Value;
 
         #endregion
+
+        public event EventHandler<Picture> CurrentPictureSourceUpdated;
 
         public event EventHandler<Picture> CurrentPictureChanged;
 
