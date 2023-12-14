@@ -18,7 +18,7 @@ using SkiaSharp;
 
 namespace Zhai.PictureView
 {
-    public partial class MainWindow : GlassesWindow
+    public partial class MainWindow : FamilWindow
     {
         PictureWindowViewModel ViewModel => this.DataContext as PictureWindowViewModel;
 
